@@ -1,10 +1,17 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, User as NextAuthUser } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
+
+interface ExtendedUser extends NextAuthUser {
+  id: string;
+  username: string;
+  isVerified: boolean;
+  isAdmin: boolean;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -60,9 +67,10 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.username = user.username;
-        token.email = user.email;
+        const u = user as ExtendedUser;
+        token.id = u.id;
+        token.username = u.username;
+        token.email = u.email;
       }
       return token;
     },
