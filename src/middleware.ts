@@ -4,7 +4,7 @@ import { getToken } from 'next-auth/jwt';
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  
+
   const publicPaths = ['/login', '/register', '/verifyemail', '/forgotpassword'];
 
   const { pathname } = req.nextUrl;
@@ -22,12 +22,11 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - static (static files)
-     * - publicPaths
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|login|register|verifyemail|forgotpassword).*)',
+    '/',
+    '/login',
+    '/register',
+    '/verifyemail',
+    '/forgotpassword'
+
   ],
 };
