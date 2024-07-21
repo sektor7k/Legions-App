@@ -23,7 +23,7 @@
     "framer-motion": "^11.3.8",
     "lucide-react": "^0.412.0",
     "mongoose": "^8.2.0",
-    "next": "14.1.0",
+    "next": "^14.2.5",
     "next-auth": "^4.24.6",
     "next-themes": "^0.3.0",
     "nodemailer": "^6.9.14",
