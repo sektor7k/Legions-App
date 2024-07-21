@@ -6,7 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
 
-export const authOptions: NextAuthOptions  = {
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -37,7 +37,17 @@ export const authOptions: NextAuthOptions  = {
         );
 
         if (!passwordMatch) throw new Error("Invalid Password");
-        return userFound;
+
+        
+
+        // Burada tüm gerekli alanların olduğundan emin olun
+        return {
+          id: userFound._id,
+          email: userFound.email,
+          username: userFound.username,
+          isVerified: userFound.isVerified,
+          isAdmin: userFound.isAdmin
+        };
       },
     }),
   ],
@@ -48,35 +58,19 @@ export const authOptions: NextAuthOptions  = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user, session, trigger }) {
-      if (trigger === "update" && session?.username) {
-        token.username = session.username;
-      }
-
-      if (trigger === "update" && session?.email) {
-        token.email = session.email;
-      }
-
+    async jwt({ token, user }) {
       if (user) {
-        const u = user as unknown as any;
-        return {
-          ...token,
-          id: u.id,
-          phone: u.phone,
-        };
+        token.id = user.id;
+        token.username = user.username;
+        token.email = user.email;
       }
       return token;
     },
     async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          _id: token.id,
-          username: token.username,
-          phone: token.phone,
-        }
-      };
+      session.user.id = token.id;
+      session.user.username = token.username;
+      session.user.email = token.email;
+      return session;
     },
   },
 };
