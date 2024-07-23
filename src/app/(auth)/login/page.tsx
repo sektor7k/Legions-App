@@ -43,7 +43,7 @@ export default function LoginPage() {
             if (response?.error) {
                 showErrorToast(response.error);
             } else {
-                showToast("Succesfuly");
+                showToast("Welcome");
             }
         } catch (error: any) {
             console.log(error)
