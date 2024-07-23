@@ -1,11 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { signOut } from "next-auth/react";
-import ModeToggle from "@/components/ModeToggle";
-import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
+
 import LambDemo from "@/components/Lamb"
 
 export default function Home() {
