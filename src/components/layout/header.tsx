@@ -14,7 +14,6 @@ export default function Header() {
         <div className="hidden lg:block">
           <Link
             href={'/'}
-            target="_blank"
           >
             <img
               src={"/logoDark.png"}
