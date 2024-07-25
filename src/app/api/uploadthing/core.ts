@@ -3,7 +3,6 @@ import { UploadThingError } from "uploadthing/server";
 import mongoose from "mongoose";
 import User from "@/models/User"; // User modelinizi doğru yoldan import edin
 import { connectDB } from "@/lib/mongodb";
-import { getSelf } from "@/lib/auth-service";
 import { getSession } from "next-auth/react";
 import { NextRequest } from "next/server";
 
