@@ -5,6 +5,17 @@ import AvatarDemo from "@/components/layout/avatarDemo"
 import { useSession } from 'next-auth/react';
 import { Input } from "@/components/ui/input";
 import { FaDiscord, FaTelegram, FaXTwitter } from "react-icons/fa6";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { Label } from "@/components/ui/label";
 
 
 export default function User() {
@@ -33,7 +44,7 @@ export default function User() {
             <p className="text-sm text-gray-500 dark:text-gray-400">{email}</p>
             <Button variant={"secondary"} className=" mt-4 ">Edit <span className="ml-2">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-                <path stroke-Linecap="round" stroke-Linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
               </svg>
             </span>
             </Button>
@@ -60,7 +71,7 @@ export default function User() {
           </div>
           <Button variant={"secondary"} className=" mt-4 ">Edit <span className="ml-2">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-              <path stroke-Linecap="round" stroke-Linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
             </svg>
           </span>
           </Button>
@@ -80,17 +91,39 @@ export default function User() {
 
 
         <div className="flex flex-col items-center space-y-6">
-
           <div className="flex flex-col">
             <p className="text-lg text-muted-foreground mb-3">EVM Adress</p>
             <div className="flex items-center ">
               <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=032" alt="" className="w-4 mr-2" />
               <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
-              <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </Button>
+              <Sheet >
+                <SheetTrigger>
+                  <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side={"bottom"}>
+                  <SheetHeader>
+                    <SheetTitle>EVM Adress</SheetTitle>
+                    <SheetDescription>
+                      Please enter your EVM wallet address.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Adress
+                    </Label>
+                    <Input id="name" placeholder="0xd40F6*************************************" className="col-span-3" />
+                  </div>
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="submit">Save changes</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
           <div className="flex flex-col">
@@ -98,11 +131,34 @@ export default function User() {
             <div className="flex items-center ">
               <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=032" alt="" className="w-4 mr-2" />
               <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
-              <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </Button>
+              <Sheet >
+                <SheetTrigger>
+                  <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side={"bottom"}>
+                  <SheetHeader>
+                    <SheetTitle>BTC Adress</SheetTitle>
+                    <SheetDescription>
+                      Please enter your BTC wallet address.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Adress
+                    </Label>
+                    <Input id="name" placeholder="0xd40F6*************************************" className="col-span-3" />
+                  </div>
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="submit">Save changes</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
           <div className="flex flex-col">
@@ -110,11 +166,34 @@ export default function User() {
             <div className="flex items-center ">
               <img src="https://cryptologos.cc/logos/solana-sol-logo.svg?v=032" alt="" className="w-4 mr-2" />
               <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
-              <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </Button>
+              <Sheet >
+                <SheetTrigger>
+                  <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side={"bottom"}>
+                  <SheetHeader>
+                    <SheetTitle>SOL Adress</SheetTitle>
+                    <SheetDescription>
+                      Please enter your Solana wallet address.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Adress
+                    </Label>
+                    <Input id="name" placeholder="0xd40F6*************************************" className="col-span-3" />
+                  </div>
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="submit">Save changes</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
           <div className="flex flex-col">
@@ -122,11 +201,34 @@ export default function User() {
             <div className="flex items-center ">
               <img src="https://cryptologos.cc/logos/sei-sei-logo.svg?v=032" alt="" className="w-4 mr-2" />
               <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
-              <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </Button>
+              <Sheet >
+                <SheetTrigger>
+                  <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side={"bottom"}>
+                  <SheetHeader>
+                    <SheetTitle>Sei Adress</SheetTitle>
+                    <SheetDescription>
+                      Please enter your Sei wallet address.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Adress
+                    </Label>
+                    <Input id="name" placeholder="0xd40F6*************************************" className="col-span-3" />
+                  </div>
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="submit">Save changes</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
           <div className="flex flex-col">
@@ -134,11 +236,34 @@ export default function User() {
             <div className="flex items-center ">
               <img src="https://cryptologos.cc/logos/aptos-apt-logo.svg?v=032" alt="" className="w-4 mr-2" />
               <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
-              <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </Button>
+              <Sheet >
+                <SheetTrigger>
+                  <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side={"bottom"}>
+                  <SheetHeader>
+                    <SheetTitle>Aptos Adress</SheetTitle>
+                    <SheetDescription>
+                      Please enter your Aptos wallet address.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Adress
+                    </Label>
+                    <Input id="name" placeholder="0xd40F6*************************************" className="col-span-3" />
+                  </div>
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="submit">Save changes</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
           <div className="flex flex-col">
@@ -146,16 +271,36 @@ export default function User() {
             <div className="flex items-center ">
               <img src="https://cryptologos.cc/logos/sui-sui-logo.svg?v=032" alt="" className="w-4 mr-2" />
               <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
-              <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </Button>
+              <Sheet >
+                <SheetTrigger>
+                  <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side={"bottom"}>
+                  <SheetHeader>
+                    <SheetTitle>Sui Adress</SheetTitle>
+                    <SheetDescription>
+                      Please enter your Sui wallet address.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Adress
+                    </Label>
+                    <Input id="name" placeholder="0xd40F6*************************************" className="col-span-3" />
+                  </div>
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="submit">Save changes</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
-
-
-
         </div>
       </div>
     </div >
