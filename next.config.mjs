@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['utfs.io'], // İzin verilen ana makineler
+        domains: ['utfs.io', "aceternity.com", "www.behance.net"], // İzin verilen ana makineler
       },
 };
 
