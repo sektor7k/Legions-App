@@ -1,21 +1,28 @@
-"use client"
 
-import { useSession } from "next-auth/react";
+import  Hero  from "@/components/landing-page/Aceternity/Hero";
+import  HowItWorks  from "@/components/landing-page/HowItWorks";
+import  FAQ  from "@/components/landing-page/FAQ";
+import  Footer  from "@/components/landing-page/Footer";
+import  ScrollToTop  from "@/components/landing-page/ScrollToTop";
+import { Team } from "@/components/landing-page/Aceternity/Team";
+import JoinWaitlist from "@/components/landing-page/Aceternity/join-waitlist";
+import Investor from "@/components/landing-page/Aceternity/Investor";
+import HeroParallaxDemo from "@/components/landing-page/Aceternity/hero-parralax";
 
-import LambDemo from "@/components/Lamb"
-
-export default function Home() {
-  const { data ,status } = useSession();
-
-
-
-  
+function App() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      <LambDemo data={data?.user.username}/>
-    
-
-     
-    </main>
+    <>
+      <Hero />
+      <Investor />
+      <HeroParallaxDemo/>
+      <HowItWorks />
+      <Team/>
+      <JoinWaitlist/>
+      <FAQ />
+      <Footer />
+      <ScrollToTop />
+    </>
   );
 }
+
+export default App;
