@@ -3,7 +3,6 @@ import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
 import Link from 'next/link';
 import ModeToggle from '../ModeToggle';
-import { useEffect, useState } from 'react';
 
 export default function Header() {
 
