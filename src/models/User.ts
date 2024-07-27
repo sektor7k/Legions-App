@@ -34,8 +34,12 @@ const UserSchema = new Schema<UserDocument>({
   username: {
     type: String,
     required: [true, "Fullname is required"],
-    minLength: [3, "fullname must be at least 3 characters"],
+    minLength: [3, "fullname must be at least 3 chaacters"],
     maxLength: [25, "fullname must be at most 25 characters"],
+  },
+  image: {
+    type: String, 
+    default: "https://github.com/shadcn.png",
   },
   isVerified: {
     type: Boolean,
