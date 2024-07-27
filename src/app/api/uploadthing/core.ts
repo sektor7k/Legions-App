@@ -1,20 +1,18 @@
+
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import mongoose from "mongoose";
 import User from "@/models/User"; // User modelinizi doğru yoldan import edin
 import { connectDB } from "@/lib/mongodb";
-import { getSession } from "next-auth/react";
-import { NextRequest } from "next/server";
+import { getServerSession } from "next-auth";
 
 const f = createUploadthing();
-
-
 
 export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "4MB" } })
     .middleware(async ({ req }) => {
 
-      const self = await getSession();
+      const self = await getServerSession();
       console.log("SELF:",self);
       if (!self) {
         throw new UploadThingError("Unauthorized");
@@ -24,19 +22,18 @@ export const ourFileRouter = {
 
     })
     .onUploadComplete(async ({ metadata, file }) => {
-
+      console.log("metadata",metadata)
       // MongoDB'ye bağlanma
       if (!mongoose.connection.readyState) {
         await connectDB();
       }
 
-
-
-      await User.findByIdAndUpdate(
-        metadata.user?.user.id,
+      const res = await User.findOneAndUpdate(
+        { email: metadata.user.user.email },
         { image: file.url },
         { new: true, runValidators: true }
       );
+      console.log("res",res);
 
       return { fileUrl: file.url };
 
