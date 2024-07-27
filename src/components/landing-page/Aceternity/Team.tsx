@@ -2,6 +2,7 @@
 import React from "react";
 import { PinContainer } from "@/components/ui/3d-pin";
 import AvatarDemo from "@/components/layout/avatarDemo";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Team() {
     return (
@@ -31,11 +32,14 @@ export function Team() {
                         <div className="text-base !m-0 !p-0 font-normal">
                             <span className="text-slate-500">Fullstack Developer</span>
                         </div>
-                        <AvatarDemo
-                            classname="flex flex-1 w-3/4 rounded-full mt-4 "
-                            img="https://github.com/sektor7k.png"
-                            username="user"
-                        />
+
+                        <Avatar className="flex flex-1 w-3/4 rounded-full mt-4 ">
+                            <AvatarImage
+                                src="https://github.com/sektor7k.png"
+                                alt="user"
+                            />
+                            <AvatarFallback>user</AvatarFallback>
+                        </Avatar>
                     </div>
                 </PinContainer>
 
@@ -47,27 +51,31 @@ export function Team() {
                         <div className="text-base !m-0 !p-0 font-normal">
                             <span className="text-slate-500">Desinger - Marketing</span>
                         </div>
-                        <AvatarDemo
-                            classname="flex flex-1 w-3/4 rounded-full mt-4 bg-gradient-to-br"
-                            img="https://pbs.twimg.com/profile_images/1664014334337470467/DNxDdOua_400x400.jpg"
-                            username="user"
-                        />
+                        <Avatar className="flex flex-1 w-3/4 rounded-full mt-4 ">
+                            <AvatarImage
+                                src="https://pbs.twimg.com/profile_images/1664014334337470467/DNxDdOua_400x400.jpg"
+                                alt="user"
+                            />
+                            <AvatarFallback>user</AvatarFallback>
+                        </Avatar>
                     </div>
                 </PinContainer>
 
                 <PinContainer title="x.com/rabbitcoinhole" href="https://x.com/rabbitcoinhole">
                     <div className="flex basis-full flex-col p-4 tracking-tight text-slate-100/50 sm:basis-1/3 w-[20rem] h-[20rem] justify-center items-center">
                         <h3 className="max-w-xs !pb-2 !m-0 font-bold text-base text-slate-100">
-                        Rabbitcoinhole
+                            Rabbitcoinhole
                         </h3>
                         <div className="text-base !m-0 !p-0 font-normal">
                             <span className="text-slate-500">Influcer</span>
                         </div>
-                        <AvatarDemo
-                            classname="flex flex-1 w-3/4 rounded-full mt-4 bg-gradient-to-br"
-                            img="https://pbs.twimg.com/profile_images/1755154072728940544/QSEWR0OS_400x400.jpg"
-                            username="user"
-                        />
+                        <Avatar className="flex flex-1 w-3/4 rounded-full mt-4 ">
+                            <AvatarImage
+                                src="https://pbs.twimg.com/profile_images/1755154072728940544/QSEWR0OS_400x400.jpg"
+                                alt="user"
+                            />
+                            <AvatarFallback>user</AvatarFallback>
+                        </Avatar>
                     </div>
                 </PinContainer>
             </div>
