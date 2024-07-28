@@ -47,8 +47,8 @@ export function DashboardNav({
                   <Link
                     href={item.disabled ? '/' : item.href}
                     className={cn(
-                      'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                      path === item.href ? 'bg-accent' : 'transparent',
+                      'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-red-950 hover:bg-opacity-40 hover:backdrop-blur-xl hover:text-accent-foreground',
+                      path === item.href ? 'bg-red-950 bg-opacity-40 backdrop-blur-xl' : 'transparent',
                       item.disabled && 'cursor-not-allowed opacity-80'
                     )}
                     onClick={() => {

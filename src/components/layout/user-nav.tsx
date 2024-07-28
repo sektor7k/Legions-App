@@ -54,7 +54,7 @@ export function UserNav() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-            <AvatarDemo classname={'w-9 h-9'} img={'https://github.com/sektor7k.png'} username={session.user.username} />
+            <AvatarDemo classname={'w-9 h-9'} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>

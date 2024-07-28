@@ -17,7 +17,7 @@ export default function ProfileAdresses() {
         <div className="space-y-6 lg:space-y-10">
             <div className="flex flex-col space-y-2 lg:space-y-4">
                 <div className="flex items-center space-x-2">
-                    <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0">
+                    <h2 className="scroll-m-20  pb-2 text-2xl font-bold tracking-tight first:mt-0">
                         SUB-WALLET ADDRESS
                     </h2>
                 </div>
@@ -28,12 +28,14 @@ export default function ProfileAdresses() {
                 <div className="flex flex-col">
                     <p className="text-lg text-muted-foreground mb-3">EVM Adress</p>
                     <div className="flex items-center ">
-                        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=032" alt="" className="w-4 mr-2" />
-                        <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
+                        <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
+                            <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=032" alt="" className="w-6" />
+                        </div>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">0xd40F6f3CeCb2b601744019b5aBEDb78809327011</p>
                         <Sheet >
                             <SheetTrigger>
-                                <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                                <Button variant={"ghost"} className=" rounded-r-xl rounded-l-none ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                     </svg>
                                 </Button>
@@ -63,12 +65,14 @@ export default function ProfileAdresses() {
                 <div className="flex flex-col">
                     <p className="text-lg text-muted-foreground mb-3">BTC Adress</p>
                     <div className="flex items-center ">
-                        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=032" alt="" className="w-4 mr-2" />
-                        <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
+                        <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
+                            <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg?v=032" alt="" className="w-6" />
+                        </div>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">0xd40F6f3CeCb2b601744019b5aBEDb78809327011</p>
                         <Sheet >
                             <SheetTrigger>
-                                <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                            <Button variant={"ghost"} className=" rounded-r-xl rounded-l-none ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                     </svg>
                                 </Button>
@@ -98,12 +102,15 @@ export default function ProfileAdresses() {
                 <div className="flex flex-col">
                     <p className="text-lg text-muted-foreground mb-3">Solana Adress</p>
                     <div className="flex items-center ">
-                        <img src="https://cryptologos.cc/logos/solana-sol-logo.svg?v=032" alt="" className="w-4 mr-2" />
-                        <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
+                        <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
+                            <img src="https://cryptologos.cc/logos/solana-sol-logo.svg?v=032" alt="" className="w-6" />
+                        </div>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">0xd40F6f3CeCb2b601744019b5aBEDb78809327011</p>
+
                         <Sheet >
                             <SheetTrigger>
-                                <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                            <Button variant={"ghost"} className=" rounded-r-xl rounded-l-none ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                     </svg>
                                 </Button>
@@ -133,12 +140,14 @@ export default function ProfileAdresses() {
                 <div className="flex flex-col">
                     <p className="text-lg text-muted-foreground mb-3">Sei Adress</p>
                     <div className="flex items-center ">
-                        <img src="https://cryptologos.cc/logos/sei-sei-logo.svg?v=032" alt="" className="w-4 mr-2" />
-                        <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
+                        <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
+                            <img src="https://cryptologos.cc/logos/sei-sei-logo.svg?v=032" alt="" className="w-6" />
+                        </div>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">0xd40F6f3CeCb2b601744019b5aBEDb78809327011</p>
                         <Sheet >
                             <SheetTrigger>
-                                <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                            <Button variant={"ghost"} className=" rounded-r-xl rounded-l-none ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                     </svg>
                                 </Button>
@@ -168,12 +177,14 @@ export default function ProfileAdresses() {
                 <div className="flex flex-col">
                     <p className="text-lg text-muted-foreground mb-3">Aptos Adress</p>
                     <div className="flex items-center ">
-                        <img src="https://cryptologos.cc/logos/aptos-apt-logo.svg?v=032" alt="" className="w-4 mr-2" />
-                        <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
+                        <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
+                            <img src="/aptoslogo.svg" alt="" className="w-6" />
+                        </div>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">0xd40F6f3CeCb2b601744019b5aBEDb78809327011</p>
                         <Sheet >
                             <SheetTrigger>
-                                <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                            <Button variant={"ghost"} className=" rounded-r-xl rounded-l-none ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                     </svg>
                                 </Button>
@@ -203,12 +214,14 @@ export default function ProfileAdresses() {
                 <div className="flex flex-col">
                     <p className="text-lg text-muted-foreground mb-3">Sui Adress</p>
                     <div className="flex items-center ">
-                        <img src="https://cryptologos.cc/logos/sui-sui-logo.svg?v=032" alt="" className="w-4 mr-2" />
-                        <Input type="text" placeholder="Twitter" disabled value={"0xd40F6f3CeCb2b601744019b5aBEDb78809327011"} className="rounded-r-none w-96" />
+                    <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
+                            <img src="https://cryptologos.cc/logos/sui-sui-logo.svg?v=032" alt="" className="w-6" />
+                        </div>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">0xd40F6f3CeCb2b601744019b5aBEDb78809327011</p>   
                         <Sheet >
                             <SheetTrigger>
-                                <Button variant={"secondary"} className=" rounded-r-3xl rounded-l-none ">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                            <Button variant={"ghost"} className=" rounded-r-xl rounded-l-none ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                     </svg>
                                 </Button>

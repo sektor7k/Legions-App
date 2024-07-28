@@ -1,23 +1,21 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useSession } from 'next-auth/react';
 
 interface AvatarProb {
     classname: string,
-    img: string,
-    username: string,
 }
-export default function AvatarDemo({classname, img, username}:AvatarProb){
+export default function AvatarDemo({classname}:AvatarProb){
+
+  const session = useSession()
     return(
         <>
         <Avatar className={classname}>
-              {/* <AvatarImage
-                src={session.user?.image ?? ''}
-                alt={session.user?.name ?? ''}
-              /> */}
               <AvatarImage
-                src={img}
-                alt={"Avatar"}
-              /> 
-              <AvatarFallback>{username}</AvatarFallback>
+                src={session.data?.user.image ?? 'https://github.com/shadcn.png'}
+                alt={session.data?.user.username ?? ''}
+              />
+              <AvatarFallback>{session.data?.user.username}</AvatarFallback>
             </Avatar>
         </>
     )
