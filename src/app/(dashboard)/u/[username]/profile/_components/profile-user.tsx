@@ -16,6 +16,7 @@ import AvatarUpload from "./avatarUpload";
 import { ElementRef, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
 export default function ProfileUser() {
 
     const { data: session, update } = useSession();
@@ -24,23 +25,44 @@ export default function ProfileUser() {
     const closeRef = useRef<ElementRef<"button">>(null);
     const [newUsername, setNewUsername] = useState(username);
     const router = useRouter()
+    const { toast } = useToast()
 
 
 
     const editUsername = async () => {
         try {
             const response = await axios.post('/api/user/edituser', { newUsername });
-            update({username:response.data.user.username})
+            update({ username: response.data.user.username })
             console.log(response.data.user.username)
             router.refresh();
             closeRef?.current?.click();
+            showToast("your username has been successfully updated")
 
         } catch (error) {
             console.log(error)
+            showErrorToast("Error")
         }
 
 
     }
+
+    function showErrorToast(message: string): void {
+        toast({
+            variant: "destructive",
+            title: "Edit Username failed",
+            description: message,
+        })
+    }
+
+    function showToast(message: string): void {
+        toast({
+            variant: "default",
+            title: `New Username ${newUsername}`,
+            description: message,
+        })
+    }
+
+
     return (
         <div className="flex flex-row items-center space-x-4">
 
