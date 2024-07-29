@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -12,13 +13,34 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import AvatarUpload from "./avatarUpload";
-
+import { ElementRef, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 export default function ProfileUser() {
 
-    const { data: session } = useSession();
+    const { data: session, update } = useSession();
     const username = session?.user?.username || 'defaultUsername';
     const email = session?.user?.email || 'defaultEmail';
+    const closeRef = useRef<ElementRef<"button">>(null);
+    const [newUsername, setNewUsername] = useState(username);
+    const router = useRouter()
 
+
+
+    const editUsername = async () => {
+        try {
+            const response = await axios.post('/api/user/edituser', { newUsername });
+            update({username:response.data.user.username})
+            console.log(response.data.user.username)
+            router.refresh();
+            closeRef?.current?.click();
+
+        } catch (error) {
+            console.log(error)
+        }
+
+
+    }
     return (
         <div className="flex flex-row items-center space-x-4">
 
@@ -50,16 +72,18 @@ export default function ProfileUser() {
                             </DialogHeader>
                             <div className="flex flex-col">
                                 <div className="flex flex-row items-center justify-start space-x-3">
-                                    <Label htmlFor="name" className="text-right">
+                                    <Label htmlFor="username" className="text-right">
                                         New Username
                                     </Label>
                                     <Input
-                                        id="name"
+                                        id="username"
                                         className=""
                                         placeholder="alex"
+                                        defaultValue={username}
+                                        onChange={(e) => setNewUsername(e.target.value)}
                                     />
                                 </div>
-                                <div className="flex flex-row items-center justify-start space-x-11">
+                                {/* <div className="flex flex-row items-center justify-start space-x-11">
                                     <Label htmlFor="username" className="text-right">
                                         New Email
                                     </Label>
@@ -68,11 +92,20 @@ export default function ProfileUser() {
                                         className=""
                                         placeholder="alex@gmail.com"
                                     />
-                                </div>
+                                </div> */}
                             </div>
-                            <DialogFooter>
-                                <Button type="submit">Save changes</Button>
-                            </DialogFooter>
+                            <div className="flex justify-between ">
+                                <DialogClose ref={closeRef} asChild>
+                                    <Button type="button" variant={"ghost"}>
+                                        Cancel
+                                    </Button>
+                                </DialogClose>
+                                <Button onClick={editUsername}
+                                    variant={"primary"}
+                                >
+                                    Save
+                                </Button>
+                            </div>
                         </DialogContent>
                     </Dialog>
                 </div>
