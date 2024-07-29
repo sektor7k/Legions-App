@@ -6,6 +6,7 @@ import User from "@/models/User"; // User modelinizi doğru yoldan import edin
 import { connectDB } from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import axios from "axios";
+import { authOptions } from "@/lib/auth";
 
 const f = createUploadthing();
 
@@ -13,7 +14,7 @@ export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "4MB" } })
     .middleware(async ({ req }) => {
 
-      const self = await getServerSession();
+      const self = await getServerSession({...authOptions});
       console.log("SELF:",self);
       if (!self) {
         throw new UploadThingError("Unauthorized");
