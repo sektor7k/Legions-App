@@ -67,7 +67,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user,trigger, session }) {
       if (user) {
         const u = user as ExtendedUser;
         token.id = u.id;
@@ -75,6 +75,11 @@ export const authOptions: NextAuthOptions = {
         token.email = u.email;
         token.image= u.image;
       }
+
+      if (trigger === "update" && session) {
+        token.image = session.image;
+      }
+
       return token;
     },
     async session({ session, token }) {

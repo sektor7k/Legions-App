@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { Trash } from "lucide-react";
 import Image from "next/image";
 import AvatarDemo from "@/components/layout/avatarDemo";
-import { getSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 interface InfoModalProps {
   initialAvatarUrl: string | null;
 };
@@ -26,16 +26,17 @@ export default function AvatarUpload({
   initialAvatarUrl
 }: InfoModalProps) {
 
-
+  const {data,update} = useSession();
   const router = useRouter();
   const closeRef = useRef<ElementRef<"button">>(null);
   const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl);
   
 
   const getUser = async() => {
-    const session = await getSession()
-    console.log("User", session?.user)
     
+    console.log("Session",data?.user)
+   
+    console.log(avatarUrl)
   }
   
 
@@ -91,6 +92,7 @@ export default function AvatarUpload({
                   }}
                   onClientUploadComplete={(res) => {
                     setAvatarUrl(res?.[0]?.url);
+                    update({image:res?.[0]?.url})
                     router.refresh();
                     closeRef?.current?.click();
                   }} endpoint={"imageUploader"} />

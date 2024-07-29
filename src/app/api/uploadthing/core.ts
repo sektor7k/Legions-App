@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import User from "@/models/User"; // User modelinizi doğru yoldan import edin
 import { connectDB } from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
+import axios from "axios";
 
 const f = createUploadthing();
 
@@ -34,6 +35,7 @@ export const ourFileRouter = {
         { new: true, runValidators: true }
       );
       console.log("res",res);
+
 
       return { fileUrl: file.url };
 
