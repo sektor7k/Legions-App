@@ -77,16 +77,20 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (trigger === "update" && session) {
-        token.image = session.image;
+        if (session.username) token.username = session.username;
+        if (session.image) token.image = session.image;
       }
+      
 
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.username = token.username;
-      session.user.email = token.email;
-      session.user.image = token.image
+      session.user = {
+        id: token.id,
+        username: token.username,
+        email: token.email,
+        image: token.image
+      };
       return session;
     },
   },
