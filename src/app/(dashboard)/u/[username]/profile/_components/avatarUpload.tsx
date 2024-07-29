@@ -18,6 +18,7 @@ import { Trash } from "lucide-react";
 import Image from "next/image";
 import AvatarDemo from "@/components/layout/avatarDemo";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
 interface InfoModalProps {
   initialAvatarUrl: string | null;
 };
@@ -30,14 +31,27 @@ export default function AvatarUpload({
   const router = useRouter();
   const closeRef = useRef<ElementRef<"button">>(null);
   const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl);
+  const { toast } = useToast()
+
   
 
-  const getUser = async() => {
-    
-    console.log("Session",data?.user)
-   
-    console.log(avatarUrl)
-  }
+  
+
+  function showErrorToast(message: string): void {
+    toast({
+        variant: "destructive",
+        title: "Avatar updated failed",
+        description: message,
+    })
+}
+
+function showToast(message: string): void {
+    toast({
+        variant: "default",
+        title: "Avatar Updated ",
+        description: message,
+    })
+}
   
 
   return (
@@ -95,6 +109,7 @@ export default function AvatarUpload({
                     update({image:res?.[0]?.url})
                     router.refresh();
                     closeRef?.current?.click();
+                    showToast("The avatar has been successfully updated.")
                   }} endpoint={"imageUploader"} />
               </div>
             )}
@@ -105,7 +120,7 @@ export default function AvatarUpload({
                 Cancel
               </Button>
             </DialogClose>
-            <Button onClick={getUser}
+            <Button 
               variant={"primary"}
             >
               Save
