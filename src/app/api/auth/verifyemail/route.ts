@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         }
         console.log(user)
 
-        user.isVerfied = true;
+        user.isVerifed = true;
         user.verifyToken = undefined;
         user.verifyExpire = undefined;
         await user.save();
