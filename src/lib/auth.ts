@@ -12,6 +12,11 @@ interface ExtendedUser extends NextAuthUser {
   isVerified: boolean;
   isAdmin: boolean;
   image: string;
+  socialMedia: {
+    twitter?: string;
+    discord?: string;
+    telegram?: string;
+  };
 }
 
 export const authOptions: NextAuthOptions = {
@@ -55,7 +60,8 @@ export const authOptions: NextAuthOptions = {
           username: userFound.username,
           isVerified: userFound.isVerified,
           isAdmin: userFound.isAdmin,
-          image: userFound.image
+          image: userFound.image,
+          socialMedia: userFound.socialMedia,
         };
       },
     }),
@@ -74,11 +80,13 @@ export const authOptions: NextAuthOptions = {
         token.username = u.username;
         token.email = u.email;
         token.image= u.image;
+        token.socialMedia = u.socialMedia;
       }
 
       if (trigger === "update" && session) {
         if (session.username) token.username = session.username;
         if (session.image) token.image = session.image;
+        if (session.socialMedia) token.socialMedia = session.socialMedia;
       }
       
 
@@ -89,7 +97,8 @@ export const authOptions: NextAuthOptions = {
         id: token.id,
         username: token.username,
         email: token.email,
-        image: token.image
+        image: token.image,
+        socialMedia: token.socialMedia,
       };
       return session;
     },
