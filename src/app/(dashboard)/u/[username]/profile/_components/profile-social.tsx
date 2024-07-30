@@ -11,9 +11,66 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
-import { Label } from "@/components/ui/label";
+import { ElementRef, useRef, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "next-auth/react";
 
 export default function ProfileSocial() {
+
+    const [twitter, setTwitter] = useState('');
+    const [discord, setDiscord] = useState('');
+    const [telegram, setTelegram] = useState('');
+    const closeRef = useRef<ElementRef<"button">>(null);
+    const router = useRouter()
+    const { toast } = useToast()
+    const { data: session, update } = useSession();
+
+
+    const handleSaveChanges = async () => {
+        const socialMedia: Partial<Record<string, string>> = {};
+        if (twitter) socialMedia.twitter = twitter;
+        if (discord) socialMedia.discord = discord;
+        if (telegram) socialMedia.telegram = telegram;
+
+        try {
+            const response = await axios.post('/api/user/socialmedia', { socialMedia });
+            update({
+                socialMedia: {
+                    twitter: socialMedia.twitter || session?.user.socialMedia?.twitter,
+                    discord: socialMedia.discord || session?.user.socialMedia?.discord,
+                    telegram: socialMedia.telegram || session?.user.socialMedia?.telegram,
+                }
+            });
+            showToast("Social media links successfully updated")
+            router.refresh();
+            closeRef?.current?.click();
+
+        } catch (error) {
+            showErrorToast("Error updating social media links")
+            console.error("Error updating social media links:", error);
+
+        }
+    };
+
+    function showErrorToast(message: string): void {
+        toast({
+            variant: "destructive",
+            title: "Edit Username failed",
+            description: message,
+        })
+    }
+
+    function showToast(message: string): void {
+        toast({
+            variant: "default",
+            title: "Social Handle Update",
+            description: message,
+        })
+    }
+
+
     return (
         <div className="flex flex-col items-center space-y-4">
             <div className=" flex flex-row justify-start items-center w-full">
@@ -27,9 +84,20 @@ export default function ProfileSocial() {
                 <div className="p-3 bg-black rounded-l-lg">
                     <FaXTwitter className="w-6 h-6" />
                 </div>
-                <p className=" bg-black bg-opacity-40 p-3 w-full  rounded-r-lg px-8">
-                    @sektor7K
-                </p>
+                {session?.user?.socialMedia?.twitter ? (
+                    <a
+                        href={`https://twitter.com/${session.user.socialMedia.twitter}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8 "
+                    >
+                        @{session.user.socialMedia.twitter}
+                    </a>
+                ) : (
+                    <p className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8">
+                        Twitter
+                    </p>
+                )}
             </div>
 
             <div className="flex items-center justify-center w-full ">
@@ -37,7 +105,7 @@ export default function ProfileSocial() {
                     <FaDiscord className="w-6 h-6" />
                 </div>
                 <p className=" bg-black bg-opacity-40 p-3 w-full  rounded-r-lg px-8">
-                    @sektor7K
+                    {`@${session?.user?.socialMedia?.discord}` || "Discord"}
                 </p>
             </div>
 
@@ -45,9 +113,20 @@ export default function ProfileSocial() {
                 <div className="p-3 bg-black rounded-l-lg">
                     <FaTelegram className="w-6 h-6" />
                 </div>
-                <p className=" bg-black bg-opacity-40 p-3 w-full  rounded-r-lg px-8">
-                    @sektor7K
-                </p>
+                {session?.user?.socialMedia?.telegram ? (
+                    <a
+                        href={`https://t.me/${session.user.socialMedia.telegram}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8 "
+                    >
+                        @{session.user.socialMedia.telegram}
+                    </a>
+                ) : (
+                    <p className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8">
+                        Telegram
+                    </p>
+                )}
             </div>
             <div className="flex justify-end w-full">
                 <Sheet >
@@ -69,24 +148,47 @@ export default function ProfileSocial() {
                         <div className="flex flex-col items-center space-y-4 mt-5 mb-5">
                             <div className="flex items-center space-x-2">
                                 <FaXTwitter />
-                                <Input type="text" placeholder="Twitter" disabled />
+                                <Input
+                                    type="text"
+                                    placeholder="Twitter"
+                                    defaultValue={twitter}
+                                    onChange={(e) => setTwitter(e.target.value)} />
                             </div>
 
                             <div className="flex items-center space-x-2">
                                 <FaDiscord />
-                                <Input type="text" placeholder="Dsicord" disabled />
+                                <Input
+                                    type="text"
+                                    placeholder="Discord"
+                                    defaultValue={discord}
+                                    onChange={(e) => setDiscord(e.target.value)} />
                             </div>
 
                             <div className="flex items-center space-x-2">
                                 <FaTelegram />
-                                <Input type="text" placeholder="telegram" disabled />
+                                <Input
+                                    type="text"
+                                    placeholder="telegram"
+                                    defaultValue={telegram}
+                                    onChange={(e) => setTelegram(e.target.value)}
+                                />
                             </div>
                         </div>
                         <SheetFooter>
-                            <SheetClose asChild>
-                                <Button type="submit">Save changes</Button>
-                            </SheetClose>
+                            <div className="flex justify-between w-full ">
+                                <SheetClose ref={closeRef} asChild>
+                                    <Button type="button" variant={"ghost"}>
+                                        Cancel
+                                    </Button>
+                                </SheetClose>
+                                <Button onClick={handleSaveChanges}
+                                    variant={"primary"}
+                                >
+                                    Save
+                                </Button>
+                            </div>
                         </SheetFooter>
+
                     </SheetContent>
                 </Sheet>
             </div>
