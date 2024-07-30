@@ -17,6 +17,14 @@ interface ExtendedUser extends NextAuthUser {
     discord?: string;
     telegram?: string;
   };
+  wallets: {
+    evm?: string;
+    btc?: string;
+    solana?: string;
+    sei?: string;
+    aptos?: string;
+    sui?: string;
+  };
 }
 
 export const authOptions: NextAuthOptions = {
@@ -62,6 +70,7 @@ export const authOptions: NextAuthOptions = {
           isAdmin: userFound.isAdmin,
           image: userFound.image,
           socialMedia: userFound.socialMedia,
+          wallets: userFound.wallets,
         };
       },
     }),
@@ -81,12 +90,14 @@ export const authOptions: NextAuthOptions = {
         token.email = u.email;
         token.image= u.image;
         token.socialMedia = u.socialMedia;
+        token.wallets = u.wallets;
       }
 
       if (trigger === "update" && session) {
         if (session.username) token.username = session.username;
         if (session.image) token.image = session.image;
         if (session.socialMedia) token.socialMedia = session.socialMedia;
+        if (session.wallets) token.wallets = session.wallets;
       }
       
 
@@ -99,6 +110,7 @@ export const authOptions: NextAuthOptions = {
         email: token.email,
         image: token.image,
         socialMedia: token.socialMedia,
+        wallets: token.wallets,
       };
       return session;
     },
