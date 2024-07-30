@@ -8,12 +8,26 @@ export interface UserDocument {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
-  isVerified: boolean;
+  isVerifed: boolean;
   isAdmin: boolean;
   forgotPasswordToken?: string;
   forgotPasswordExpire?: Date;
   verifyToken?: string;
   verifyExpire?: Date;
+  socialMedia?: {
+    twitter?: string;
+    discord?: string;
+    telegram?: string;
+  };
+  wallets?: {
+    evm?: string;
+    btc?: string;
+    solana?: string;
+    sei?: string;
+    aptos?: string;
+    sui?: string;
+  };
+
 }
 
 const UserSchema = new Schema<UserDocument>({
@@ -38,10 +52,10 @@ const UserSchema = new Schema<UserDocument>({
     maxLength: [25, "fullname must be at most 25 characters"],
   },
   image: {
-    type: String, 
+    type: String,
     default: "https://github.com/shadcn.png",
   },
-  isVerified: {
+  isVerifed: {
     type: Boolean,
     default: false,
   },
@@ -53,6 +67,19 @@ const UserSchema = new Schema<UserDocument>({
   forgotPasswordExpire: Date,
   verifyToken: String,
   verifyExpire: Date,
+  socialMedia: {
+    twitter: { type: String, default: "" },
+    discord: { type: String, default: "" },
+    telegram: { type: String, default: "" },
+  },
+  wallets: {
+    evm: { type: String, default: "" },
+    btc: { type: String, default: "" },
+    solana: { type: String, default: "" },
+    sei: { type: String, default: "" },
+    aptos: { type: String, default: "" },
+    sui: { type: String, default: "" },
+  },
 }, {
   timestamps: true,
 });
