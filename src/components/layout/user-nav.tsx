@@ -61,16 +61,22 @@ export function UserNav() {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
-                {session.user?.username}
+                { session.user?.username ? (
+                  session.user.username
+                ):("username")}
               </p>
               <p className="text-xs leading-none text-muted-foreground">
-                {session.user?.email}
+                {session.user?.email ? (
+                  session.user.email
+                ):(
+                  "user@email.com"
+                )}
               </p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={()=>{ router.push(`/u/${session.user.username}`)}}>
+            <DropdownMenuItem onClick={()=>{ router.push(`/u/${session.user.username}/profile`)}}>
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>

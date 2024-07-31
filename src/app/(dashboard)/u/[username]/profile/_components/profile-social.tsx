@@ -104,9 +104,19 @@ export default function ProfileSocial() {
                 <div className="p-3 bg-black rounded-l-lg">
                     <FaDiscord className="w-6 h-6" />
                 </div>
-                <p className=" bg-black bg-opacity-40 p-3 w-full  rounded-r-lg px-8">
-                    {`@${session?.user?.socialMedia?.discord}` || "Discord"}
-                </p>
+                {session?.user?.socialMedia?.discord ? (
+                    <a
+                        href={`#`}
+                        rel="noopener noreferrer"
+                        className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8 "
+                    >
+                        @{session.user.socialMedia.discord}
+                    </a>
+                ) : (
+                    <p className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8">
+                        Discord
+                    </p>
+                )}
             </div>
 
             <div className="flex items-center justify-center w-full ">

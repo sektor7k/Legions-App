@@ -20,8 +20,8 @@ import { useToast } from "@/components/ui/use-toast";
 export default function ProfileUser() {
 
     const { data: session, update } = useSession();
-    const username = session?.user?.username || 'defaultUsername';
-    const email = session?.user?.email || 'defaultEmail';
+    const username = session?.user?.username || 'Username';
+    const email = session?.user?.email || 'user@gmail.com';
     const closeRef = useRef<ElementRef<"button">>(null);
     const [newUsername, setNewUsername] = useState(username);
     const router = useRouter()
