@@ -12,6 +12,7 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
 
 
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
