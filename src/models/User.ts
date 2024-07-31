@@ -27,6 +27,10 @@ export interface UserDocument {
     aptos?: string;
     sui?: string;
   };
+  cryptoLoginNonce?: {
+    nonce: string;
+    expires: Date;
+  };
 
 }
 
@@ -34,7 +38,8 @@ const UserSchema = new Schema<UserDocument>({
   email: {
     type: String,
     unique: true,
-    required: [true, "Email is required"],
+    //required: [true, "Email is required"],
+    required: false,
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       "Email is invalid",
@@ -47,7 +52,8 @@ const UserSchema = new Schema<UserDocument>({
   },
   username: {
     type: String,
-    required: [true, "Fullname is required"],
+    //required: [true, "Fullname is required"],
+    required: false,
     minLength: [3, "fullname must be at least 3 chaacters"],
     maxLength: [25, "fullname must be at most 25 characters"],
   },
@@ -79,6 +85,10 @@ const UserSchema = new Schema<UserDocument>({
     sei: { type: String, default: "" },
     aptos: { type: String, default: "" },
     sui: { type: String, default: "" },
+  },
+  cryptoLoginNonce: {
+    nonce: { type: String },
+    expires: { type: Date },
   },
 }, {
   timestamps: true,
