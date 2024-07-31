@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
+import { ethers } from "ethers";
 
 interface ExtendedUser extends NextAuthUser {
   id: string;
@@ -26,6 +27,46 @@ interface ExtendedUser extends NextAuthUser {
     sui?: string;
   };
 }
+
+async function authorizeCrypto(credentials: Record<"publicAddress" | "signedNonce", string> | undefined) {
+  if (!credentials) return null;
+
+  const { publicAddress, signedNonce } = credentials;
+
+  // Veritabanına bağlan
+  await connectDB();
+
+  // Public address ile kullanıcıyı bul
+  const userFound = await User.findOne({ "wallets.evm": publicAddress });
+
+  if (!userFound || !userFound.cryptoLoginNonce) return null;
+
+  const { nonce, expires } = userFound.cryptoLoginNonce;
+
+  // Nonce imzasını doğrula
+  const signerAddress = ethers.verifyMessage(nonce, signedNonce);
+
+  if (signerAddress !== publicAddress) return null;
+
+  // Nonce'un süresi dolmuş mu kontrol et
+  if (expires < new Date()) return null;
+
+  // Nonce'u temizle ve kullanıcıyı güncelle
+  userFound.cryptoLoginNonce = undefined;
+  await userFound.save();
+
+  return {
+    id: userFound._id,
+    email: userFound.email,
+    username: userFound.username,
+    isVerified: userFound.isVerified,
+    isAdmin: userFound.isAdmin,
+    image: userFound.image,
+    socialMedia: userFound.socialMedia,
+    wallets: userFound.wallets,
+  };
+}
+
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -73,6 +114,15 @@ export const authOptions: NextAuthOptions = {
           wallets: userFound.wallets,
         };
       },
+    }),
+    CredentialsProvider({
+      id: "crypto",
+      name: "Crypto Wallet Auth",
+      credentials: {
+        publicAddress: { label: "Public Address", type: "text" },
+        signedNonce: { label: "Signed Nonce", type: "text" },
+      },
+      authorize: authorizeCrypto,
     }),
   ],
   pages: {
