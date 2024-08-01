@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
 
         //     console.log(response.data);
         //     return NextResponse.json({ data: response.data }, { status: 200 });
+        return NextResponse.json({ data: null}, { status: 200 });
+
     } catch (error: any) {
         console.error('API isteği hatası:', error.response?.data);
         return NextResponse.json({ error: error.message }, { status: 500 });
