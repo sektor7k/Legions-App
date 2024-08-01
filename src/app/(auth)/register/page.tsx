@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import { ethers } from "ethers";
 import ModelViewer from "../_components/ModelViewer";
+import LottieModel from "../_components/Lottie";
 
 declare global {
     interface Window {
@@ -139,10 +140,8 @@ export default function RegisterPage() {
         // sassasasaa
 
         <div className="flex flex-row justify-between items-center w-full h-screen">
-            <div className="relative flex flex-col justify-end h-full w-1/2">
-                <div className="absolute bottom-0 left-0 w-full">
-                    <ModelViewer />
-                </div>
+            <div className="relative flex flex-col justify-center h-full w-1/2">       
+                    <LottieModel/>
             </div>
             <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 backdrop-blur-sm border-gradient">
                 <h1 className="font-bold text-2xl text-neutral-800 dark:text-neutral-200">

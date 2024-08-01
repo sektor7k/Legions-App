@@ -31,24 +31,25 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Provider>
-        <body className={cn(
-          "min-h-screen bg-background font-sans antialiased dark",
-          fontSans.variable
-        )}>
-           <NextSSRPlugin
-          routerConfig={extractRouterConfig(ourFileRouter)}
-        />
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <main>
-              {children}
-            </main>
-            <Toaster />
-          </ThemeProvider>
+      <body
+          className={cn(
+            "min-h-screen font-sans antialiased dark",
+            fontSans.variable
+          )}
+        >
+          <div className="fixed inset-0 bg-background bg-cover bg-center"></div>
+          <div className="relative z-10 min-h-screen">
+            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <main>{children}</main>
+              <Toaster />
+            </ThemeProvider>
+          </div>
         </body>
       </Provider>
     </html>
