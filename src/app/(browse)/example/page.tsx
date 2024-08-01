@@ -2,23 +2,25 @@
 
 import React from 'react'
 
-import { getSession } from 'next-auth/react'
 
-const page = () => {
 
-    const userData = async() => {
-        const user = await getSession()
 
-        console.log(user)
-    }
+
+
+export default function Page() {
+
+    
 
   return (
-    <div>
-      <button onClick={userData}>Button</button>
+    <div className="flex flex-col items-center justify-center min-h-screen ">
+      
+      <div className="w-full h-96">
+        
+      </div>
     </div>
   )
 }
 
-export default page
+
 
 
