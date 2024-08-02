@@ -1,4 +1,4 @@
-import Header from '@/components/layout/header';
+
 import Navbar from '@/components/layout/navbar';
 
 
@@ -6,7 +6,7 @@ const BrowseLayout = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <div  >
-            <Header/>
+            <Navbar/>
 
             {children}
 
