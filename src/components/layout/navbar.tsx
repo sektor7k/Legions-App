@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sheet";
 
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import ModeToggle from "@/components/ModeToggle";
 import { LogoIcon } from "../landing-page/Icons";
@@ -53,7 +53,7 @@ export default function Navbar() {
           <NavigationMenuItem className="font-bold flex">
             <a
               rel="noreferrer noopener"
-              href="/"
+              href="#"
               className="ml-2 font-bold text-xl flex"
             >
               <LogoIcon />
@@ -62,7 +62,6 @@ export default function Navbar() {
 
           {/* mobile */}
           <span className="flex md:hidden">
-            <ModeToggle />
 
             <Sheet
               open={isOpen}
@@ -79,12 +78,18 @@ export default function Navbar() {
 
               <SheetContent side={"left"}>
                 <SheetHeader>
-                  <SheetTitle className="font-bold text-xl">
-                    Shadcn/React
+                  <SheetTitle className=" flex justify-center items-center">
+                    <a
+                      rel="noreferrer noopener"
+                      href="#"
+                      
+                    >
+                      <LogoIcon />
+                    </a>
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col justify-center items-center gap-2 mt-4">
-                  <UserNav />
+
                   {routeList.map(({ href, label }: RouteProps) => (
                     <a
                       rel="noreferrer noopener"
@@ -107,6 +112,7 @@ export default function Navbar() {
                     <GitHubLogoIcon className="mr-2 w-5 h-5" />
                     Github
                   </a>
+                  <Button>Launch App</Button>
                 </nav>
               </SheetContent>
             </Sheet>
@@ -138,8 +144,7 @@ export default function Navbar() {
               <GitHubLogoIcon className="mr-2 w-5 h-5" />
               Github
             </a>
-            <UserNav />
-            <ModeToggle />
+            <Button>Launch App</Button>
           </div>
         </NavigationMenuList>
       </NavigationMenu>
