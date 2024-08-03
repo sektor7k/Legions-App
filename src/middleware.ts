@@ -5,8 +5,8 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  const publicPaths = ['/', '/login', '/register', '/verifyemail', '/forgotpassword'];
-  const restrictedPaths = ['/u']; // /u altında başlayan tüm yolları kontrol edeceğiz
+  const publicPaths = ['/landingpage', '/login', '/register', '/verifyemail', '/forgotpassword'];
+  const restrictedPaths = ['/u','/']; // /u altında başlayan tüm yolları kontrol edeceğiz
 
   const { pathname } = req.nextUrl;
 
@@ -26,6 +26,7 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     '/',
+    '/landingpage',
     '/login',
     '/register',
     '/verifyemail',

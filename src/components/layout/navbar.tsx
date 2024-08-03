@@ -82,7 +82,7 @@ export default function Navbar() {
                     <a
                       rel="noreferrer noopener"
                       href="#"
-                      
+
                     >
                       <LogoIcon />
                     </a>
@@ -112,7 +112,14 @@ export default function Navbar() {
                     <GitHubLogoIcon className="mr-2 w-5 h-5" />
                     Github
                   </a>
-                  <Button>Launch App</Button>
+                  <a
+                    rel="noreferrer noopener"
+                    href="/"
+                    target="_blank"
+                    className={`border ${buttonVariants({ variant: "default" })}`}
+                  >
+                    Launch App
+                  </a>
                 </nav>
               </SheetContent>
             </Sheet>
@@ -144,7 +151,14 @@ export default function Navbar() {
               <GitHubLogoIcon className="mr-2 w-5 h-5" />
               Github
             </a>
-            <Button>Launch App</Button>
+            <a
+              rel="noreferrer noopener"
+              href="/"
+              target="_blank"
+              className={`border ${buttonVariants({ variant: "default" })}`}
+            >
+              Launch App
+            </a>
           </div>
         </NavigationMenuList>
       </NavigationMenu>

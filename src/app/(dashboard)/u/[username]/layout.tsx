@@ -9,10 +9,17 @@ export default function DashboardLayout({
   return (
     <>
       <Header />
-      <div className="flex h-screen overflow-hidden bg-bg-castrum bg-cover bg-center">
-        <Sidebar />
-        <main className="flex-1 overflow-hidden pt-14">{children}</main>
+      <>
+      <div className="relative flex h-screen overflow-hidden">
+        <Sidebar/>
+        <main className="flex-1 overflow-y-auto pt-14 relative md:overflow-hidden">
+          <div className="fixed inset-0 bg-bg-castrum bg-cover bg-center"></div>
+          <div className="relative z-10">
+            {children}
+          </div>
+        </main>
       </div>
+    </>
     </>
   );
 }

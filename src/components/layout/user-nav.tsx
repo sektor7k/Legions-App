@@ -4,7 +4,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem, 
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
@@ -18,36 +18,38 @@ export function UserNav() {
   const { data: session } = useSession();
 
   const router = useRouter();
-    const {toast} = useToast();
+  const { toast } = useToast();
 
-    const logout = async () => {
-        try {
-            signOut()
-            router.push("/login") 
-            showToast(":)")
+  const logout = async () => {
+    try {
 
-        } catch (error: any) {
-            console.log(error.data.message);
-            showErrorToast(error.data.message)
+      showToast("See you again soon")
+      setTimeout(() => {
+        signOut();
+      }, 1000);
 
-        }
+    } catch (error: any) {
+      console.log(error.data.message);
+      showErrorToast(error.data.message)
+
     }
+  }
 
-    function showErrorToast(message: string): void {
-        toast({
-            variant: "destructive",
-            title: "Logout failed",
-            description: message,
-        })
-    }
+  function showErrorToast(message: string): void {
+    toast({
+      variant: "destructive",
+      title: "Logout failed",
+      description: message,
+    })
+  }
 
-    function showToast(message: string): void {
-        toast({
-            variant: "default",
-            title: "Logout Succesfuly",
-            description: message,
-        })
-    }
+  function showToast(message: string): void {
+    toast({
+      variant: "destructive",
+      title: "Logout Succesfuly",
+      description: message,
+    })
+  }
 
   if (session) {
     return (
@@ -61,14 +63,14 @@ export function UserNav() {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
-                { session.user?.username ? (
+                {session.user?.username ? (
                   session.user.username
-                ):("username")}
+                ) : ("username")}
               </p>
               <p className="text-xs leading-none text-muted-foreground">
                 {session.user?.email ? (
                   session.user.email
-                ):(
+                ) : (
                   "user@email.com"
                 )}
               </p>
@@ -76,7 +78,7 @@ export function UserNav() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={()=>{ router.push(`/u/${session.user.username}/profile`)}}>
+            <DropdownMenuItem onClick={() => { router.push(`/u/${session.user.username}/profile`) }}>
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>

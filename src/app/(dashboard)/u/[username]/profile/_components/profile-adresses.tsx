@@ -94,14 +94,14 @@ export default function ProfileAdresses() {
                                         Please enter your EVM wallet address.
                                     </SheetDescription>
                                 </SheetHeader>
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                    <Label htmlFor="evm" className="text-right">
+                                <div className="grid grid-cols-3 items-center gap-4">
+                                    <Label htmlFor="evm" className="text-right col-span-1">
                                         Adress
                                     </Label>
                                     <Input
                                         id="evm"
                                         placeholder="0xd40F6*************************************"
-                                        className="col-span-3"
+                                        className="col-span-2"
                                         onChange={(e) => setWalletAddress(e.target.value)}
                                     />
                                 </div>

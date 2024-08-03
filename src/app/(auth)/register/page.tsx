@@ -136,12 +136,9 @@ export default function RegisterPage() {
 
     return (
 
-
-        // sassasasaa
-
-        <div className="flex flex-row justify-between items-center w-full h-screen">
-            <div className="relative flex flex-col justify-center h-full w-1/2">       
-                    <LottieModel/>
+        <div className="flex flex-row justify-center items-center w-full h-screen md:justify-between">
+            <div className="relative flex-col justify-center h-full w-1/2 hidden md:flex">
+                <LottieModel />
             </div>
             <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 backdrop-blur-sm border-gradient">
                 <h1 className="font-bold text-2xl text-neutral-800 dark:text-neutral-200">

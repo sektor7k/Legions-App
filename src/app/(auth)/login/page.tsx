@@ -119,11 +119,11 @@ export default function LoginPage() {
 
 
     return (
-        <div className="flex flex-row justify-between items-center w-full h-screen">
-            <div className="relative flex flex-col justify-center h-full w-1/2">
+        <div className="flex flex-row justify-center items-center w-full h-screen md:justify-between">
+            <div className="relative flex-col justify-center h-full w-1/2 hidden md:flex">
                 <LottieModel />
             </div>
-            <div className="w-1/2 flex justify-center items-center">
+            <div className="flex justify-center items-center md:w-1/2">
                 <div className="max-w-md w-full mx-auto  p-4 md:p-8  backdrop-blur-sm border-gradient">
                     <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
                         LOGIN
