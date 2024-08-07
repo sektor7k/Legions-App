@@ -43,3 +43,23 @@ export function getNavItems(session: Session | null): NavItem[] {
     }
   ];
 }
+
+export function getNavItemsBrowse(session: Session | null): NavItem[] {
+  const username = session?.user?.username || 'defaultUsername';
+
+  return [
+    {
+      title: 'TopGainLose',
+      href: `/`,
+      icon: 'lineChart',
+      label: 'Dashboard'
+    },
+    {
+      title: 'Tournaments',
+      href: `/tournament`,
+      icon: 'swords',
+      label: 'profile'
+    },
+    
+  ];
+}
