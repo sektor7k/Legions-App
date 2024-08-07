@@ -1,4 +1,4 @@
-import Header from '@/components/layout/header';
+import DashboardHeader from '@/components/layout/DashboardHeader';
 import Sidebar from '@/components/layout/sidebar';
 
 export default function DashboardLayout({
@@ -8,7 +8,7 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <Header />
+      <DashboardHeader />
       <>
       <div className="relative flex h-screen overflow-hidden">
         <Sidebar/>
