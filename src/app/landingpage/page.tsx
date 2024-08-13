@@ -8,11 +8,14 @@ import { Team } from "@/components/landing-page/Aceternity/Team";
 import JoinWaitlist from "@/components/landing-page/Aceternity/join-waitlist";
 import Investor from "@/components/landing-page/Aceternity/Investor";
 import HeroParallaxDemo from "@/components/landing-page/Aceternity/hero-parralax";
+import { CompareDemo } from "@/components/landing-page/Aceternity/CompareDemo";
 
 function App() {
   return (
     <>
-      <Hero />
+
+      {/* <Hero /> */}
+      <CompareDemo/>
       <Investor />
       <HeroParallaxDemo/>
       <HowItWorks />
