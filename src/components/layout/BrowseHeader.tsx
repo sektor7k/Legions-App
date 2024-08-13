@@ -19,25 +19,6 @@ export default function BrowseHeader() {
     const { data: session } = useSession();
     const navItems = getNavItemsBrowse(session);
 
-    const routeList: RouteProps[] = [
-        {
-            href: "#features",
-            label: "Features",
-        },
-        {
-            href: "#testimonials",
-            label: "Testimonials",
-        },
-        {
-            href: "#pricing",
-            label: "Pricing",
-        },
-        {
-            href: "#faq",
-            label: "FAQ",
-        },
-    ];
-
 
     return (
         <div className="supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-black bg-opacity-30 backdrop-blur">

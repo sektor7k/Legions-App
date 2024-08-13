@@ -52,14 +52,45 @@ export function getNavItemsBrowse(session: Session | null): NavItem[] {
       title: 'TopGainLose',
       href: `/`,
       icon: 'lineChart',
-      label: 'Dashboard'
+      label: 'TopGainLose'
     },
     {
       title: 'Tournaments',
       href: `/tournament`,
       icon: 'swords',
-      label: 'profile'
+      label: 'Tournaments'
     },
     
+  ];
+}
+
+export function getNavItemsTournament(session: Session | null): NavItem[] {
+  const username = session?.user?.username || 'defaultUsername';
+
+  return [
+    {
+      title: 'Overview',
+      href: `/t`,
+      icon: 'lineChart',
+      label: 'Overview'
+    },
+    {
+      title: 'Brackets',
+      href: `/t2`,
+      icon: 'swords',
+      label: 'Brackets'
+    },
+    {
+      title: 'Participants',
+      href: `/t3`,
+      icon: 'lineChart',
+      label: 'Participants'
+    },
+    {
+      title: 'Chat',
+      href: `/t4`,
+      icon: 'swords',
+      label: 'Chat'
+    },
   ];
 }
