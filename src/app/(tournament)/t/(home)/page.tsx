@@ -57,7 +57,7 @@ export default function Page() {
 
                 </div>
 
-                <div className=" flex flex-col w-1/3">
+                <div className=" flex flex-col w-1/3 space-y-4">
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
                         <p className="text-red-700 font-semibold">STARTS IN</p>
                         <div className="w-full flex flex-col justify-center items-center space-y-12">
@@ -77,7 +77,7 @@ export default function Page() {
                                 <div className="flex flex-col items-center justify-center  bg-red-950 bg-opacity-70 px-1 p-2 rounded-lg">
                                     <p className="text-3xl font-extrabold font-mono">00</p>
                                     <p className="text-red-700 font-bold font-mono text-sm">SECS</p>
-                                </div>      
+                                </div>
                             </div>
                             <Button variant={"destructive"} className="font-semibold text-lg">
                                 Resgister
@@ -85,7 +85,39 @@ export default function Page() {
                         </div>
                     </div>
 
+                    <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
+                        <p className="text-red-700 font-semibold">PRIZE POOL</p>
+                        <div className="w-full flex flex-col justify-center items-start space-y-3">
+                            <div className=" text-red-700">1ST PLACE <span className="text-white ml-3 font-bold">$50.000</span></div>
+                            <div className=" text-red-700">2ST PLACE <span className="text-white ml-3 font-bold">$20.000</span></div>
+                            <div className=" text-red-700">3ST PLACE <span className="text-white ml-3 font-bold">$10.000</span></div>
+                        </div>
+                    </div>
+
+                    <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
+                        <p className="text-red-700 font-semibold">DATES</p>
+                        <div className="w-full flex flex-col justify-center items-start space-y-3">
+                            <div className=" text-red-700">CHECH IN :<span className="text-white text-sm ml-1 font-medium">1 JULY 2024(20:00 - 20:59 GMT+3)</span></div>
+                            <div className=" text-red-700">STARTS :<span className="text-white text-sm ml-3 font-medium">1 JULY 2024(20:00 - 20:59 GMT+3)</span></div>
+                            <div className=" text-red-700">ENDS :<span className="text-white text-sm ml-3 font-medium">1 JULY 2024(20:00 - 20:59 GMT+3)</span></div>
+                        </div>
+                    </div>
+                    <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
+                        <div className="w-full flex flex-col justify-center items-start space-y-3">
+                            <div className=" text-red-700 font-semibold">TEAM SIZE :<span className="text-white ml-1 font-bold">5 Players</span></div>
+                            <div className=" text-red-700 font-semibold">TEAM COUNT :<span className="text-white ml-1 font-bold">4 - 32 Teams</span></div>
+                            <div className=" text-red-700 font-semibold">REGION :<span className="text-white ml-1 font-bold">Europe</span></div>
+                            <div className=" text-red-700 font-semibold">BRACKET :<span className="text-white ml-1 font-bold">Single Elimination</span></div>
+                            
+                        </div>
+                    </div>
+                    
                 </div>
+            </div>
+            <div className=" flex flex-row justify-center space-x-32 items-center bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm p-3 px-8 rounded-lg">
+                <Image src={"/logoDark.png"} alt={""} width={300} height={20}/>
+                <img src={"/valoDark.png"} alt={""} width={300} height={20}/>
+                
             </div>
         </div>
     )
