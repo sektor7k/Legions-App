@@ -36,7 +36,7 @@ export default function Page() {
                     </div>
                 </div>
             </div>
-            <div className=" flex flex-row justify-between w-5/6">
+            <div className=" flex flex-col justify-between w-5/6 space-y-4 md:flex-row md:space-y-0 ">
 
                 <div className="flex flex-col justify-start space-y-6 bg-black w-full bg-opacity-60 backdrop-blur-sm p-6 px-8 rounded-lg md:w-[calc((2/3*100%)-1rem)] ">
 
@@ -57,7 +57,7 @@ export default function Page() {
 
                 </div>
 
-                <div className=" flex flex-col w-1/3 space-y-4">
+                <div className=" flex flex-col w-full space-y-4 md:w-1/3">
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
                         <p className="text-red-700 font-semibold">STARTS IN</p>
                         <div className="w-full flex flex-col justify-center items-center space-y-12">
@@ -114,9 +114,9 @@ export default function Page() {
                     
                 </div>
             </div>
-            <div className=" flex flex-row justify-center space-x-32 items-center bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm p-3 px-8 rounded-lg">
+            <div className=" flex flex-col justify-center items-center bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm p-3 px-8 rounded-lg  md:flex-row md:space-x-32 ">
                 <Image src={"/logoDark.png"} alt={""} width={300} height={20}/>
-                <img src={"/valoDark.png"} alt={""} width={300} height={20}/>
+                <Image src={"/valoDark.png"} alt={""} width={300} height={20}/>
                 
             </div>
         </div>

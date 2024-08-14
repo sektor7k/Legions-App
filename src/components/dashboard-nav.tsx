@@ -157,7 +157,7 @@ export function DashboardNavTournament({
   console.log('isActive', isMobileNav, isMinimized);
 
   return (
-    <nav className="flex flex-row space-x-10">
+    <nav className="flex flex-col space-y-4 justify-start w-2/4 md:w-full md:space-y-0 md:flex-row md:space-x-10">
       <TooltipProvider>
         {items.map((item, index) => {
           const Icon = Icons[item.icon || 'arrowRight'];
@@ -168,7 +168,7 @@ export function DashboardNavTournament({
                   <Link
                     href={item.disabled ? '/' : item.href}
                     className={cn(
-                      'flex items-center gap-2 overflow-hidden rounded-sm p-2 text-sm font-semibold px-5 bg-white bg-opacity-20 border-2 border-gray-400 hover:bg-red-900 hover:border-red-800 hover:bg-opacity-40 hover:backdrop-blur-xl hover:text-accent-foreground',
+                      'flex items-center gap-2 overflow-hidden rounded-sm p-2 text-sm font-semibold px-5 bg-white bg-opacity-20 border-2 border-gray-400 hover:bg-red-900 hover:border-red-800 hover:bg-opacity-40 hover:backdrop-blur-xl hover:text-accent-foreground ',
                       path === item.href ? 'bg-red-900 border-red-800 bg-opacity-40 backdrop-blur-xl' : 'transparent',
                       item.disabled && 'cursor-not-allowed opacity-80'
                     )}
