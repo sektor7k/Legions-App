@@ -1,6 +1,6 @@
 "use client"
 import { cn } from '@/lib/utils';
-import { MobileSidebar } from './mobile-sidebar-browse';
+import { MobileSidebar } from './mobile-sidebar-tournament';
 import { UserNav } from './user-nav';
 import Link from 'next/link';
 
