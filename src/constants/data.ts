@@ -76,19 +76,19 @@ export function getNavItemsTournament(session: Session | null): NavItem[] {
     },
     {
       title: 'Brackets',
-      href: `/t2`,
+      href: `/t/brackets`,
       icon: 'swords',
       label: 'Brackets'
     },
     {
       title: 'Participants',
-      href: `/t3`,
+      href: `/t/participants`,
       icon: 'lineChart',
       label: 'Participants'
     },
     {
       title: 'Chat',
-      href: `/t4`,
+      href: `/t/chat`,
       icon: 'swords',
       label: 'Chat'
     },
