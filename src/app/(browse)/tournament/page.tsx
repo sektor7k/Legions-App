@@ -8,133 +8,133 @@ export default function Tournaments() {
             id: 1,
             name: "Counter Strike 2 Cup #1",
             thumbnail: "https://i.ibb.co/z70Q72C/csbg.jpg",
-            thumbnailGif:"https://i.ibb.co/BLjbB8w/csHover.gif",
+            thumbnailGif: "https://i.ibb.co/BLjbB8w/csHover.gif",
             organizer: "Counter Strike",
             organizerAvatar: "https://i.ibb.co/YTHNh27/csAvatar.jpg",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
         {
             id: 2,
             name: "Castrum x Valorant Cup #1",
             thumbnail: "https://i.ibb.co/DM0fs9S/valobg.jpg",
-            thumbnailGif:"https://i.ibb.co/nMz84jn/valo-Hover.gif",
+            thumbnailGif: "https://i.ibb.co/nMz84jn/valo-Hover.gif",
             organizer: "Valorant",
             organizerAvatar: "https://i.ibb.co/bLDkjXJ/valo-Avatar.png",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
         {
             id: 3,
             name: "Castrum x The Finals #1",
             thumbnail: "https://i.ibb.co/tCwYyrG/finalsbg.jpg",
-            thumbnailGif:"https://i.ibb.co/HLZ38Cv/finals-Hover.gif",
+            thumbnailGif: "https://i.ibb.co/HLZ38Cv/finals-Hover.gif",
             organizer: "The Finals",
             organizerAvatar: "https://i.ibb.co/Kys9pGZ/finals-Avatar.jpg",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
         {
             id: 4,
             name: "Castrum x Pubg #1",
             thumbnail: "https://i.ibb.co/cx8tDGj/img-og-pubg.jpg",
-            thumbnailGif:"https://i.ibb.co/ZcHbTZ1/giphy.gif",
+            thumbnailGif: "https://i.ibb.co/ZcHbTZ1/giphy.gif",
             organizer: "Pubg",
             organizerAvatar: "https://i.ibb.co/Hd5Bd1p/1r-LKCN21-400x400.jpg",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
         {
             id: 5,
             name: "Castrum x Pubg #1",
             thumbnail: "https://i.ibb.co/cx8tDGj/img-og-pubg.jpg",
-            thumbnailGif:"https://i.ibb.co/ZcHbTZ1/giphy.gif",
+            thumbnailGif: "https://i.ibb.co/ZcHbTZ1/giphy.gif",
             organizer: "Pubg",
             organizerAvatar: "https://i.ibb.co/Hd5Bd1p/1r-LKCN21-400x400.jpg",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
         {
             id: 6,
             name: "Castrum x The Finals #1",
             thumbnail: "https://i.ibb.co/tCwYyrG/finalsbg.jpg",
-            thumbnailGif:"https://i.ibb.co/HLZ38Cv/finals-Hover.gif",
+            thumbnailGif: "https://i.ibb.co/HLZ38Cv/finals-Hover.gif",
             organizer: "The Finals",
             organizerAvatar: "https://i.ibb.co/Kys9pGZ/finals-Avatar.jpg",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
         {
             id: 7,
             name: "Castrum x Valorant Cup #1",
             thumbnail: "https://i.ibb.co/DM0fs9S/valobg.jpg",
-            thumbnailGif:"https://i.ibb.co/nMz84jn/valo-Hover.gif",
+            thumbnailGif: "https://i.ibb.co/nMz84jn/valo-Hover.gif",
             organizer: "Valorant",
             organizerAvatar: "https://i.ibb.co/bLDkjXJ/valo-Avatar.png",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
         {
             id: 8,
             name: "Counter Strike 2 Cup #1",
             thumbnail: "https://i.ibb.co/z70Q72C/csbg.jpg",
-            thumbnailGif:"https://i.ibb.co/BLjbB8w/csHover.gif",
+            thumbnailGif: "https://i.ibb.co/BLjbB8w/csHover.gif",
             organizer: "Counter Strike",
             organizerAvatar: "https://i.ibb.co/YTHNh27/csAvatar.jpg",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
         {
             id: 9,
             name: "Castrum x Valorant Cup #1",
             thumbnail: "https://i.ibb.co/DM0fs9S/valobg.jpg",
-            thumbnailGif:"https://i.ibb.co/nMz84jn/valo-Hover.gif",
+            thumbnailGif: "https://i.ibb.co/nMz84jn/valo-Hover.gif",
             organizer: "Valorant",
             organizerAvatar: "https://i.ibb.co/bLDkjXJ/valo-Avatar.png",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
         {
             id: 10,
             name: "Counter Strike 2 Cup #1",
             thumbnail: "https://i.ibb.co/z70Q72C/csbg.jpg",
-            thumbnailGif:"https://i.ibb.co/BLjbB8w/csHover.gif",
+            thumbnailGif: "https://i.ibb.co/BLjbB8w/csHover.gif",
             organizer: "Counter Strike",
             organizerAvatar: "https://i.ibb.co/YTHNh27/csAvatar.jpg",
             participants: 50,
             capacity: 64,
             date: "2024-08-10T18:00:00Z"
-            
-            
+
+
         },
-        
+
     ];
 
 
@@ -150,8 +150,10 @@ export default function Tournaments() {
                     <div className="overflow-y-auto max-h-[calc(80vh-5rem)] p-2">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {tournaments.map((tournament) => (
-                                <CardDemo key={tournament.id} name={tournament.name} thumbnail={tournament.thumbnail} thumbnailGif={tournament.thumbnailGif} organizer={tournament.organizer} organizerAvatar={tournament.organizerAvatar} participants={tournament.participants} capacity={tournament.capacity} date={tournament.date} />
+                                <a href="/t">
+                                    <CardDemo key={tournament.id} name={tournament.name} thumbnail={tournament.thumbnail} thumbnailGif={tournament.thumbnailGif} organizer={tournament.organizer} organizerAvatar={tournament.organizerAvatar} participants={tournament.participants} capacity={tournament.capacity} date={tournament.date} />
 
+                                </a>
                             ))}
                         </div>
                     </div>
