@@ -6,7 +6,8 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   const publicPaths = ['/landingpage', '/login', '/register', '/verifyemail', '/forgotpassword'];
-  const restrictedPaths = ['/u','/']; // /u altında başlayan tüm yolları kontrol edeceğiz
+  const restrictedPaths = ['/u','/','/t']; // /u altında başlayan tüm yolları kontrol edeceğiz
+  const adminPaths = ['/admin'];
 
   const { pathname } = req.nextUrl;
 
@@ -17,6 +18,14 @@ export async function middleware(req: NextRequest) {
   if (restrictedPaths.some(path => pathname.startsWith(path))) {
     if (!token) {
       return NextResponse.redirect(new URL('/login', req.url));
+    }
+  }
+
+  // Admin kontrolü yapılması gereken yollar
+  if (adminPaths.some(path => pathname.startsWith(path))) {
+    // Eğer token yoksa veya token'daki kullanıcı admin değilse yönlendir
+    if (!token || !token.isAdmin) {
+      return NextResponse.redirect(new URL('/not-authorized', req.url));
     }
   }
 
@@ -31,6 +40,8 @@ export const config = {
     '/register',
     '/verifyemail',
     '/forgotpassword',
-    '/u/:path*', // /u altında başlayan tüm yolları kontrol edeceğiz
+    '/u/:path*',
+    '/t/:path*',
+    '/admin/:path*'
   ],
 };
