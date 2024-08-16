@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import User from "@/models/User"; // User modelinizi doğru yoldan import edin
 import { connectDB } from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
-import axios from "axios";
 import { authOptions } from "@/lib/auth";
 
 const f = createUploadthing();
@@ -15,7 +14,6 @@ export const ourFileRouter = {
     .middleware(async ({ req }) => {
 
       const self = await getServerSession({...authOptions});
-      console.log("SELF:",self);
       if (!self) {
         throw new UploadThingError("Unauthorized");
       }
@@ -24,18 +22,19 @@ export const ourFileRouter = {
 
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("metadata",metadata)
-      // MongoDB'ye bağlanma
-      if (!mongoose.connection.readyState) {
-        await connectDB();
-      }
+      // // MongoDB'ye bağlanma
+      // if (!mongoose.connection.readyState) {
+      //   await connectDB();
+      // }
 
-      const res = await User.findOneAndUpdate(
-        { email: metadata.user.user.email },
-        { image: file.url },
-        { new: true, runValidators: true }
-      );
-      console.log("res",res);
+      // const res = await User.findOneAndUpdate(
+      //   { email: metadata.user.user.email },
+      //   { image: file.url },
+      //   { new: true, runValidators: true }
+      // );
+      // console.log("res",res);
+
+      console.log("FILE URL: ", file.url)
 
 
       return { fileUrl: file.url };
