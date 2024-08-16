@@ -39,7 +39,7 @@ export default function RegisterPage() {
 
     useEffect(() => {
         if (session) {
-            router.push("/");
+            router.push("/"); 
         }
     }, [session, router]);
 

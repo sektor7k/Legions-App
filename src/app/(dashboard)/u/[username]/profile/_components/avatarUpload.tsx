@@ -4,7 +4,7 @@ import { useState, useRef, ElementRef } from "react";
 import {
   Dialog,
   DialogClose,
-  DialogContent,
+  DialogContent, 
   DialogHeader,
   DialogTitle,
   DialogTrigger
@@ -19,6 +19,7 @@ import Image from "next/image";
 import AvatarDemo from "@/components/layout/avatarDemo";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
+import axios from "axios";
 interface InfoModalProps {
   initialAvatarUrl: string | null;
 };
@@ -104,7 +105,9 @@ function showToast(message: string): void {
                       color: "#FFFFFF"
                     }
                   }}
-                  onClientUploadComplete={(res) => {
+                  onClientUploadComplete={async (res) => {
+                    console.log("Saasasasa")
+                    await axios.post('/api/user/uploadavatar',{avatarimage:res?.[0]?.url})
                     setAvatarUrl(res?.[0]?.url);
                     update({image:res?.[0]?.url})
                     router.refresh();

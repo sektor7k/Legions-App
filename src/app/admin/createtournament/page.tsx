@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
+import { useFieldArray } from "react-hook-form";
+
 
 import { Button } from "@/components/ui/button"
 import {
@@ -34,6 +36,9 @@ import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { UploadDropzone } from "@/utils/uploadthing"
 import { useState } from "react"
+import axios from "axios"
+import { toast } from "@/components/ui/use-toast";
+
 
 
 const formSchema = z.object({
@@ -76,22 +81,64 @@ const formSchema = z.object({
     bracket: z.string().min(2, {
         message: "Username must be at least 2 characters.",
     }),
+    prizePool: z.array(
+        z.object({
+            key: z.string(),
+            value: z.string(),
+        })
+    ).optional(),
 })
 
 export default function createTournament() {
 
-    const [avatarUrl, setAvatarUrl] = useState("");
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            tname: "",
+            // tname: "",
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-console.log("sasa")
-        console.log(values)
+    const { fields, append, remove } = useFieldArray({
+        name: "prizePool",
+        control: form.control
+    });
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        try {
+            const response = await axios.post("/api/tournament/addtournament", values);
+        
+            console.log("Tournament created successfully:", response.data);
+            form.reset();
+            showToast("Tournament created successfully!");
+        
+            // Başarılı mesaj gösterme veya yönlendirme gibi işlemler yapabilirsiniz
+          } catch (error) {
+            if (axios.isAxiosError(error)) {
+              console.error("Failed to create tournament:", error.response?.data);
+              // Hata mesajı gösterme işlemi yapabilirsiniz
+            } else {
+              console.error("Unexpected error:", error);
+              showErrorToast("Unexpected error")
+            }
+          }
+    }
+
+    function showErrorToast(message: string): void {
+        toast({
+            variant: "destructive",
+            title: "Signup failed",
+            description: message,
+        })
+    }
+
+
+    function showToast(message: string): void {
+        toast({
+            variant: "default",
+            title: "Tournament Created",
+            description: message,
+        })
     }
 
     return (
@@ -117,8 +164,7 @@ console.log("sasa")
                                             }}
                                             onClientUploadComplete={(res) => {
                                                 console.log(res);
-                                                const uploadedUrl = res?.[0]?.url; 
-                                                setAvatarUrl(uploadedUrl); 
+                                                const uploadedUrl = res?.[0]?.url;
                                                 field.onChange(uploadedUrl);
                                             }} endpoint={"imageUploader"} />
                                     </div>
@@ -154,6 +200,37 @@ console.log("sasa")
                                     />
                                 </FormControl>
                                 <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="prizePool"
+                        render={({ field }) => (
+                            <FormItem>
+                                <div className="flex flex-col items-center justify-center space-y-9 w-auto">
+                                <FormLabel><span className="text-xl">Prize Pool</span></FormLabel>
+                                {fields.map((field, index) => (
+                                    <div key={field.id} className="flex space-x-2">
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Position (e.g., 1st)"
+                                                {...form.register(`prizePool.${index}.key` as const)}
+                                            />
+                                        </FormControl>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Prize (e.g., 200)"
+                                                {...form.register(`prizePool.${index}.value` as const)}
+                                            />
+                                        </FormControl>
+                                        <Button type="button" onClick={() => remove(index)}>Remove</Button>
+                                    </div>
+                                ))}
+                                <Button type="button" onClick={() => append({ key: "", value: "" })}>
+                                    Add Prize
+                                </Button>
+                                </div>
                             </FormItem>
                         )}
                     />
