@@ -141,6 +141,7 @@ export const authOptions: NextAuthOptions = {
         token.image= u.image;
         token.socialMedia = u.socialMedia;
         token.wallets = u.wallets;
+        token.isAdmin = u.isAdmin
       }
 
       if (trigger === "update" && session) {
@@ -161,6 +162,7 @@ export const authOptions: NextAuthOptions = {
         image: token.image,
         socialMedia: token.socialMedia,
         wallets: token.wallets,
+        isAdmin: token.isAdmin,
       };
       return session;
     },
