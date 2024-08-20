@@ -9,9 +9,14 @@ export async function POST(request: Request) {
 
     const reqBody = await request.json(); // İstek gövdesini al
     const {
-      thumnail,
-      tname,
+      thumbnail,
+      thumbnailGif,
+      tname, 
       tdescription,
+      organizer,
+      organizerAvatar,
+      participants,
+      capacity,
       checkin,
       checkinTime,
       starts,
@@ -41,9 +46,14 @@ export async function POST(request: Request) {
 
     // Yeni turnuva oluştur
     const tournament = new Tournament({
-      thumnail,
-      tname,
+      thumbnail,
+      thumbnailGif,
+      tname, 
       tdescription,
+      organizer,
+      organizerAvatar,
+      participants,
+      capacity,
       checkin,
       checkinTime,
       starts,
