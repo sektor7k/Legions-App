@@ -42,7 +42,10 @@ import { toast } from "@/components/ui/use-toast";
 
 
 const formSchema = z.object({
-    thumnail: z.string().min(2, {
+    thumbnail: z.string().min(2, {
+        message: "Username must be at least 2 characters.",
+    }),
+    thumbnailGif: z.string().min(2, {
         message: "Username must be at least 2 characters.",
     }),
     tname: z.string().min(2, {
@@ -51,6 +54,13 @@ const formSchema = z.object({
     tdescription: z.string().min(2, {
         message: "Username must be at least 2 characters.",
     }),
+    organizer: z.string().min(2, {
+        message: "Username must be at least 2 characters.",
+    }),
+    organizerAvatar: z.string().min(2, {
+        message: "Username must be at least 2 characters.",
+    }),
+    capacity:z.string(),
     checkin: z.date({
         required_error: "A date of birth is required.",
     }),
@@ -106,7 +116,15 @@ export default function createTournament() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-            const response = await axios.post("/api/tournament/addtournament", values);
+
+            const formattedValues = {
+                ...values,
+                checkin: values.checkin ? format(values.checkin, "PPP") : null,
+                starts: values.checkin ? format(values.starts, "PPP") : null,
+                ends: values.checkin ? format(values.ends, "PPP") : null,
+              };
+
+            const response = await axios.post("/api/tournament/addtournament", formattedValues);
         
             console.log("Tournament created successfully:", response.data);
             form.reset();
@@ -147,10 +165,38 @@ export default function createTournament() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-2/5">
                     <FormField
                         control={form.control}
-                        name="thumnail"
+                        name="thumbnail"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Tournament Thumbnail</FormLabel>
+                                <FormControl>
+                                    <div className="border rounded-md outline-dashed  w-auto h-72">
+                                        <UploadDropzone
+                                            appearance={{
+                                                label: {
+                                                    color: "#FFFFFF"
+                                                },
+                                                allowedContent: {
+                                                    color: "#FFFFFF"
+                                                }
+                                            }}
+                                            onClientUploadComplete={(res) => {
+                                                console.log(res);
+                                                const uploadedUrl = res?.[0]?.url;
+                                                field.onChange(uploadedUrl);
+                                            }} endpoint={"imageUploader"} />
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="thumbnailGif"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel> Thumbnail Gif</FormLabel>
                                 <FormControl>
                                     <div className="border rounded-md outline-dashed  w-auto h-72">
                                         <UploadDropzone
@@ -198,6 +244,60 @@ export default function createTournament() {
                                         className="resize-none h-48"
                                         {...field}
                                     />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="organizer"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Organizer Name</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="shadcn" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="organizerAvatar"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel> Organizer Avatar</FormLabel>
+                                <FormControl>
+                                    <div className="border rounded-full outline-dashed w-72 h-72">
+                                        <UploadDropzone
+                                            appearance={{
+                                                label: {
+                                                    color: "#FFFFFF"
+                                                },
+                                                allowedContent: {
+                                                    color: "#FFFFFF"
+                                                }
+                                            }}
+                                            onClientUploadComplete={(res) => {
+                                                console.log(res);
+                                                const uploadedUrl = res?.[0]?.url;
+                                                field.onChange(uploadedUrl);
+                                            }} endpoint={"imageUploader"} />
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="capacity"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Capacity</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="shadcn" {...field} type="number" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
