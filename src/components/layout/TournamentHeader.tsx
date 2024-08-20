@@ -9,15 +9,13 @@ import { DashboardNavTournament } from '../dashboard-nav';
 import { useSession } from 'next-auth/react';
 import { getNavItemsTournament } from '@/constants/data';
 
-interface RouteProps {
-    href: string;
-    label: string;
-}
+type TournamentHeaderProps = {
+    id: string;
+  };
 
-export default function TournamentHeader() {
+export default function TournamentHeader({ id }: TournamentHeaderProps) {
 
-    const { data: session } = useSession();
-    const navItems = getNavItemsTournament(session);
+    const navItems = getNavItemsTournament({id});
 
 
     return (

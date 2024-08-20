@@ -1,14 +1,19 @@
 import { Schema, model, models } from "mongoose";
 
 export interface TournamentDocument {
-  thumnail: string;
+  thumbnail: string;
+  thumbnailGif: string;
   tname: string;
   tdescription: string;
-  checkin: Date;
+  organizer: string;
+  organizerAvatar: string;
+  participants: number;
+  capacity: number;
+  checkin: string;
   checkinTime: string;
-  starts: Date;
+  starts: string;
   startsTime: string;
-  ends: Date;
+  ends: string;
   endsTime: string;
   teamsize: string;
   teamcount: string;
@@ -21,7 +26,11 @@ export interface TournamentDocument {
 }
 
 const TournamentSchema = new Schema<TournamentDocument>({
-  thumnail: {
+  thumbnail: {
+    type: String,
+    required: true,
+  },
+  thumbnailGif: {
     type: String,
     required: true,
   },
@@ -33,8 +42,24 @@ const TournamentSchema = new Schema<TournamentDocument>({
     type: String,
     required: true,
   },
+  organizer: {
+    type: String,
+    required: true,
+  },
+  organizerAvatar: {
+    type: String,
+    required: true,
+  },
+  participants: {
+    type: Number,
+    default: 0
+  },
+  capacity: {
+    type: Number,
+    required: true,
+  },
   checkin: {
-    type: Date,
+    type: String,
     required: true,
   },
   checkinTime: {
@@ -42,7 +67,7 @@ const TournamentSchema = new Schema<TournamentDocument>({
     required: true,
   },
   starts: {
-    type: Date,
+    type: String,
     required: true,
   },
   startsTime: {
@@ -50,7 +75,7 @@ const TournamentSchema = new Schema<TournamentDocument>({
     required: true,
   },
   ends: {
-    type: Date,
+    type: String,
     required: true,
   },
   endsTime: {

@@ -64,33 +64,40 @@ export function getNavItemsBrowse(session: Session | null): NavItem[] {
   ];
 }
 
-export function getNavItemsTournament(session: Session | null): NavItem[] {
-  const username = session?.user?.username || 'defaultUsername';
+export function getNavItemsTournament(params?: { id: string }): NavItem[] {
+  // params'ın tanımlı olup olmadığını ve id'nin mevcut olup olmadığını kontrol et
+  if (!params || !params.id) {
+    console.error('params veya params.id tanımlı değil');
+    return [];
+  }
 
+  const id = params.id;
+  
   return [
     {
       title: 'Overview',
-      href: `/t`,
+      href: `/t/${id}`,
       icon: 'lineChart',
       label: 'Overview'
     },
     {
       title: 'Brackets',
-      href: `/t/brackets`,
+      href: `/t/${id}/brackets`,
       icon: 'swords',
       label: 'Brackets'
     },
     {
       title: 'Participants',
-      href: `/t/participants`,
+      href: `/t/${id}/participants`,
       icon: 'lineChart',
       label: 'Participants'
     },
     {
       title: 'Chat',
-      href: `/t/chat`,
+      href: `/t/${id}/chat`,
       icon: 'swords',
       label: 'Chat'
     },
   ];
 }
+
