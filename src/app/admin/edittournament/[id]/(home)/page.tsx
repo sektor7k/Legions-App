@@ -22,6 +22,12 @@ import { ElementRef, useEffect, useRef, useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { Textarea } from "@/components/ui/textarea";
+import { useFieldArray, useForm } from "react-hook-form";
+
+interface PrizePool {
+    key: string;
+    value: string;
+}
 
 export default function TournamentPage({ params }: { params: { id: string } }) {
 
@@ -30,6 +36,8 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     const router = useRouter();
     const [startDateTime, setStartDateTime] = useState<Date | null>(null);
     const [tdescription, setDescription] = useState('');
+    const [prizePool, setPrizePool] = useState<PrizePool[]>([{ key: "", value: "" }]);
+
 
     useEffect(() => {
         // ID'yi URL'den al
@@ -87,7 +95,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
         return combinedDate;
     }
-    
+
     useEffect(() => {
         if (tournament && tournament.starts) {
             const startDate = tournament.starts;
@@ -124,7 +132,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
     const editDescription = async () => {
         try {
-            const response = await axios.post('/api/tournament/editDescription', {id: params.id , tdescription });
+            const response = await axios.post('/api/tournament/editDescription', { id: params.id, tdescription });
             showToast("Edit description successfully")
             router.refresh();
             closeRef?.current?.click();
@@ -135,6 +143,39 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
         }
     };
+
+    const handlePrizePoolChange = (index: number, field: keyof PrizePool, value: string) => {
+        const updatedPrizePool = [...prizePool];
+        updatedPrizePool[index][field] = value;
+        setPrizePool(updatedPrizePool);
+    };
+
+    // Function to add a new prize entry
+    const addPrizePoolEntry = () => {
+        setPrizePool([...prizePool, { key: "", value: "" }]);
+    };
+
+    // Function to remove a prize entry
+    const removePrizePoolEntry = (index: number) => {
+        const updatedPrizePool = prizePool.filter((_, i) => i !== index);
+        setPrizePool(updatedPrizePool);
+    };
+
+    const editPrizePool = async() =>{
+        try {
+            const response = await axios.post('/api/tournament/editPrizepool', { id: params.id, prizePool });
+            showToast("Edit prize pool successfully")
+            router.refresh();
+            closeRef?.current?.click();
+
+        } catch (error) {
+            showErrorToast("Error Edit prize pool")
+            console.error("Error Edit prize pool:", error);
+
+        }
+    }
+
+
 
     return (
         <div className=" flex flex-col w-full justify-center items-center space-y-3">
@@ -203,15 +244,15 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                     />
                                 </div>
                                 <DialogFooter>
-                            <div className="flex justify-between ">
-                                <DialogClose ref={closeRef} asChild>
-                                    <Button type="button" variant={"ghost"}>
-                                        Cancel
-                                    </Button>
-                                </DialogClose>
-                                <Button onClick={editDescription} type="submit">Save changes</Button>
-                            </div>
-                        </DialogFooter>
+                                    <div className="flex justify-between ">
+                                        <DialogClose ref={closeRef} asChild>
+                                            <Button type="button" variant={"ghost"}>
+                                                Cancel
+                                            </Button>
+                                        </DialogClose>
+                                        <Button onClick={editDescription} type="submit">Save changes</Button>
+                                    </div>
+                                </DialogFooter>
                             </DialogContent>
                         </Dialog>
                         {tournament.tdescription}
@@ -236,9 +277,58 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
                         <p className="text-red-700 font-semibold">PRIZE POOL</p>
-                        <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
-                            <HiPencil className="w-5 h-5" />
-                        </button>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
+                                    <HiPencil className="w-5 h-5" />
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Edit Tournament Prize Pool</DialogTitle>
+                                </DialogHeader>
+
+                                {/* Prize Pool Fields */}
+                                <div className="flex flex-col space-y-2">
+                                    {prizePool.map((field, index) => (
+                                        <div key={index} className="flex space-x-2">
+                                            <Input
+                                                placeholder="Position (e.g., 1st)"
+                                                value={field.key}
+                                                onChange={(e) =>
+                                                    handlePrizePoolChange(index, "key", e.target.value)
+                                                }
+                                            />
+                                            <Input
+                                                placeholder="Prize (e.g., 200)"
+                                                value={field.value}
+                                                onChange={(e) =>
+                                                    handlePrizePoolChange(index, "value", e.target.value)
+                                                }
+                                            />
+                                            <Button type="button" onClick={() => removePrizePoolEntry(index)}>
+                                                Remove
+                                            </Button>
+                                        </div>
+                                    ))}
+                                    <Button type="button" onClick={addPrizePoolEntry}>
+                                        Add Prize
+                                    </Button>
+                                </div>
+
+                                {/* Footer with Save and Cancel Buttons */}
+                                <DialogFooter>
+                                    <div className="flex justify-between ">
+                                        <DialogClose ref={closeRef} asChild>
+                                            <Button type="button" variant={"ghost"}>
+                                                Cancel
+                                            </Button>
+                                        </DialogClose>
+                                        <Button onClick={editPrizePool} type="submit">Save changes</Button>
+                                    </div>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                         <div className="w-full flex flex-col justify-center items-start space-y-3">
                             {tournament.prizePool.map((item: any) => (
                                 <div key={item._id} className=" text-red-700">{item.key} PLACE<span className="text-white ml-3 font-bold">${item.value}</span></div>
