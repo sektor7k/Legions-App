@@ -1,6 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import { Check } from "lucide-react"
+import { CalendarIcon, Check } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation";
 import Countdown from "./_components/Countdown";
@@ -15,6 +15,19 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSeparator,
+    InputOTPSlot,
+} from "@/components/ui/input-otp"
+import { Calendar } from "@/components/ui/calendar"
+
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { UploadDropzone } from "@/utils/uploadthing";
@@ -22,7 +35,7 @@ import { ElementRef, useEffect, useRef, useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { Textarea } from "@/components/ui/textarea";
-import { useFieldArray, useForm } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 interface PrizePool {
     key: string;
@@ -37,6 +50,18 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     const [startDateTime, setStartDateTime] = useState<Date | null>(null);
     const [tdescription, setDescription] = useState('');
     const [prizePool, setPrizePool] = useState<PrizePool[]>([{ key: "", value: "" }]);
+
+    const [checkin, setCheckin] = useState<Date | undefined>(undefined);
+    const [checkinTime, setCheckinTime] = useState("");
+    const [starts, setStarts] = useState<Date | undefined>(undefined);
+    const [startsTime, setStartsTime] = useState("");
+    const [ends, setEnds] = useState<Date | undefined>(undefined);
+    const [endsTime, setEndsTime] = useState("");
+
+    const [teamsize, setTeamsize] = useState('');
+    const [teamcount, setTeamcount] = useState('');
+    const [region, setRegion] = useState('');
+    const [bracket, setBracket] = useState('');
 
 
     useEffect(() => {
@@ -161,7 +186,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
         setPrizePool(updatedPrizePool);
     };
 
-    const editPrizePool = async() =>{
+    const editPrizePool = async () => {
         try {
             const response = await axios.post('/api/tournament/editPrizepool', { id: params.id, prizePool });
             showToast("Edit prize pool successfully")
@@ -171,6 +196,34 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
         } catch (error) {
             showErrorToast("Error Edit prize pool")
             console.error("Error Edit prize pool:", error);
+
+        }
+    }
+
+    const editDates = async () => {
+        try {
+            const response = await axios.post('/api/tournament/editDates', { id: params.id, checkin, checkinTime, starts, startsTime, ends, endsTime });
+            showToast("Edit dates successfully")
+            router.refresh();
+            closeRef?.current?.click();
+
+        } catch (error) {
+            showErrorToast("Error Edit dates")
+            console.error("Error Edit dates:", error);
+
+        }
+    };
+
+    const editDetail = async () => {
+        try {
+            const response = await axios.post('/api/tournament/editDetail', { id: params.id, teamsize, teamcount, region, bracket });
+            showToast("Edit detail successfully")
+            router.refresh();
+            closeRef?.current?.click();
+
+        } catch (error) {
+            showErrorToast("Error Edit detail")
+            console.error("Error Edit detail:", error);
 
         }
     }
@@ -340,9 +393,171 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
                         <p className="text-red-700 font-semibold">DATES</p>
-                        <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
-                            <HiPencil className="w-5 h-5" />
-                        </button>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
+                                    <HiPencil className="w-5 h-5" />
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Edit Tournament Dates</DialogTitle>
+                                </DialogHeader>
+
+                                {/* Check-in Date */}
+                                <div className="flex flex-row items-center justify-between">
+                                    <div className="flex flex-col">
+                                        <label>Check In</label>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-[240px] pl-3 text-left font-normal",
+                                                        !checkin && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {checkin ? (
+                                                        format(checkin, "PPP")
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={checkin}
+                                                    onSelect={setCheckin}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label>Check In Time</label>
+                                        <InputOTP maxLength={4} value={checkinTime} onChange={setCheckinTime}>
+                                            <InputOTPGroup>
+                                                <InputOTPSlot index={0} />
+                                                <InputOTPSlot index={1} />
+                                            </InputOTPGroup>
+                                            <InputOTPSeparator />
+                                            <InputOTPGroup>
+                                                <InputOTPSlot index={2} />
+                                                <InputOTPSlot index={3} />
+                                            </InputOTPGroup>
+                                        </InputOTP>
+                                    </div>
+                                </div>
+
+                                {/* Starts Date */}
+                                <div className="flex flex-row items-center justify-between">
+                                    <div className="flex flex-col">
+                                        <label>Starts</label>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-[240px] pl-3 text-left font-normal",
+                                                        !starts && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {starts ? (
+                                                        format(starts, "PPP")
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={starts}
+                                                    onSelect={setStarts}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label>Starts Time</label>
+                                        <InputOTP maxLength={4} value={startsTime} onChange={setStartsTime}>
+                                            <InputOTPGroup>
+                                                <InputOTPSlot index={0} />
+                                                <InputOTPSlot index={1} />
+                                            </InputOTPGroup>
+                                            <InputOTPSeparator />
+                                            <InputOTPGroup>
+                                                <InputOTPSlot index={2} />
+                                                <InputOTPSlot index={3} />
+                                            </InputOTPGroup>
+                                        </InputOTP>
+                                    </div>
+                                </div>
+
+                                {/* Ends Date */}
+                                <div className="flex flex-row items-center justify-between">
+                                    <div className="flex flex-col">
+                                        <label>Ends</label>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-[240px] pl-3 text-left font-normal",
+                                                        !ends && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {ends ? (
+                                                        format(ends, "PPP")
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={ends}
+                                                    onSelect={setEnds}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label>Ends Time</label>
+                                        <InputOTP maxLength={4} value={endsTime} onChange={setEndsTime}>
+                                            <InputOTPGroup>
+                                                <InputOTPSlot index={0} />
+                                                <InputOTPSlot index={1} />
+                                            </InputOTPGroup>
+                                            <InputOTPSeparator />
+                                            <InputOTPGroup>
+                                                <InputOTPSlot index={2} />
+                                                <InputOTPSlot index={3} />
+                                            </InputOTPGroup>
+                                        </InputOTP>
+                                    </div>
+                                </div>
+
+                                {/* Footer with Save and Cancel Buttons */}
+                                <DialogFooter>
+                                    <div className="flex justify-between ">
+                                        <DialogClose ref={closeRef} asChild>
+                                            <Button type="button" variant={"ghost"}>
+                                                Cancel
+                                            </Button>
+                                        </DialogClose>
+                                        <Button onClick={editDates} type="submit">Save changes</Button>
+                                    </div>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                         <div className="w-full flex flex-col justify-center items-start space-y-3">
                             <div className=" text-red-700">CHECH IN :<span className="text-white text-sm ml-1 font-medium">{tournament.checkin} ({tournament.checkinTime} GMT+3)</span></div>
                             <div className=" text-red-700">STARTS :<span className="text-white text-sm ml-3 font-medium">{tournament.starts} ({tournament.startsTime} GMT+3)</span></div>
@@ -350,9 +565,75 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                         </div>
                     </div>
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
-                        <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
-                            <HiPencil className="w-5 h-5" />
-                        </button>
+
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
+                                    <HiPencil className="w-5 h-5" />
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Edit Tournament Detail</DialogTitle>
+                                </DialogHeader>
+                                <div className="">
+                                    <div className="">
+                                        <Label htmlFor="teamsize" className="text-right">
+                                            Team Size
+                                        </Label>
+                                        <Input
+                                            id="teamsize"
+                                            className="col-span-3"
+                                            onChange={(e) => setTeamsize(e.target.value)}
+
+                                        />
+                                    </div>
+                                    <div className="">
+                                        <Label htmlFor="teamcount" className="text-right">
+                                            Team Count
+                                        </Label>
+                                        <Input
+                                            id="teamcount"
+                                            className="col-span-3"
+                                            onChange={(e) => setTeamcount(e.target.value)}
+
+                                        />
+                                    </div>
+                                    <div className="">
+                                        <Label htmlFor="username" className="text-right">
+                                            Region
+                                        </Label>
+                                        <Input
+                                            id="username"
+                                            className="col-span-3"
+                                            onChange={(e) => setRegion(e.target.value)}
+
+                                        />
+                                    </div>
+                                    <div className="">
+                                        <Label htmlFor="username" className="text-right">
+                                            Bracket
+                                        </Label>
+                                        <Input
+                                            id="username"
+                                            className="col-span-3"
+                                            onChange={(e) => setBracket(e.target.value)}
+
+                                        />
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <div className="flex justify-between ">
+                                        <DialogClose ref={closeRef} asChild>
+                                            <Button type="button" variant={"ghost"}>
+                                                Cancel
+                                            </Button>
+                                        </DialogClose>
+                                        <Button onClick={editDetail} type="submit">Save changes</Button>
+                                    </div>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                         <div className="w-full flex flex-col justify-center items-start space-y-3">
                             <div className=" text-red-700 font-semibold">TEAM SIZE :<span className="text-white ml-1 font-bold">{tournament.teamsize}</span></div>
                             <div className=" text-red-700 font-semibold">TEAM COUNT :<span className="text-white ml-1 font-bold">{tournament.teamcount}s</span></div>
