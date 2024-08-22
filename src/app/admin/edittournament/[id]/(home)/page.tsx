@@ -1,18 +1,35 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import axios from "axios";
 import { Check } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import Countdown from "./_components/Countdown";
 import { parse, format } from 'date-fns';
+import { HiPencil } from "react-icons/hi2";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { UploadDropzone } from "@/utils/uploadthing";
+import { ElementRef, useEffect, useRef, useState } from "react";
+import { toast } from "@/components/ui/use-toast";
+import axios from "axios";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function TournamentPage({ params }: { params: { id: string } }) {
 
     const [tournament, setTournament] = useState<any>(null);
+    const closeRef = useRef<ElementRef<"button">>(null);
     const router = useRouter();
     const [startDateTime, setStartDateTime] = useState<Date | null>(null);
+    const [tdescription, setDescription] = useState('');
 
     useEffect(() => {
         // ID'yi URL'den al
@@ -70,22 +87,54 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
         return combinedDate;
     }
-
-
+    
     useEffect(() => {
         if (tournament && tournament.starts) {
-          const startDate = tournament.starts;
-          const startTime = tournament.startsTime ?? '00:00'; // Varsayılan saat
-          const combinedDateTime = getCombinedDate(startDate, startTime);
-          setStartDateTime(combinedDateTime); // State güncelleme
+            const startDate = tournament.starts;
+            const startTime = tournament.startsTime ?? '00:00'; // Varsayılan saat
+            const combinedDateTime = getCombinedDate(startDate, startTime);
+            setStartDateTime(combinedDateTime); // State güncelleme
         } else {
-          console.error("tournament veya tournament.starts değeri mevcut değil.");
+            console.error("tournament veya tournament.starts değeri mevcut değil.");
         }
-      }, [tournament]);
+    }, [tournament]);
 
 
 
     if (!tournament) return <div>Loading...</div>;
+
+
+    // Edit Tournament
+
+    function showErrorToast(message: string): void {
+        toast({
+            variant: "destructive",
+            title: "Edit Username failed",
+            description: message,
+        })
+    }
+
+    function showToast(message: string): void {
+        toast({
+            variant: "default",
+            title: "Social Handle Update",
+            description: message,
+        })
+    }
+
+    const editDescription = async () => {
+        try {
+            const response = await axios.post('/api/tournament/editDescription', {id: params.id , tdescription });
+            showToast("Edit description successfully")
+            router.refresh();
+            closeRef?.current?.click();
+
+        } catch (error) {
+            showErrorToast("Error Edit description")
+            console.error("Error Edit description:", error);
+
+        }
+    };
 
     return (
         <div className=" flex flex-col w-full justify-center items-center space-y-3">
@@ -136,6 +185,35 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                         {tournament.tname}
                     </p>
                     <p className="font-medium">
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="absolute right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
+                                    <HiPencil className="w-5 h-5" />
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Edit Tournament Description</DialogTitle>
+                                </DialogHeader>
+                                <div className="flex flex-col py-4 ">
+                                    <Textarea
+                                        placeholder="Tell us a little bit about yourself"
+                                        className="resize-none h-48"
+                                        onChange={(e) => setDescription(e.target.value)}
+                                    />
+                                </div>
+                                <DialogFooter>
+                            <div className="flex justify-between ">
+                                <DialogClose ref={closeRef} asChild>
+                                    <Button type="button" variant={"ghost"}>
+                                        Cancel
+                                    </Button>
+                                </DialogClose>
+                                <Button onClick={editDescription} type="submit">Save changes</Button>
+                            </div>
+                        </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                         {tournament.tdescription}
                     </p>
 
@@ -145,7 +223,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
                         <p className="text-red-700 font-semibold">STARTS IN</p>
                         <div className="w-full flex flex-col justify-center items-center space-y-12">
-                        {startDateTime ? (
+                            {startDateTime ? (
                                 <Countdown targetDate={startDateTime} />
                             ) : (
                                 <div>Loading countdown...</div>
@@ -158,6 +236,9 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
                         <p className="text-red-700 font-semibold">PRIZE POOL</p>
+                        <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
+                            <HiPencil className="w-5 h-5" />
+                        </button>
                         <div className="w-full flex flex-col justify-center items-start space-y-3">
                             {tournament.prizePool.map((item: any) => (
                                 <div key={item._id} className=" text-red-700">{item.key} PLACE<span className="text-white ml-3 font-bold">${item.value}</span></div>
@@ -169,6 +250,9 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
                         <p className="text-red-700 font-semibold">DATES</p>
+                        <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
+                            <HiPencil className="w-5 h-5" />
+                        </button>
                         <div className="w-full flex flex-col justify-center items-start space-y-3">
                             <div className=" text-red-700">CHECH IN :<span className="text-white text-sm ml-1 font-medium">{tournament.checkin} ({tournament.checkinTime} GMT+3)</span></div>
                             <div className=" text-red-700">STARTS :<span className="text-white text-sm ml-3 font-medium">{tournament.starts} ({tournament.startsTime} GMT+3)</span></div>
@@ -176,6 +260,9 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                         </div>
                     </div>
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
+                        <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
+                            <HiPencil className="w-5 h-5" />
+                        </button>
                         <div className="w-full flex flex-col justify-center items-start space-y-3">
                             <div className=" text-red-700 font-semibold">TEAM SIZE :<span className="text-white ml-1 font-bold">{tournament.teamsize}</span></div>
                             <div className=" text-red-700 font-semibold">TEAM COUNT :<span className="text-white ml-1 font-bold">{tournament.teamcount}s</span></div>
