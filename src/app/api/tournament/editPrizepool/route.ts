@@ -13,9 +13,9 @@ export async function POST(request: NextRequest) {
         console.log(reqBody)
 
 
-        const { tdescription } = reqBody
+        const { prizePool } = reqBody
         const cardId = reqBody.id
-        const card = await Tournament.findByIdAndUpdate(cardId, { $set: {tdescription} }, { new: true });
+        const card = await Tournament.findByIdAndUpdate(cardId, { $set: {prizePool} }, { new: true });
 
         return NextResponse.json({
             message: "successfully",
