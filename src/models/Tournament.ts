@@ -23,6 +23,7 @@ export interface TournamentDocument {
     key: string;
     value: string;
   }>;
+  currentphase:string
 }
 
 const TournamentSchema = new Schema<TournamentDocument>({
@@ -104,6 +105,10 @@ const TournamentSchema = new Schema<TournamentDocument>({
       value: { type: String, required: true },
     },
   ],
+  currentphase:{
+    type: String,
+    default:'none'
+  }
 }, {
   timestamps: true,
 });
