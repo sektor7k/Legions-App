@@ -36,6 +36,40 @@ import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import * as React from "react"
+import { ChevronsUpDown } from "lucide-react"
+
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command"
+
+const frameworks = [
+    {
+        value: "Drafting",
+        label: "Drafting",
+    },
+    {
+        value: "Registration",
+        label: "Registration",
+    },
+    {
+        value: "checkin",
+        label: "checkin",
+    },
+    {
+        value: "live",
+        label: "live",
+    },
+    {
+        value: "Finished",
+        label: "Finished",
+    },
+]
 
 interface PrizePool {
     key: string;
@@ -62,6 +96,9 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     const [teamcount, setTeamcount] = useState('');
     const [region, setRegion] = useState('');
     const [bracket, setBracket] = useState('');
+
+    const [open, setOpen] = useState(false)
+    const [currentphase, setValue] = useState("")
 
 
     useEffect(() => {
@@ -228,6 +265,39 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
         }
     }
 
+    const editCurrentphase = async () => {
+        try {
+            const response = await axios.post('/api/tournament/editCurrentphase', { id: params.id, currentphase });
+            showToast("Edit current phase successfully")
+            router.refresh();
+            closeRef?.current?.click();
+
+        } catch (error) {
+            showErrorToast("Error Edit current phase")
+            console.error("Error Edit current phase:", error);
+
+        }
+    }
+    const phases = ["Drafting", "Registration", "checkin", "live", "Finished"];
+
+    const currentPhase = tournament.currentphase;
+
+    const getPhaseBgClass = (phase: string) => {
+        const phaseIndex = phases.indexOf(phase);
+        const currentPhaseIndex = phases.indexOf(currentPhase);
+        return phaseIndex <= currentPhaseIndex ? "bg-green-900" : "bg-red-900";
+    };
+
+    const getPhaseBgClassCheck = (phase: string) => {
+        const phaseIndex = phases.indexOf(phase);
+        const currentPhaseIndex = phases.indexOf(currentPhase);
+        return phaseIndex <= currentPhaseIndex ? "bg-green-600" : "bg-red-600";
+    };
+
+    const getLineBgClass = (index: number) => {
+        const currentPhaseIndex = phases.indexOf(currentPhase);
+        return index <= currentPhaseIndex - 1 ? "border-green-400" : "border-gray-400";
+    };
 
 
     return (
@@ -236,30 +306,93 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                 <p className=" text-red-700 font-semibold">
                     CURRENT PHASE
                 </p>
-                <div className=" flex justify-start w-full md:justify-center">
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <button className="absolute top-2 right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
+                            <HiPencil className="w-5 h-5" />
+                        </button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Edit Tournament Prize Pool</DialogTitle>
+                        </DialogHeader>
+
+                        <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={open}
+                                    className="w-[200px] justify-between"
+                                >
+                                    {currentphase
+                                        ? frameworks.find((framework) => framework.value === currentphase)?.label
+                                        : "Select framework..."}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[200px] p-0">
+                                <Command>
+                                    <CommandInput placeholder="Search framework..." />
+                                    <CommandList>
+                                        <CommandEmpty>No framework found.</CommandEmpty>
+                                        <CommandGroup>
+                                            {frameworks.map((framework) => (
+                                                <CommandItem
+                                                    key={framework.value}
+                                                    value={framework.value}
+                                                    onSelect={(currentValue) => {
+                                                        setValue(currentValue === currentphase ? "" : currentValue)
+                                                        setOpen(false)
+                                                    }}
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            "mr-2 h-4 w-4",
+                                                            currentphase === framework.value ? "opacity-100" : "opacity-0"
+                                                        )}
+                                                    />
+                                                    {framework.label}
+                                                </CommandItem>
+                                            ))}
+                                        </CommandGroup>
+                                    </CommandList>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
+
+
+                        <DialogFooter>
+                            <div className="flex justify-between ">
+                                <DialogClose ref={closeRef} asChild>
+                                    <Button type="button" variant={"ghost"}>
+                                        Cancel
+                                    </Button>
+                                </DialogClose>
+                                <Button onClick={editCurrentphase} type="submit">Save changes</Button>
+                            </div>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+                <div className="flex justify-start w-full md:justify-center">
                     <div className="flex flex-col w-5/6 items-start justify-center space-y-2 md:flex-row md:items-center md:space-y-0">
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium">Drafting</div>
-                        </div>
-                        <p className="w-full border border-gray-400 mx-3 rounded-full hidden md:flex"></p>
-
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium">Registration</div>
-                        </div>
-                        <p className="w-full border border-gray-400 mx-3 rounded-full hidden md:flex"></p>
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium text-nowrap">Check In</div>
-                        </div>
-                        <p className="w-full border border-gray-400 mx-3 rounded-full hidden md:flex"></p>
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium">Live</div>
-                        </div>
-                        <p className="w-full border border-gray-400 mx-3 rounded-full hidden md:flex"></p>
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium">Finished</div>
-                        </div>
-
-
+                        {phases.map((phase, index) => (
+                            <React.Fragment key={phase}>
+                                <div
+                                    className={`flex flex-row space-x-3 items-center justify-center ${getPhaseBgClass(
+                                        phase
+                                    )} px-5 p-2 rounded-full bg-opacity-80`}
+                                >
+                                    <Check className={`${getPhaseBgClassCheck(
+                                        phase
+                                    )} rounded-full text-slate-700`} />{" "}
+                                    <div className="font-medium text-nowrap">{phase === "checkin" ? "Check In" : phase === "live" ? "Live" : phase}</div>
+                                </div>
+                                {index < phases.length - 1 && (
+                                    <p className={`w-full border mx-3 rounded-full hidden md:flex ${getLineBgClass(index)}`}></p>
+                                )}
+                            </React.Fragment>
+                        ))}
                     </div>
                 </div>
             </div>
