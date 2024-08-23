@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Countdown from "./_components/Countdown";
 import { parse, format } from 'date-fns';
+import React from "react";
 
 export default function TournamentPage({ params }: { params: { id: string } }) {
 
@@ -87,36 +88,52 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
     if (!tournament) return <div>Loading...</div>;
 
+    const phases = ["Drafting", "Registration", "checkin", "live", "Finished"];
+
+    const currentPhase = tournament.currentphase;
+
+    const getPhaseBgClass = (phase: string) => {
+        const phaseIndex = phases.indexOf(phase);
+        const currentPhaseIndex = phases.indexOf(currentPhase);
+        return phaseIndex <= currentPhaseIndex ? "bg-green-900" : "bg-red-900";
+    };
+
+    const getPhaseBgClassCheck = (phase: string) => {
+        const phaseIndex = phases.indexOf(phase);
+        const currentPhaseIndex = phases.indexOf(currentPhase);
+        return phaseIndex <= currentPhaseIndex ? "bg-green-600" : "bg-red-600";
+    };
+
+    const getLineBgClass = (index: number) => {
+        const currentPhaseIndex = phases.indexOf(currentPhase);
+        return index <= currentPhaseIndex - 1 ? "border-green-400" : "border-gray-400";
+    };
+
     return (
         <div className=" flex flex-col w-full justify-center items-center space-y-3">
             <div className=" flex flex-col justify-start space-y-3 bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm p-3 px-8 rounded-lg">
                 <p className=" text-red-700 font-semibold">
                     CURRENT PHASE
                 </p>
-                <div className=" flex justify-start w-full md:justify-center">
+                <div className="flex justify-start w-full md:justify-center">
                     <div className="flex flex-col w-5/6 items-start justify-center space-y-2 md:flex-row md:items-center md:space-y-0">
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium">Drafting</div>
-                        </div>
-                        <p className="w-full border border-gray-400 mx-3 rounded-full hidden md:flex"></p>
-
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium">Registration</div>
-                        </div>
-                        <p className="w-full border border-gray-400 mx-3 rounded-full hidden md:flex"></p>
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium text-nowrap">Check In</div>
-                        </div>
-                        <p className="w-full border border-gray-400 mx-3 rounded-full hidden md:flex"></p>
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium">Live</div>
-                        </div>
-                        <p className="w-full border border-gray-400 mx-3 rounded-full hidden md:flex"></p>
-                        <div className=" flex flex-row space-x-3 items-center justify-center bg-red-900 px-5 p-2 rounded-full bg-opacity-80">
-                            <Check className="bg-red-500 rounded-full text-slate-700" /> <div className=" font-medium">Finished</div>
-                        </div>
-
-
+                        {phases.map((phase, index) => (
+                            <React.Fragment key={phase}>
+                                <div
+                                    className={`flex flex-row space-x-3 items-center justify-center ${getPhaseBgClass(
+                                        phase
+                                    )} px-5 p-2 rounded-full bg-opacity-80`}
+                                >
+                                    <Check className={`${getPhaseBgClassCheck(
+                                        phase
+                                    )} rounded-full text-slate-700`} />{" "}
+                                    <div className="font-medium text-nowrap">{phase === "checkin" ? "Check In" : phase === "live" ? "Live" : phase}</div>
+                                </div>
+                                {index < phases.length - 1 && (
+                                    <p className={`w-full border mx-3 rounded-full hidden md:flex ${getLineBgClass(index)}`}></p>
+                                )}
+                            </React.Fragment>
+                        ))}
                     </div>
                 </div>
             </div>
