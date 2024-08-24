@@ -247,7 +247,7 @@ export default function createTournament() {
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )}
+                        )} 
                     />
                     <FormField
                         control={form.control}

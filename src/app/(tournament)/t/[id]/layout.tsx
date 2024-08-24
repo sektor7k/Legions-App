@@ -12,7 +12,7 @@ const TournamentLayout = ({ children }: { children: React.ReactNode }) => {
         <div  >
             <TournamentHeader id={id} />
             <div className="relative flex h-screen overflow-hidden">
-                <main className="flex-1 pt-14 pb-14 relative overflow-y-auto ">
+                <main className="flex-1 pt-14 pb-6 relative overflow-y-auto ">
                     <div className="fixed inset-0 bg-bg-tournament bg-cover bg-center h-full"></div>
                     <div className="relative z-10">
                         {children}
