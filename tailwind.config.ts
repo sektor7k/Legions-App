@@ -1,5 +1,7 @@
 import type { Config } from 'tailwindcss'
 import { withUt } from "uploadthing/tw";
+import daisyui from "daisyui"
+
 
 const config = withUt({
   darkMode: ['class'],
@@ -139,7 +141,7 @@ const config = withUt({
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate'),daisyui,],
 }) satisfies Config 
 
 
