@@ -5,7 +5,7 @@ export function CompareDemo() {
   return (
     <div className="w-full h-screen">  {/* Set height to full screen */}
       <Compare
-        firstImage="/comparelegions1.jpeg"
+        firstImage="/comparelegions3.png"
         secondImage="/comparelegions2.png"
         firstImageClassName="object-cover object-left-top w-full h-full"
         secondImageClassname="object-cover object-left-top w-full h-full"
