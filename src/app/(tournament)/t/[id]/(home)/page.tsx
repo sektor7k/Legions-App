@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Countdown from "./_components/Countdown";
 import { parse, format } from 'date-fns';
 import React from "react";
+import RegisterTournament from "./_components/RegisterTournament";
 
 export default function TournamentPage({ params }: { params: { id: string } }) {
 
@@ -167,9 +168,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                             ) : (
                                 <div>Loading countdown...</div>
                             )}
-                            <Button variant={"destructive"} className="font-semibold text-lg">
-                                Resgister
-                            </Button>
+                            <RegisterTournament id={params.id} />
                         </div>
                     </div>
 
