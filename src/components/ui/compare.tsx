@@ -188,7 +188,7 @@ export const Compare = ({
             />
           </div>
           {showHandlebar && (
-            <div className="h-8 w-8 rounded-md top-1/2 -translate-y-1/2  z-30 -right-3.5 absolute   flex items-center justify-center ">
+            <div className="h-8 w-8  top-1/2 -translate-y-1/2  z-30 -right-3.5 absolute   flex items-center justify-center ">
               <Image src={"/logoicon.png"} alt={""} layout="fill"/>
             </div>
           )}
@@ -199,7 +199,7 @@ export const Compare = ({
           {firstImage ? (
             <motion.div
               className={cn(
-                "absolute inset-0 z-20 rounded-2xl flex-shrink-0 w-full h-full select-none overflow-hidden",
+                "absolute inset-0 z-20  flex-shrink-0 w-full h-full select-none overflow-hidden",
                 firstImageClassName
               )}
               style={{
@@ -207,14 +207,16 @@ export const Compare = ({
               }}
               transition={{ duration: 0 }}
             >
-              <img
-                alt="first image"
+              <video
                 src={firstImage}
                 className={cn(
-                  "absolute inset-0  z-20 rounded-2xl flex-shrink-0 w-full h-full select-none",
+                  "absolute inset-0  z-20  flex-shrink-0 w-full h-full select-none",
                   firstImageClassName
                 )}
                 draggable={false}
+                autoPlay
+          loop
+          muted
               />
             </motion.div>
           ) : null}
@@ -223,14 +225,17 @@ export const Compare = ({
 
       <AnimatePresence initial={false}>
         {secondImage ? (
-          <motion.img
+          <motion.video
             className={cn(
-              "absolute top-0 left-0 z-[19]  rounded-2xl w-full h-full select-none",
+              "absolute top-0 left-0 z-[19]   w-full h-full select-none",
               secondImageClassname
             )}
-            alt="second image"
+
             src={secondImage}
             draggable={false}
+            autoPlay
+          loop
+          muted
           />
         ) : null}
       </AnimatePresence>
