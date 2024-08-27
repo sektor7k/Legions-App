@@ -10,6 +10,13 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Badge } from "@/components/ui/badge"
 import { UploadDropzone } from "@/utils/uploadthing";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -27,6 +34,7 @@ interface RegisterTournamentProps {
 export default function RegisterTournament({ id }: RegisterTournamentProps) {
     const [isFirstDialogOpen, setIsFirstDialogOpen] = useState(false);
     const [isSecondDialogOpen, setIsSecondDialogOpen] = useState(false);
+    const [isthreeialogOpen, setthreeDialogOpen] = useState(false);
 
     const [teamImage, setTeamImage] = useState("public")
     const [teamName, setTeamName] = useState("public")
@@ -36,6 +44,8 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
     const router = useRouter();
     const { data: session } = useSession();
 
+    const [teams, setTeams] = useState([]);
+
 
 
 
@@ -44,7 +54,19 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
         setIsSecondDialogOpen(true);
     };
 
-    const closeSecondDialog = () => {
+    const openThreeDialog = async () => {
+        setIsFirstDialogOpen(false);
+        setthreeDialogOpen(true);
+        try {
+            const response = await axios.post('/api/tournament/getTeamPublic', { tournamentId: id, status: "public" });
+            setTeams(response.data);
+            console.log(response.data)
+        } catch (error) {
+            console.error('Error fetching teams:', error);
+        }
+    };
+
+    const closeSecondDialog = () => { 
         setIsSecondDialogOpen(false);
     };
 
@@ -128,6 +150,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                         <Button
                             variant="destructive"
                             className="font-semibold text-lg"
+                            onClick={openThreeDialog}
                         >
                             Join Team
                         </Button>
@@ -193,6 +216,53 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                             <Button onClick={createTeam} type="submit">Save changes</Button>
                         </div>
                     </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* join team */}
+            <Dialog open={isthreeialogOpen} onOpenChange={setthreeDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Join Team</DialogTitle>
+                        <DialogDescription>
+                            Enter team information to create a team.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col justify-center items-center space-y-4">
+                        {teams?.map((team: any, index) => (
+                            <div key={index} className="p-3 rounded-md shadow-lg space-y-2 ">
+                                <div className="flex flex-wrap items-center justify-between space-x-4 ">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-auto">
+                                            <img src={team.teamImage} alt={team.teamName} className="w-12 h-12 rounded-full object-cover" />
+                                        </div>
+                                        <div className="w-auto">
+                                            <h2 className="text-lg font-semibold text-coolGray-900">{team.teamName}</h2>
+                                        </div>
+                                    </div>
+                                    <div className="w-auto">
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button variant="ghost" className='rounded-full w-10 h-10 p-0'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                                            <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
+                                                        </svg>
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Join the team</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        ))}
+                    </div>
+
                 </DialogContent>
             </Dialog>
         </div>
