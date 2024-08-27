@@ -30,10 +30,10 @@ export function getNavItems(session: Session | null): NavItem[] {
       label: 'profile'
     },
     {
-      title: 'Kanban',
-      href: `/dashboard/kanban/${username}`,
+      title: 'Notifications',
+      href: `/u/${username}/notifications`,
       icon: 'kanban',
-      label: 'kanban'
+      label: 'notifications'
     },
     {
       title: 'Login',
