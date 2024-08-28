@@ -10,7 +10,11 @@ export async function POST(request: NextRequest) {
 
     try {
         // tournamentId'ye göre tüm takımları bul
-        const teams = await Team.find({ tournamentId });
+        const teams = await Team.find({ tournamentId })
+        .populate({
+            path: 'members.memberId',
+            select: 'username image' // Sadece kullanıcı adı ve resmi al
+        });
 
         if (!teams || teams.length === 0) {
             return NextResponse.json({ message: 'Teams not found' }, { status: 404 });
