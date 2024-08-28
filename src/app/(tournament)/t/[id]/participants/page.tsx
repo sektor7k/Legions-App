@@ -19,21 +19,33 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
     const [teams, setTeams] = useState([]);
     const {data:session} = useSession()
     const router = useRouter();
+    const [isRegistered, setIsRegistered] = useState(false);
 
     useEffect(() => {
-        // Verileri API'den çekme
-        const fetchTeams = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.post('/api/tournament/getTeam', { tournamentId: params.id }); // API endpoint'inizi buraya ekleyin
-                setTeams(response.data);
-                console.log(response.data)
+                // Takımları çek
+                const teamsResponse = await axios.post('/api/tournament/getTeam', { tournamentId: params.id });
+                setTeams(teamsResponse.data);
+    
+                // Kayıt durumunu kontrol et
+                const registrationResponse = await axios.post('/api/tournament/checkRegistration', {
+                    userId: session?.user.id,
+                    tournamentId: params.id
+                });
+                console.log(registrationResponse.data);
+    
+                setIsRegistered(registrationResponse.data.isRegistered);
             } catch (error) {
-                console.error('Error fetching teams:', error);
+                console.error('Error fetching data:', error);
             }
         };
-
-        fetchTeams();
-    }, []);
+    
+        if (session?.user.id) {
+            fetchData();
+        }
+    }, [session, params.id]);
+    
 
     function showErrorToast(message: string): void {
         toast({
@@ -61,7 +73,6 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 userId,
                 leadId,
             });
-            console.log('Invite sent:', response.data);
             showToast("Invite team successfully")
             router.refresh();
         } catch (error) {
@@ -99,6 +110,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                 <Button 
                                                 variant="ghost"
                                                  className='rounded-full w-10 h-10 p-0'
+                                                 disabled={isRegistered}
                                                  onClick={() => {
                                                     const leadMember = team.members.find((member: any) => member.isLead);
                                                     handleJoinTeam(team._id, leadMember ? leadMember.memberId : '');
@@ -119,14 +131,14 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
                         <div className="space-y-4">
                             {team.members
-                                .sort((a: any, b: any) => (b.isLead ? 1 : 0) - (a.isLead ? 1 : 0)) // Lead olanı başa getir
+                                 .sort((a: any, b: any) => (b.isLead ? 1 : 0) - (a.isLead ? 1 : 0)) // Lead olanı başa getir
                                 .map((member: any, idx: any) => (
                                     <div key={idx} className="flex flex-row items-center justify-between space-x-3">
                                         <div className='flex flex-row items-center justify-center space-x-3'>
                                             <div className="w-auto">
                                                 <img
-                                                    src={member.avatar}
-                                                    alt={member.name}
+                                                    src={member.memberId.image}
+                                                    alt={member.memberId.username}
                                                     className="w-10 h-10 rounded-full object-cover"
                                                 />
                                             </div>
@@ -134,7 +146,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                 <span
                                                     className={"text-base font-medium text-coolGray-900"}
                                                 >
-                                                    {member.name}
+                                                    {member.memberId.username}
                                                 </span>
                                             </div>
                                         </div>
