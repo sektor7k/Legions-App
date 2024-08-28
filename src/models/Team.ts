@@ -1,32 +1,37 @@
-import mongoose from 'mongoose';
+import { Schema, model, models, Document, Types } from 'mongoose';
 
-const Schema = mongoose.Schema;
+export interface Member {
+  memberId: Types.ObjectId;
+  isLead: boolean;
+}
 
-// Define the member schema
-const memberSchema = new Schema({
+export interface TeamDocument extends Document {
+  tournamentId: Types.ObjectId;
+  teamName: string;
+  teamImage: string;
+  status: string;
+  members: Member[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const memberSchema = new Schema<Member>({
   memberId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     required: true,
+    ref: 'User'
   },
-  name: {
-    type: String,
-    required: true,
+  isLead: {
+    type: Boolean,
+    default: false,
   },
-  avatar: {
-    type: String,
-    required: true,
-  },
-  isLead:{
-    type:Boolean
-  }
 });
 
-// Define the team schema
-const teamSchema = new Schema({
+const teamSchema = new Schema<TeamDocument>({
   tournamentId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     required: true,
-    ref: 'Tournament', // assuming you have a Tournament model
+    ref: 'Tournament',
   },
   teamName: {
     type: String,
@@ -37,12 +42,14 @@ const teamSchema = new Schema({
     required: true,
   },
   status: {
-    type: String, // or any other statuses you want
+    type: String,
     required: true,
   },
   members: [memberSchema],
+}, {
+  timestamps: true, // createdAt ve updatedAt alanlarını otomatik olarak ekler
 });
 
-const Team = mongoose.models.Team || mongoose.model('Team', teamSchema);
+const Team = models.Team || model<TeamDocument>('Team', teamSchema);
 
 export default Team;
