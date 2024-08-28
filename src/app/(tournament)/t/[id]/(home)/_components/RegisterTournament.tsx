@@ -1,4 +1,4 @@
-import { ElementRef, useRef, useState } from "react";
+import { ElementRef, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -36,7 +36,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
     const [isSecondDialogOpen, setIsSecondDialogOpen] = useState(false);
     const [isthreeialogOpen, setthreeDialogOpen] = useState(false);
 
-    const [teamImage, setTeamImage] = useState("public")
+    const [teamImage, setTeamImage] = useState("")
     const [teamName, setTeamName] = useState("public")
     const [status, setStatus] = useState("public")
 
@@ -45,6 +45,8 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
     const { data: session } = useSession();
 
     const [teams, setTeams] = useState([]);
+
+    const [isRegistered, setIsRegistered] = useState(false);
 
 
 
@@ -66,7 +68,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
         }
     };
 
-    const closeSecondDialog = () => { 
+    const closeSecondDialog = () => {
         setIsSecondDialogOpen(false);
     };
 
@@ -78,16 +80,16 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
     function showErrorToast(message: string): void {
         toast({
             variant: "destructive",
-            title: "Create team failed",
-            description: message,
+            title: message,
+            description: "",
         })
     }
 
     function showToast(message: string): void {
         toast({
             variant: "default",
-            title: "Create Team",
-            description: message,
+            title: message,
+            description: "",
         })
     }
 
@@ -101,8 +103,6 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                 members: [
                     {
                         memberId: session?.user.id,
-                        name: session?.user.username,
-                        avatar: session?.user.image,
                         isLead: true
                     },
                 ]
@@ -118,6 +118,42 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
         }
     }
 
+    const handleJoinTeam = async (teamId: string, leadId: string) => {
+
+        const userId = session?.user.id
+
+        try {
+            const response = await axios.post('/api/tournament/invite/sendInvite', {
+                teamId,
+                userId,
+                leadId,
+            });
+            showToast("Invite team successfully")
+            router.refresh();
+        } catch (error) {
+            showErrorToast("Error Invite team")
+            console.error('Error sending invite:', error);
+        }
+    };
+
+    useEffect(() => {
+        const checkRegistrationStatus = async () => {
+                try {
+                    const response = await axios.post('/api/tournament/checkRegistration', {
+                        userId: session?.user.id,
+                        tournamentId: id
+                    });
+                    console.log(response.data)
+
+                    setIsRegistered(response.data.isRegistered);
+                } catch (error) {
+                    console.error('Error checking registration status:', error);
+                }
+            }
+
+        checkRegistrationStatus();
+    }, [session, status, id]);
+
     return (
         <div>
             {/* First Dialog */}
@@ -127,8 +163,9 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                         variant="destructive"
                         className="font-semibold text-lg"
                         onClick={() => setIsFirstDialogOpen(true)}
+                        disabled={isRegistered}
                     >
-                        Register
+                        {isRegistered ? "Registered" : "Register"}
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
@@ -244,11 +281,20 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                                         <TooltipProvider>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <Button variant="ghost" className='rounded-full w-10 h-10 p-0'>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-                                                            <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
-                                                        </svg>
-                                                    </Button>
+
+                                                    <DialogClose ref={closeRef} asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            className='rounded-full w-10 h-10 p-0'
+                                                            onClick={() => {
+                                                                const leadMember = team.members.find((member: any) => member.isLead);
+                                                                handleJoinTeam(team._id, leadMember ? leadMember.memberId : '');
+                                                            }} >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                                                <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
+                                                            </svg>
+                                                        </Button>
+                                                    </DialogClose>
                                                 </TooltipTrigger>
                                                 <TooltipContent>
                                                     <p>Join the team</p>
