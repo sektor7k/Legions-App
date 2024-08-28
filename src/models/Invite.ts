@@ -1,23 +1,29 @@
-import mongoose from 'mongoose';
+import { Schema, model, models, Document, Types } from 'mongoose';
 
-const Schema = mongoose.Schema;
+export interface InviteDocument extends Document {
+  teamId: Types.ObjectId;
+  userId: Types.ObjectId;
+  leadId: Types.ObjectId;
+  status: 'pending' | 'accepted' | 'rejected';
+  invitedAt: Date;
+  respondedAt?: Date;
+}
 
-// Invite schema
-const inviteSchema = new Schema({
+const inviteSchema = new Schema<InviteDocument>({
   teamId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Team',
     required: true,
   },
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
   leadId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true, // Bu, hangi takım liderine bildirimin gideceğini belirtir
+    required: true,
   },
   status: {
     type: String,
@@ -31,8 +37,10 @@ const inviteSchema = new Schema({
   respondedAt: {
     type: Date,
   },
+}, {
+  timestamps: true, // createdAt ve updatedAt alanlarını otomatik olarak ekler
 });
 
-const Invite = mongoose.models.Invite || mongoose.model('Invite', inviteSchema);
+const Invite = models.Invite || model<InviteDocument>('Invite', inviteSchema);
 
 export default Invite;
