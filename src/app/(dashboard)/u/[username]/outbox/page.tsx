@@ -3,11 +3,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Badge } from "@/components/ui/badge";
 import { useSession } from 'next-auth/react';
+import { Button } from "@/components/ui/button";
+import { toast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 export default function OutboxPage() {
     const [invites, setInvites] = useState<any[]>([]);
     const { data: session, status } = useSession();
-
+    const router = useRouter();
     useEffect(() => {
         const fetchInvites = async () => {
             if (status === 'authenticated' && session?.user?.id) {
@@ -31,6 +34,34 @@ export default function OutboxPage() {
 
         fetchInvites();
     }, [session, status]);
+
+    function showErrorToast(message: string): void {
+        toast({
+            variant: "destructive",
+            title: message,
+            description: "",
+        })
+    }
+
+    function showToast(message: string): void {
+        toast({
+            variant: "default",
+            title: message,
+            description: "",
+        })
+    }
+
+    const handleDeleteInvite = async (inviteId: string) => {
+        try {
+            await axios.post(`/api/tournament/invite/deleteInvite`, { inviteId });
+            setInvites(invites.filter(invite => invite._id !== inviteId));
+            showToast("Delete invite successfully")
+            router.refresh();
+        } catch (error) {
+            showErrorToast("Delete invite Error")
+            console.error('Error deleting invite:', error);
+        }
+    };
 
     return (
         <div className="max-w-4xl mx-auto p-8 space-y-8">
@@ -59,7 +90,16 @@ export default function OutboxPage() {
                                             Sent at: {new Date(invite.invitedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                                         </p>
                                     </div>
-                                    <div className="flex justify-end">
+                                    <div className="flex justify-end items-center space-x-2">
+                                        {invite.status === 'pending' && (
+                                            <Button
+                                                variant="destructive"
+                                                size="sm"
+                                                onClick={() => handleDeleteInvite(invite._id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        )}
                                         <Badge
                                             variant="default"
                                             className={`${invite.status === 'accepted' ? 'bg-green-500 text-white' :
@@ -75,6 +115,5 @@ export default function OutboxPage() {
                 </div>
             )}
         </div>
-
     );
 }
