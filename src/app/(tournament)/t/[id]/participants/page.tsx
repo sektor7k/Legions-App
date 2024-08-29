@@ -31,6 +31,8 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
     const closeRef = useRef<ElementRef<"button">>(null);
     const router = useRouter();
     const [isRegistered, setIsRegistered] = useState(false);
+    const [hasPendingInvite, setHasPendingInvite] = useState(false);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -47,6 +49,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 console.log(registrationResponse.data);
 
                 setIsRegistered(registrationResponse.data.isRegistered);
+                setHasPendingInvite(registrationResponse.data.hasPendingInvite);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -85,7 +88,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 leadId,
             });
             showToast("Invite team successfully")
-            router.refresh();
+            setHasPendingInvite(true);
         } catch (error) {
             showErrorToast("Error Invite team")
             console.error('Error sending invite:', error);
@@ -99,7 +102,13 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 memberId,
             });
             showToast("Member removed successfully");
-            router.refresh(); // Sayfayı yenileyerek güncel durumu göstermek için
+            setTeams((prevTeams:any) =>
+                prevTeams.map((team:any) =>
+                    team._id === teamId
+                        ? { ...team, members: team.members.filter((member: any) => member.memberId._id !== memberId) }
+                        : team
+                )
+            );
         } catch (error) {
             showErrorToast("Error removing member");
             console.error('Error removing member:', error);
@@ -111,7 +120,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
             const response = await axios.post('/api/tournament/deleteTeam', { teamId });
             showToast("Team deleted successfully");
 
-            router.refresh();
+            setTeams(prevTeams => prevTeams.filter((team:any) => team._id !== teamId));
         } catch (error) {
             showErrorToast("Error deleting team");
             console.error('Error deleting team:', error);
@@ -221,7 +230,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                     <Button
                                                         variant="ghost"
                                                         className='rounded-full w-10 h-10 p-0'
-                                                        disabled={isRegistered}
+                                                        disabled={isRegistered || hasPendingInvite}
                                                         onClick={() => {
                                                             const leadMember = team.members.find((member: any) => member.isLead);
                                                             handleJoinTeam(team._id, leadMember ? leadMember.memberId : '');
