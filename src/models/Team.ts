@@ -50,6 +50,19 @@ const teamSchema = new Schema<TeamDocument>({
   timestamps: true, // createdAt ve updatedAt alanlarını otomatik olarak ekler
 });
 
+// 'remove' hook 
+teamSchema.pre('findOneAndDelete', async function (next) {
+  try {
+    const team = this.getQuery(); // Silinen takıma erişim
+    const Invite = model('Invite'); // Invite modelini kullanarak referans alın
+    // Bu takım ile ilgili tüm davetleri sil
+    await Invite.deleteMany({ teamId: team._id });
+    next();
+  } catch (error:any) {
+    next(error);
+  }
+});
+
 const Team = models.Team || model<TeamDocument>('Team', teamSchema);
 
 export default Team;
