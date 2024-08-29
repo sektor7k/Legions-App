@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,12 @@ const roomId = "defaultRoomId"; // Bu sabit değeri daha sonra dinamik hale geti
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5001");
 
 export default function ChatPage({ params }: { params: { id: string } }) {
-    const [messages, setMessages] = useState<{ userName: string; text: string; createdAt: string, avatar:string }[]>([]);
+    const [messages, setMessages] = useState<{ userName: string; text: string; createdAt: string, avatar: string }[]>([]);
     const [currentMsg, setCurrentMsg] = useState("");
 
     const { data: session } = useSession();
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
 
     // Bağlantı ve olay dinleyicileri
     useEffect(() => {
@@ -37,6 +39,12 @@ export default function ChatPage({ params }: { params: { id: string } }) {
             socket.off("receive_msg");
         };
     }, [params.id, socket]);
+    useEffect(() => {
+        scrollToBottom(); // Her yeni mesajda en alta kaydır
+    }, [messages]);
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
 
     const sendData = async () => {
         if (currentMsg === "" || !session?.user?.username) return;
@@ -96,6 +104,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                                     </div>
                                 );
                             })}
+                            <div ref={messagesEndRef} />
                         </div>
                     </div>
                     <div>
@@ -106,6 +115,12 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                                 value={currentMsg}
                                 placeholder="Type your message..."
                                 onChange={(e) => setCurrentMsg(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault(); // Varsayılan enter davranışını engelle
+                                        sendData(); // Mesajı gönder
+                                    }
+                                }}
                             />
                             <button
                                 onClick={sendData}
