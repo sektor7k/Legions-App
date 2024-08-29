@@ -47,6 +47,8 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
     const [teams, setTeams] = useState([]);
 
     const [isRegistered, setIsRegistered] = useState(false);
+    const [hasPendingInvite, setHasPendingInvite] = useState(false);
+
 
 
 
@@ -129,7 +131,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                 leadId,
             });
             showToast("Invite team successfully")
-            router.refresh();
+            setHasPendingInvite(true)
         } catch (error) {
             showErrorToast("Error Invite team")
             console.error('Error sending invite:', error);
@@ -146,6 +148,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                     console.log(response.data)
 
                     setIsRegistered(response.data.isRegistered);
+                    setHasPendingInvite(response.data.hasPendingInvite);
                 } catch (error) {
                     console.error('Error checking registration status:', error);
                 }
@@ -163,9 +166,9 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                         variant="destructive"
                         className="font-semibold text-lg"
                         onClick={() => setIsFirstDialogOpen(true)}
-                        disabled={isRegistered}
+                        disabled={isRegistered || hasPendingInvite}
                     >
-                        {isRegistered ? "Registered" : "Register"}
+                        {isRegistered || hasPendingInvite ? "Registered" : "Register"}
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
