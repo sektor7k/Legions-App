@@ -55,33 +55,49 @@ export default function InboxPage() {
 
     const handleAcceptInvite = async (inviteId: string) => {
         try {
-
             // API'den davetleri alın
             const response = await axios.post(`/api/tournament/invite/replyInvite`, { id: inviteId, reply: "accept" });
-            showToast("")
-            router.refresh();
-            console.log(response.data)
-
+            showToast("Invite accepted");
+    
+            const updatedInvite = response.data.invite; // Güncellenmiş daveti al
+    
+            // State'i güncelle: kabul edilen daveti mevcut listeden kaldır, yeni daveti en üste ekle
+            setInvites(prevInvites => [
+                updatedInvite, // Yeni daveti en üste ekle
+                ...prevInvites.filter(invite => invite._id !== inviteId) // Kabul edilen daveti listeden çıkar
+            ]);
+    
+            console.log(updatedInvite);
+    
         } catch (error) {
-            showErrorToast("Error Invite reply")
+            showErrorToast("Error Invite reply");
             console.error('Error fetching invites:', error);
         }
-    }
+    };
+    
 
     const handleRejectInvite = async (inviteId: string) => {
         try {
-
             // API'den davetleri alın
             const response = await axios.post(`/api/tournament/invite/replyInvite`, { id: inviteId, reply: "reject" });
-            showErrorToast("")
-            router.refresh();
-            console.log(response.data)
-
+            
+            const updatedInvite = response.data.invite; // API yanıtından güncellenmiş daveti alın
+    
+            // State'i güncelle: reddedilen daveti mevcut listeden çıkar, yeni daveti en üste ekle
+            setInvites(prevInvites => [
+                updatedInvite, // Güncellenmiş daveti en üste ekle
+                ...prevInvites.filter(invite => invite._id !== inviteId) // Önceki listeden bu daveti çıkar
+            ]);
+    
+            showErrorToast("Invite rejected successfully"); // Başarılı mesajı gösterin
+            console.log(response.data);
+    
         } catch (error) {
-            showErrorToast("Error Invite reply")
-            console.error('Error fetching invites:', error);
+            showErrorToast("Error rejecting invite");
+            console.error('Error processing invite:', error);
         }
-    }
+    };
+    
 
 
     return (
