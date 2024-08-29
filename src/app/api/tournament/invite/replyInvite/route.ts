@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Invite from '@/models/Invite';
 import Team, { TeamDocument, Member } from '@/models/Team';
-import { Types } from 'mongoose';
 
 export async function POST(request: NextRequest) {
     const { id, reply } = await request.json();
@@ -11,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     try {
         // Invite'ı bul ve durumunu güncelle
-        const invite = await Invite.findById(id);
+        const invite = await Invite.findById(id).populate('userId', 'username image').populate('teamId', 'teamName teamImage');
 
         if (!invite) {
             return NextResponse.json({ message: 'Invite not found' }, { status: 404 });
@@ -38,11 +37,12 @@ export async function POST(request: NextRequest) {
                 await team.save();
             }
 
-            return NextResponse.json({ message: 'Invite accepted and user added to team', team }, { status: 200 });
+            // Populate edilmiş invite'ı geri döndür
+            return NextResponse.json({ message: 'Invite accepted and user added to team', invite }, { status: 200 });
         } else if (reply === 'reject') {
             invite.status = 'rejected';
             await invite.save();
-            return NextResponse.json({ message: 'Invite rejected' }, { status: 200 });
+            return NextResponse.json({ message: 'Invite rejected', invite }, { status: 200 });
         } else {
             return NextResponse.json({ message: 'Invalid reply type' }, { status: 400 });
         }
