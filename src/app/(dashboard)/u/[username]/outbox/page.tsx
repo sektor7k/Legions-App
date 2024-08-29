@@ -55,6 +55,9 @@ export default function OutboxPage() {
                                     />
                                     <div className="flex-1 text-white">
                                         <h2 className="text-lg font-semibold">{invite.teamId.teamName}</h2>
+                                        <p className="text-xs text-gray-400">
+                                            Sent at: {new Date(invite.invitedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                        </p>
                                     </div>
                                     <div className="flex justify-end">
                                         <Badge
@@ -72,5 +75,6 @@ export default function OutboxPage() {
                 </div>
             )}
         </div>
+
     );
 }
