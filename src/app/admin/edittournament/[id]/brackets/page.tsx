@@ -1,40 +1,122 @@
+"use client"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import TCard from "./_components/Cards";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
 
-export default function Page() {
+export default function Page({ params }: { params: { id: string } }) {
+    const [teamvalue, setteamValue] = useState("");
+    const [bracket, setBracket] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchBracket = async () => {
+            try {
+                const response = await axios.post('/api/tournament/bracket/getBracket', {
+                    tournamentId: params.id,
+                });
+
+                if (response.status === 200) {
+                    setBracket(response.data);
+                } else {
+                    console.error('Error fetching bracket', response.data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching bracket:', error);
+            }
+        };
+
+        fetchBracket();
+    }, [params.id]);
+
+    const generateRounds = (teamCount: number) => {
+        const rounds = [];
+        let currentTeamCount = teamCount;
+
+        while (currentTeamCount >= 2) {
+            rounds.push(currentTeamCount);
+            currentTeamCount = Math.floor(currentTeamCount / 2);
+        }
+
+        return rounds;
+    };
+
+    const createBracket = async () => {
+        if (!teamvalue) {
+            console.error('Please select a team count');
+            return;
+        }
+
+        try {
+            const response = await axios.post('/api/tournament/bracket/createBracket', {
+                teamCount: teamvalue,
+                tournamentId: params.id,
+            });
+
+            if (response.status === 200) {
+                console.log('Bracket created successfully', response.data);
+                setBracket(response.data);
+            } else {
+                console.error('Error creating bracket', response.data.message);
+            }
+        } catch (error) {
+            console.error('Error creating bracket:', error);
+        }
+    };
+
+    const rounds = bracket ? generateRounds(bracket.teams.length) : [];
+
     return (
-        <div className="flex  items-center mt-14 pl-10">
-            <div className="flex flex-row justify-center mr-3">
-                <ol className="flex flex-1 flex-col justify-around mr-20 space-y-2 round">
-                    {/* Round 1 */}
-                    {Array(16).fill(0).map((_, index) => (
-                        <TCard key={index}/>
-                    ))}
-                </ol>
-                <ol className="flex flex-1 flex-col justify-around mr-20 ml-10 round">
-                    {/* Round 2 */}
-                    {Array(8).fill(0).map((_, index) => (
-                        <TCard key={index}/>
-                    ))}
-                </ol>
-                <ol className="flex flex-1 flex-col justify-around mr-20 ml-10 round">
-                    {/* Round 3 */}
-                    {Array(4).fill(0).map((_, index) => (
-                       <TCard key={index}/>
-                    ))}
-                </ol>
-                <ol className="flex flex-1 flex-col justify-around mr-20 ml-10 round">
-                    {/* Round 4 */}
-                    {Array(2).fill(0).map((_, index) => (
-                        <TCard key={index}/>
-                    ))}
-                </ol>
-                <ol className="flex flex-1 flex-col justify-around mr-20 ml-10 round round-winner">
-                    {/*kazanan */}
-                    {Array(1).fill(0).map((_, index) => (
-                        <TCard key={index}/>
-                    ))}
-                </ol>
+        <div className="flex flex-col items-center mt-10 pl-10 overflow-x-auto">
+            <div className="flex flex-row space-x-2">
+                <Select onValueChange={(value: any) => setteamValue(value)}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select a team count" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="4">4</SelectItem>
+                            <SelectItem value="8">8</SelectItem>
+                            <SelectItem value="16">16</SelectItem>
+                            <SelectItem value="32">32</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+                <Button onClick={createBracket}>Create Bracket</Button>
             </div>
+            {bracket && (
+                <div className="flex flex-row justify-center mr-3 mt-8">
+                    {rounds.map((teamsInRound, roundIndex) => (
+                        <ol
+                            key={roundIndex}
+                            className="flex flex-1 flex-col justify-around mr-20 ml-10 round space-y-3"
+                        >
+                            {bracket.teams
+                                .filter((team: any) => team.round === roundIndex + 1)
+                                .map((team: any, index: number) => (
+                                    <TCard 
+                                        key={index} 
+                                        team={team} 
+                                    />
+                                ))}
+                        </ol>
+                    ))}
+                    <ol className="flex flex-1 flex-col justify-around mr-20 ml-10 round round-winner">
+                        {/* Kazanan */}
+                        <TCard 
+                             team={bracket.teams.find((team: any) => team.round === rounds.length + 1)} 
+                        />
+                    </ol>
+                </div>
+            )}
         </div>
     );
 }
