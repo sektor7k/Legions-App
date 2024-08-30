@@ -38,7 +38,7 @@ const inviteSchema = new Schema<InviteDocument>({
     type: Date,
   },
 }, {
-  timestamps: true, // createdAt ve updatedAt alanlarını otomatik olarak ekler
+  timestamps: true, 
 });
 
 const Invite = models.Invite || model<InviteDocument>('Invite', inviteSchema);
