@@ -135,9 +135,16 @@
 .round:nth-child(4) .with-connector:after {
   height: 400px;
 }
+.round:nth-child(5) .with-connector:after {
+  height: 800px;
+}
+.round:nth-child(6) .with-connector:after {
+  height: 1600px;
+}
 
 .round.round-winner .with-connector:after {
   width: 0;
+  height: 0;
 }
 
 /*
@@ -152,5 +159,21 @@
   border-top: 2px solid #e2e8f0;
 }
 
+/* 
+  Byes
+*/ 
+
+.with-connector.with-bye {
+  margin-top: 33px;
+  margin-bottom: 33px;
+}
+
+.round .with-connector.with-bye:after {
+  height: 0;
+}
+
+.with-connector.with-bye + .with-connector {
+  display: none;
+}
 
 }
