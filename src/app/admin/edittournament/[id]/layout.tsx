@@ -1,5 +1,5 @@
 "use client"
-import TournamentHeader from '@/components/layout/TournamentHeader';
+import TournamentHeaderAdmin from '@/components/layout/TournamentHeaderAdmin';
 import { useParams } from 'next/navigation';
 
 
@@ -10,7 +10,7 @@ const TournamentLayout = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <div  >
-            <TournamentHeader id={id} />
+            <TournamentHeaderAdmin id={id} />
             <div className="relative flex h-screen overflow-hidden">
                 <main className="flex-1 pt-14 pb-14 relative overflow-y-auto ">
                     <div className="fixed inset-0 bg-bg-tournament bg-cover bg-center h-full"></div>
