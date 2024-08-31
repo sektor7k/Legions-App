@@ -109,6 +109,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                     },
                 ]
             });
+            setIsRegistered(true)
             showToast("Create team successfully")
             router.refresh();
             closeRef?.current?.click();

@@ -90,32 +90,33 @@ export default function TCard({ tournamentId, team, allteams }: TCardProps) {
                                 <p>TeamId:</p>
                                 <p>{selectTeam}</p>
                             </div>
-
                         </div>
-                        {allteams?.map((team: any, index) => (
-                            <div key={index} className="p-3 rounded-md shadow-lg space-y-2 ">
-                                <div className="flex flex-wrap items-center justify-between space-x-4 ">
-                                    <div className="flex items-center space-x-4">
-                                        <div className="w-auto">
-                                            <img src={team.teamImage} alt={team.teamName} className="w-12 h-12 rounded-full object-cover" />
+                        <div className=" flex flex-col space-y-2 overflow-y-auto max-h-[30vh]">
+                            {allteams?.map((team: any, index) => (
+                                <div key={index} className="p-3 rounded-md shadow-lg space-y-2 ">
+                                    <div className="flex flex-wrap items-center justify-between space-x-4 ">
+                                        <div className="flex items-center space-x-4">
+                                            <div className="w-auto">
+                                                <img src={team.teamImage} alt={team.teamName} className="w-12 h-12 rounded-full object-cover" />
+                                            </div>
+                                            <div className="w-auto">
+                                                <h2 className="text-lg font-semibold text-coolGray-900">{team.teamName}</h2>
+                                            </div>
                                         </div>
                                         <div className="w-auto">
-                                            <h2 className="text-lg font-semibold text-coolGray-900">{team.teamName}</h2>
+                                            <Button
+                                                variant="ghost"
+                                                className='rounded-full w-10 h-10 p-0'
+                                                onClick={() => setSelectTeam(team?._id)} >
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                                    <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
+                                                </svg>
+                                            </Button>
                                         </div>
-                                    </div>
-                                    <div className="w-auto">
-                                        <Button
-                                            variant="ghost"
-                                            className='rounded-full w-10 h-10 p-0'
-                                            onClick={() => setSelectTeam(team?._id)} >
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-                                                <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
-                                            </svg>
-                                        </Button>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                         <Label>Score</Label>
                         <Input
                             type="number"
