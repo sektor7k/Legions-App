@@ -16,26 +16,36 @@ import axios from "axios";
 export default function Page({ params }: { params: { id: string } }) {
     const [teamvalue, setteamValue] = useState("");
     const [bracket, setBracket] = useState<any>(null);
+    const [allteams, setTeams] = useState([]);
 
     useEffect(() => {
-        const fetchBracket = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.post('/api/tournament/bracket/getBracket', {
+                // Bracket verisini çek
+                const bracketResponse = await axios.post('/api/tournament/bracket/getBracket', {
                     tournamentId: params.id,
                 });
-
-                if (response.status === 200) {
-                    setBracket(response.data);
+                console.log(bracketResponse.data)
+    
+                if (bracketResponse.status === 200) {
+                    setBracket(bracketResponse.data);
                 } else {
-                    console.error('Error fetching bracket', response.data.message);
+                    console.error('Error fetching bracket', bracketResponse.data.message);
                 }
+    
+                // Takımları çek
+                const teamsResponse = await axios.post('/api/tournament/getTeam', { tournamentId: params.id });
+                setTeams(teamsResponse.data);
+    
+    
             } catch (error) {
-                console.error('Error fetching bracket:', error);
+                console.error('Error fetching data:', error);
             }
         };
-
-        fetchBracket();
+    
+        fetchData();
     }, [params.id]);
+
 
     const generateRounds = (teamCount: number) => {
         const rounds = [];
@@ -102,17 +112,16 @@ export default function Page({ params }: { params: { id: string } }) {
                             {bracket.teams
                                 .filter((team: any) => team.round === roundIndex + 1)
                                 .map((team: any, index: number) => (
-                                    <TCard 
-                                        key={index} 
-                                        team={team} 
-                                    />
+                                    <TCard
+                                        key={index}
+                                        team={team} tournamentId={params.id} allteams={allteams} />
                                 ))}
                         </ol>
                     ))}
                     <ol className="flex flex-1 flex-col justify-around mr-20 ml-10 round round-winner">
                         {/* Kazanan */}
-                        <TCard 
-                             team={bracket.teams.find((team: any) => team.round === rounds.length + 1)} 
+                        <TCard
+                            team={bracket.teams.find((team: any) => team.round === rounds.length + 1)} tournamentId={params.id} allteams={allteams}
                         />
                     </ol>
                 </div>
