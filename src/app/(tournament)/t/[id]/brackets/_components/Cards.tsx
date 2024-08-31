@@ -1,19 +1,35 @@
 
-interface TCardProps{
-    
+interface TCardProps {
+    team?: {
+        teamId?: {
+            teamName?: string;
+            teamImage?: string;
+        }
+        score?: number;
+        _id: string
+    };
 }
-export default function TCard() {
+
+export default function TCard({ team,  }: TCardProps) {
+
+    const isTeamNull = !team?.teamId;
 
     return (
-        <div  className="h-16 w-32 bg-red-800 bg-opacity-50 border-2 border-red-800 backdrop-blur-sm rounded-sm relative with-connector grid grid-cols-3">
-            <div className=" col-span-2 flex flex-col items-center justify-center">
-                <img src="https://futesports.gg/wp-content/uploads/2021/05/Crest-White_1@3x-300x300.png" alt="" width={42} />
-                <p className="text-xs font-bold">Team 1</p>
+        <div className="h-16 w-32 bg-red-800 bg-opacity-50 border-2 border-red-800 backdrop-blur-sm rounded-sm relative with-connector grid grid-cols-3">          
+            <div className="col-span-2 flex flex-col items-center justify-center">
+                <img
+                    src={team?.teamId?.teamImage || "/defaultteam.png"}
+                    alt={team?.teamId?.teamImage || "No Team"}
+                    width={42}
+                    className={isTeamNull ? 'opacity-50' : 'opacity-100'}
+                />
+                <p className={`text-xs font-bold ${isTeamNull ? 'opacity-50' : ''}`}>{team?.teamId?.teamName || "No Team"}</p>
             </div>
-            <div className="col-span-1 border-l-2 border-gray-800 flex items-center justify-center ">
-                <p className="text-3xl font-bold">2</p>
+            <div className="col-span-1 border-l-2 border-gray-800 flex items-center justify-center">
+            <p className={`text-3xl font-bold ${isTeamNull ? 'opacity-50' : ''}`}>
+                    {isTeamNull ? "-" : team.score}
+                </p>
             </div>
-           
         </div>
     )
 }
