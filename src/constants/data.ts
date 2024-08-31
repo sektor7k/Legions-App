@@ -83,3 +83,40 @@ export function getNavItemsTournament(params?: { id: string }): NavItem[] {
   ];
 }
 
+export function getNavItemsTournamentAdmin(params?: { id: string }): NavItem[] {
+  // params'ın tanımlı olup olmadığını ve id'nin mevcut olup olmadığını kontrol et
+  if (!params || !params.id) {
+    console.error('params veya params.id tanımlı değil');
+    return [];
+  }
+
+  const id = params.id;
+  
+  return [
+    {
+      title: 'Overview',
+      href: `/admin/edittournament/${id}`,
+      icon: 'lineChart',
+      label: 'Overview'
+    },
+    {
+      title: 'Brackets',
+      href: `/admin/edittournament/${id}/brackets`,
+      icon: 'swords',
+      label: 'Brackets'
+    },
+    {
+      title: 'Participants',
+      href: `/admin/edittournament/${id}/participants`,
+      icon: 'lineChart',
+      label: 'Participants'
+    },
+    {
+      title: 'Chat',
+      href: `/admin/edittournament/${id}/chat`,
+      icon: 'swords',
+      label: 'Chat'
+    },
+  ];
+}
+
