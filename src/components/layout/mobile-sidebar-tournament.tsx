@@ -6,16 +6,15 @@ import { MenuIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
  
-// import { Playlist } from "../data/playlists";
+type TournamentHeaderProps = {
+  id: string;
+};
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  // playlists: Playlist[];
-} 
 
-export function MobileSidebar({ className }: SidebarProps) {
+export function MobileSidebar({ id }: TournamentHeaderProps) {
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
-  const navItems = getNavItemsTournament(session);
+  const navItems = getNavItemsTournament({id});
   return (
     <>
       <Sheet open={open} onOpenChange={setOpen}>
