@@ -60,7 +60,7 @@ const formSchema = z.object({
     organizerAvatar: z.string().min(2, {
         message: "Username must be at least 2 characters.",
     }),
-    capacity:z.string(),
+    capacity: z.string(),
     checkin: z.date({
         required_error: "A date of birth is required.",
     }),
@@ -97,6 +97,9 @@ const formSchema = z.object({
             value: z.string(),
         })
     ).optional(),
+    sponsors: z.array(z.string()).min(1, {
+        message: "At least one sponsor is required."
+    }).optional(),
 })
 
 export default function createTournament() {
@@ -114,7 +117,27 @@ export default function createTournament() {
         control: form.control
     });
 
+    const [sponsors, setSponsors] = useState<string[]>([]); // Resimleri tutmak için state
+
+    const addSponsor = (url: string) => {
+        setSponsors((prevSponsors) => {
+            const updatedSponsors = [...prevSponsors, url];
+            form.setValue("sponsors", updatedSponsors); // sponsors dizisini form verisine ekle
+            return updatedSponsors;
+        });
+    };
+
+    const removeSponsor = (index: number) => {
+        setSponsors((prevSponsors) => {
+            const updatedSponsors = prevSponsors.filter((_, i) => i !== index);
+            form.setValue("sponsors", updatedSponsors); // Güncellenmiş diziyi form verisine ekle
+            return updatedSponsors;
+        });
+    };
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
+
+
         try {
 
             const formattedValues = {
@@ -122,24 +145,24 @@ export default function createTournament() {
                 checkin: values.checkin ? format(values.checkin, "PPP") : null,
                 starts: values.checkin ? format(values.starts, "PPP") : null,
                 ends: values.checkin ? format(values.ends, "PPP") : null,
-              };
+            };
 
             const response = await axios.post("/api/tournament/addtournament", formattedValues);
-        
+
             console.log("Tournament created successfully:", response.data);
             form.reset();
             showToast("Tournament created successfully!");
-        
+
             // Başarılı mesaj gösterme veya yönlendirme gibi işlemler yapabilirsiniz
-          } catch (error) {
+        } catch (error) {
             if (axios.isAxiosError(error)) {
-              console.error("Failed to create tournament:", error.response?.data);
-              // Hata mesajı gösterme işlemi yapabilirsiniz
+                console.error("Failed to create tournament:", error.response?.data);
+                // Hata mesajı gösterme işlemi yapabilirsiniz
             } else {
-              console.error("Unexpected error:", error);
-              showErrorToast("Unexpected error")
+                console.error("Unexpected error:", error);
+                showErrorToast("Unexpected error")
             }
-          }
+        }
     }
 
     function showErrorToast(message: string): void {
@@ -247,7 +270,7 @@ export default function createTournament() {
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )} 
+                        )}
                     />
                     <FormField
                         control={form.control}
@@ -303,33 +326,33 @@ export default function createTournament() {
                             </FormItem>
                         )}
                     />
-                     <FormField
+                    <FormField
                         control={form.control}
                         name="prizePool"
                         render={({ field }) => (
                             <FormItem>
                                 <div className="flex flex-col items-center justify-center space-y-9 w-auto">
-                                <FormLabel><span className="text-xl">Prize Pool</span></FormLabel>
-                                {fields.map((field, index) => (
-                                    <div key={field.id} className="flex space-x-2">
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Position (e.g., 1st)"
-                                                {...form.register(`prizePool.${index}.key` as const)}
-                                            />
-                                        </FormControl>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Prize (e.g., 200)"
-                                                {...form.register(`prizePool.${index}.value` as const)}
-                                            />
-                                        </FormControl>
-                                        <Button type="button" onClick={() => remove(index)}>Remove</Button>
-                                    </div>
-                                ))}
-                                <Button type="button" onClick={() => append({ key: "", value: "" })}>
-                                    Add Prize
-                                </Button>
+                                    <FormLabel><span className="text-xl">Prize Pool</span></FormLabel>
+                                    {fields.map((field, index) => (
+                                        <div key={field.id} className="flex space-x-2">
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Position (e.g., 1st)"
+                                                    {...form.register(`prizePool.${index}.key` as const)}
+                                                />
+                                            </FormControl>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Prize (e.g., 200)"
+                                                    {...form.register(`prizePool.${index}.value` as const)}
+                                                />
+                                            </FormControl>
+                                            <Button type="button" onClick={() => remove(index)}>Remove</Button>
+                                        </div>
+                                    ))}
+                                    <Button type="button" onClick={() => append({ key: "", value: "" })}>
+                                        Add Prize
+                                    </Button>
                                 </div>
                             </FormItem>
                         )}
@@ -572,6 +595,50 @@ export default function createTournament() {
                                     <Input placeholder="shadcn" {...field} />
                                 </FormControl>
                                 <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className="flex flex-col items-center justify-center space-y-9 w-auto">
+                        <FormLabel><span className="text-xl">Sponsors</span></FormLabel>
+                        {sponsors.map((url, index) => (
+                            <div key={index} className="flex space-x-2 items-center">
+                                <div className=" border overflow-hidden">
+                                    <img
+                                        src={url || "/default-logo.png"} // Resim URL'sini göster
+                                        alt="Sponsor Logo"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <Button type="button" onClick={() => removeSponsor(index)}>Remove</Button>
+                            </div>
+                        ))}
+                    </div>
+
+                    <FormField
+                        control={form.control}
+                        name="sponsors"
+                        render={() => (
+                            <FormItem>
+                                <FormLabel>Add Sponsor Logo</FormLabel>
+                                <FormControl>
+                                    <UploadDropzone
+                                        appearance={{
+                                            label: {
+                                                color: "#FFFFFF"
+                                            },
+                                            allowedContent: {
+                                                color: "#FFFFFF"
+                                            }
+                                        }}
+                                        onClientUploadComplete={(res) => {
+                                            const uploadedUrl = res?.[0]?.url;
+                                            if (uploadedUrl) {
+                                                addSponsor(uploadedUrl); // Yeni resim URL'sini ekle
+                                            }
+                                        }}
+                                        endpoint={"imageUploader"} // Resim yükleme endpoint'i
+                                    />
+                                </FormControl>
                             </FormItem>
                         )}
                     />
