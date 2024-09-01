@@ -28,6 +28,7 @@ export async function POST(request: Request) {
       region,
       bracket,
       prizePool,
+      sponsors
     } = reqBody;
 
     // console.log(tname,
@@ -65,6 +66,7 @@ export async function POST(request: Request) {
       region,
       bracket,
       prizePool,
+      sponsors
     });
 
     // Turnuvayı kaydet
