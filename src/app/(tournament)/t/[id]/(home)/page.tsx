@@ -76,14 +76,14 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         if (tournament && tournament.starts) {
-          const startDate = tournament.starts;
-          const startTime = tournament.startsTime ?? '00:00'; // Varsayılan saat
-          const combinedDateTime = getCombinedDate(startDate, startTime);
-          setStartDateTime(combinedDateTime); // State güncelleme
+            const startDate = tournament.starts;
+            const startTime = tournament.startsTime ?? '00:00'; // Varsayılan saat
+            const combinedDateTime = getCombinedDate(startDate, startTime);
+            setStartDateTime(combinedDateTime); // State güncelleme
         } else {
-          console.error("tournament veya tournament.starts değeri mevcut değil.");
+            console.error("tournament veya tournament.starts değeri mevcut değil.");
         }
-      }, [tournament]);
+    }, [tournament]);
 
 
 
@@ -163,7 +163,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                     <div className="  flex flex-col justify-center items-start space-y-2 bg-black w-full bg-opacity-60 backdrop-blur-sm rounded-lg p-6">
                         <p className="text-red-700 font-semibold">STARTS IN</p>
                         <div className="w-full flex flex-col justify-center items-center space-y-12">
-                        {startDateTime ? (
+                            {startDateTime ? (
                                 <Countdown targetDate={startDateTime} />
                             ) : (
                                 <div>Loading countdown...</div>
@@ -203,10 +203,18 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
                 </div>
             </div>
-            <div className=" flex flex-col justify-center items-center bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm p-3 px-8 rounded-lg  md:flex-row md:space-x-32 ">
-                <Image src={"/logoDark.png"} alt={""} width={300} height={20} />
-                <Image src={"/valoDark.png"} alt={""} width={300} height={20} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm py-16 px-8 rounded-lg md:flex-row md:space-x-32">
 
+                {tournament.sponsors && tournament.sponsors.map((sponsorUrl:any, index:any) => (
+                    <Image
+                        key={index} // Benzersiz anahtar
+                        src={sponsorUrl} // Sponsor URL'si
+                        alt={`Sponsor`} // Alternatif metin
+                        width={300} // Genişlik
+                        height={20} // Yükseklik
+                        className="mt-4 md:mt-0" // Mobilde alt kısımda boşluk bırak
+                    />
+                ))}
             </div>
         </div>
     )
