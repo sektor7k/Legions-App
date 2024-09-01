@@ -23,7 +23,8 @@ export interface TournamentDocument {
     key: string;
     value: string;
   }>;
-  currentphase:string
+  sponsors?: string[];
+  currentphase: string
 }
 
 const TournamentSchema = new Schema<TournamentDocument>({
@@ -105,9 +106,14 @@ const TournamentSchema = new Schema<TournamentDocument>({
       value: { type: String, required: true },
     },
   ],
-  currentphase:{
+  sponsors: [
+    {
+      type: String, // Her bir sponsor bir string olacak
+    },
+  ],
+  currentphase: {
     type: String,
-    default:'none'
+    default: 'none'
   }
 }, {
   timestamps: true,
