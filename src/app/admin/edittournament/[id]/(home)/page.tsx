@@ -100,6 +100,16 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     const [open, setOpen] = useState(false)
     const [currentphase, setValue] = useState("")
 
+    const [sponsors, setSponsors] = useState<string[]>([]); // Resimleri tutmak için state
+
+    const addSponsor = (url: string) => {
+        setSponsors((prevSponsors) => [...prevSponsors, url]);
+    };
+
+    const removeSponsor = (index: number) => {
+        setSponsors((prevSponsors) => prevSponsors.filter((_, i) => i !== index));
+    };
+
 
     useEffect(() => {
         // ID'yi URL'den al
@@ -179,16 +189,16 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     function showErrorToast(message: string): void {
         toast({
             variant: "destructive",
-            title: "Edit Username failed",
-            description: message,
+            title: message,
+            description: "",
         })
     }
 
     function showToast(message: string): void {
         toast({
             variant: "default",
-            title: "Social Handle Update",
-            description: message,
+            title: message,
+            description: "",
         })
     }
 
@@ -297,6 +307,20 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     const getLineBgClass = (index: number) => {
         const currentPhaseIndex = phases.indexOf(currentPhase);
         return index <= currentPhaseIndex - 1 ? "border-green-400" : "border-gray-400";
+    };
+
+    const editSponsors = async () => {
+        try {
+            const response = await axios.post('/api/tournament/editSponsors', { id: params.id, sponsors });
+            showToast("Edit Sponsors successfully")
+            router.refresh();
+            closeRef?.current?.click();
+
+        } catch (error) {
+            showErrorToast("Error Edit Sponsors")
+            console.error("Error Edit Sponsors:", error);
+
+        }
     };
 
 
@@ -778,11 +802,75 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
                 </div>
             </div>
-            <div className=" flex flex-col justify-center items-center bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm p-3 px-8 rounded-lg  md:flex-row md:space-x-32 ">
-                <Image src={"/logoDark.png"} alt={""} width={300} height={20} />
-                <Image src={"/valoDark.png"} alt={""} width={300} height={20} />
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm py-16 px-8 rounded-lg md:flex-row md:space-x-32">
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <button className="absolute right-2 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full transition duration-300">
+                            <HiPencil className="w-5 h-5" />
+                        </button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Edit Tournament Sponsors</DialogTitle>
+                        </DialogHeader>
+                        <div className="flex flex-col items-center justify-center space-y-9 w-auto">
+                            {sponsors.map((url, index) => (
+                                <div key={index} className="flex space-x-2 items-center">
+                                    <div className="border overflow-hidden">
+                                        <img
+                                            src={url || "/default-logo.png"} // Resim URL'sini göster
+                                            alt="Sponsor Logo"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <Button type="button" onClick={() => removeSponsor(index)}>Remove</Button>
+                                </div>
+                            ))}
+                        </div>
+
+                        <UploadDropzone
+                            appearance={{
+                                label: {
+                                    color: "#FFFFFF"
+                                },
+                                allowedContent: {
+                                    color: "#FFFFFF"
+                                }
+                            }}
+                            onClientUploadComplete={(res) => {
+                                const uploadedUrl = res?.[0]?.url;
+                                if (uploadedUrl) {
+                                    addSponsor(uploadedUrl); // Yeni resim URL'sini ekle
+                                }
+                            }}
+                            endpoint={"imageUploader"} // Resim yükleme endpoint'i
+                        />
+
+                        <DialogFooter>
+                            <div className="flex justify-between">
+                                <DialogClose asChild>
+                                    <Button type="button" variant={"ghost"}>
+                                        Cancel
+                                    </Button>
+                                </DialogClose>
+                                <Button onClick={editSponsors} type="button">Save changes</Button>
+                            </div>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+                {tournament.sponsors && tournament.sponsors.map((sponsorUrl: any, index: any) => (
+                    <Image
+                        key={index} // Benzersiz anahtar
+                        src={sponsorUrl} // Sponsor URL'si
+                        alt={`Sponsor`} // Alternatif metin
+                        width={300} // Genişlik
+                        height={20} // Yükseklik
+                        className="mt-4 md:mt-0" // Mobilde alt kısımda boşluk bırak
+                    />
+                ))}
             </div>
+
         </div>
     )
 }
