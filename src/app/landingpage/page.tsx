@@ -1,14 +1,13 @@
 
-import  Hero  from "@/components/landing-page/Aceternity/Hero";
-import  HowItWorks  from "@/components/landing-page/HowItWorks";
+
 import  FAQ  from "@/components/landing-page/FAQ";
 import  Footer  from "@/components/landing-page/Footer";
 import  ScrollToTop  from "@/components/landing-page/ScrollToTop";
-import { Team } from "@/components/landing-page/Aceternity/Team";
 import JoinWaitlist from "@/components/landing-page/Aceternity/join-waitlist";
 import Investor from "@/components/landing-page/Aceternity/Investor";
-import HeroParallaxDemo from "@/components/landing-page/Aceternity/hero-parralax";
 import { CompareDemo } from "@/components/landing-page/Aceternity/CompareDemo";
+import { RoadMap } from "@/components/landing-page/Aceternity/RoadMap";
+import { Teams } from "@/components/landing-page/Aceternity/Teams";
 
 function App() {
   return (
@@ -17,9 +16,8 @@ function App() {
       {/* <Hero /> */}
       <CompareDemo/>
       <Investor />
-      <HeroParallaxDemo/>
-      <HowItWorks />
-      <Team/>
+      <RoadMap />
+      <Teams/>
       <JoinWaitlist/>
       <FAQ />
       <Footer />
