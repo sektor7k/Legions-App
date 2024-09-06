@@ -1,3 +1,4 @@
+import Image from "next/image";
 export default function TopGain() {
     const topGainData = [
         { name: 'Netvrk', symbol: 'NETVR', price: '$0.07257', change: '13.64%', volume: '$317.9K' },
@@ -24,7 +25,7 @@ export default function TopGain() {
                     {topGainData.map((item, index) => (
                         <tr key={index} className=" border-gray-800 border-gradient-bottom font-bold h-20">
                             <td className="py-3 flex items-center w-1/2">
-                                <img src={`coin1.jpg`} alt={item.name} className="w-8 h-8 mr-2" />
+                                <Image src={"/coin1.jpg"} width={32} height={32} alt={item.name} className="mr-2" />
                                 <div>
                                     <p>{item.name}</p>
                                     <p className="text-red-500">{item.symbol}</p>

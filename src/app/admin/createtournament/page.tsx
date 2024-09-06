@@ -42,67 +42,28 @@ import { toast } from "@/components/ui/use-toast";
 
 
 const formSchema = z.object({
-    thumbnail: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    thumbnailGif: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    tname: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    tdescription: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    organizer: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    organizerAvatar: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
+    thumbnail: z.string().min(2, { message: "Thumbnail must be at least 2 characters." }),
+    thumbnailGif: z.string().min(2, { message: "Thumbnail GIF must be at least 2 characters." }),
+    tname: z.string().min(2, { message: "Tournament name must be at least 2 characters." }),
+    tdescription: z.string().min(2, { message: "Description must be at least 2 characters." }),
+    organizer: z.string().min(2, { message: "Organizer name must be at least 2 characters." }),
+    organizerAvatar: z.string().min(2, { message: "Organizer avatar must be at least 2 characters." }),
     capacity: z.string(),
-    checkin: z.date({
-        required_error: "A date of birth is required.",
-    }),
-    checkinTime: z.string().min(4, {
-        message: "Clock",
-    }),
-    starts: z.date({
-        required_error: "A date of birth is required.",
-    }),
-    startsTime: z.string().min(4, {
-        message: "Clock",
-    }),
-    ends: z.date({
-        required_error: "A date of birth is required.",
-    }),
-    endsTime: z.string().min(4, {
-        message: "Clock",
-    }),
-    teamsize: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    teamcount: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    region: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    bracket: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    prizePool: z.array(
-        z.object({
-            key: z.string(),
-            value: z.string(),
-        })
-    ).optional(),
-    sponsors: z.array(z.string()).min(1, {
-        message: "At least one sponsor is required."
-    }).optional(),
+    checkin: z.date({ required_error: "Check-in date is required." }),
+    checkinTime: z.string().min(4, { message: "Check-in time must be at least 4 characters." }),
+    starts: z.date({ required_error: "Start date is required." }),
+    startsTime: z.string().min(4, { message: "Start time must be at least 4 characters." }),
+    ends: z.date({ required_error: "End date is required." }),
+    endsTime: z.string().min(4, { message: "End time must be at least 4 characters." }),
+    teamsize: z.string().min(2, { message: "Team size must be at least 2 characters." }),
+    teamcount: z.string().min(2, { message: "Team count must be at least 2 characters." }),
+    region: z.string().min(2, { message: "Region must be at least 2 characters." }),
+    bracket: z.string().min(2, { message: "Bracket must be at least 2 characters." }),
+    prizePool: z.array(z.object({ key: z.string(), value: z.string() })).optional(),
+    sponsors: z.array(z.string()).min(1, { message: "At least one sponsor is required." }).optional(),
 })
 
-export default function createTournament() {
+export default function CreateTournament() {
 
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -136,7 +97,6 @@ export default function createTournament() {
     };
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-
 
         try {
 
