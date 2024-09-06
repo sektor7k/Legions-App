@@ -4,8 +4,6 @@ import { io } from "socket.io-client";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
-// Sabit roomId tanımı
-const roomId = "defaultRoomId"; // Bu sabit değeri daha sonra dinamik hale getirebilirsiniz.
 
 // Socket.io bağlantısı
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5001");
