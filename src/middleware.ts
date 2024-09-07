@@ -8,6 +8,8 @@ export async function middleware(req: NextRequest) {
   const publicPaths = ['/landingpage', '/login', '/register', '/verifyemail', '/forgotpassword'];
   const restrictedPaths = ['/u','/','/t']; // /u altında başlayan tüm yolları kontrol edeceğiz
   const adminPaths = ['/admin'];
+  const enterUsernamePath = '/enter-username';
+
 
   const { pathname } = req.nextUrl;
 
@@ -19,6 +21,10 @@ export async function middleware(req: NextRequest) {
     if (!token) {
       return NextResponse.redirect(new URL('/login', req.url));
     }
+
+    if (!token.username && pathname !== enterUsernamePath) {
+      return NextResponse.redirect(new URL('/enter-username', req.url));
+    }
   }
 
   // Admin kontrolü yapılması gereken yollar
@@ -28,6 +34,11 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/not-authorized', req.url));
     }
   }
+
+  if (pathname === enterUsernamePath && token?.username) {
+    return NextResponse.redirect(new URL('/', req.url)); // Ana sayfaya veya istediğiniz sayfaya yönlendirin
+  }
+  
 
   return NextResponse.next();
 }
@@ -43,6 +54,7 @@ export const config = {
     '/forgotpassword',
     '/u/:path*',
     '/t/:path*',
-    '/admin/:path*'
+    '/admin/:path*',
+    '/enter-username',
   ],
 };
