@@ -10,6 +10,10 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
+    if (!Team || !Bracket) {
+        return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
+    }
+
     try {
         const bracket = await Bracket.findOne({ tournamentId }).populate({
             path: 'teams.teamId',
