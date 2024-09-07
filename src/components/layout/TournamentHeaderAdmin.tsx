@@ -42,7 +42,7 @@ export default function TournamentHeaderAdmin({ id }: TournamentHeaderProps) {
                 </div>
 
                 <div className={cn('block lg:!hidden')}>
-                    <MobileSidebar />
+                    <MobileSidebar id={id} />
                 </div>
 
                 <div className="flex items-center gap-2">
