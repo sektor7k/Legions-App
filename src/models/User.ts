@@ -38,8 +38,9 @@ const UserSchema = new Schema<UserDocument>({
   email: {
     type: String,
     unique: true,
-    //required: [true, "Email is required"],
-    required: false,
+    required: [function () { return !this.wallets?.evm }, "Email is required"],
+    sparse: true, // Email alanı dolu olduğunda benzersizlik kontrol edilir
+
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       "Email is invalid",
@@ -79,7 +80,7 @@ const UserSchema = new Schema<UserDocument>({
     telegram: { type: String, default: "" },
   },
   wallets: {
-    evm: { type: String, default: "" },
+    evm: { type: String, unique: true, sparse: true },
     btc: { type: String, default: "" },
     solana: { type: String, default: "" },
     sei: { type: String, default: "" },
