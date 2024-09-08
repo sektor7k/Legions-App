@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import Team from "@/models/Team"; // Team modelini import edin
 import mongoose from "mongoose";
+import { updateParticipantsCount } from "@/helpers/participantscount";
 
 export async function POST(request: Request) {
   try {
@@ -23,6 +24,12 @@ export async function POST(request: Request) {
 
     // Takımı kaydet
     const savedTeam = await team.save();
+
+    await updateParticipantsCount({
+      countType: "increase",  
+      countSize: 1,          
+      tournamentId,          
+    });
 
     return NextResponse.json(
       {

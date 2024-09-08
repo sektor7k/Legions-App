@@ -4,9 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/helpers/mailer";
 
 
-
-
-
 export async function POST(request: NextRequest) {
     try {
         await connectDB()
@@ -16,9 +13,12 @@ export async function POST(request: NextRequest) {
         console.log(reqBody);
 
         const user = await User.findOne({ email })
-
-        console.log(user)
-
+        if (!user) {
+            return NextResponse.json({
+                message: "User not found",
+                success: false,
+            }, { status: 404 });  // 404 Not Found durumu döndürülür
+        }
         //send forgot password email
         await sendEmail({email, emailType: "RESET", userId: user._id})
 

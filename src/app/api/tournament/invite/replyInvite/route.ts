@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Invite from '@/models/Invite';
 import Team, { TeamDocument, Member } from '@/models/Team';
+import { updateParticipantsCount } from '@/helpers/participantscount';
 
 export async function POST(request: NextRequest) {
     const { id, reply } = await request.json();
@@ -32,6 +33,12 @@ export async function POST(request: NextRequest) {
                 member.memberId.equals(invite.userId)
             );
 
+            await updateParticipantsCount({
+                countType: "increase",
+                countSize: 1,
+                tournamentId: team.tournamentId,
+            });
+            
             if (!userAlreadyInTeam) {
                 team.members.push({ memberId: invite.userId, isLead: false });
                 await team.save();
