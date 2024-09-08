@@ -15,20 +15,25 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
       await User.findByIdAndUpdate(userId,
         { forgotPasswordToken: hashedToken, forgotPasswordExpire: Date.now() + 3600000 })
     }
-
+    
     var transport = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
+      host: "live.smtp.mailtrap.io",
+      port: 587,
       auth: {
-        user: "e23eb3d50d0da5",
-        pass: "23d4d71fae33ad"
-        // TODO: add these credentials to .env file
+        user: "api",
+        pass: "ae6401ff1428345a2eaced42758d81e2"
       }
     });
-
+    
     const mailOptions = {
-      from: 'omeraydin2112@gmail.com',
-      to: email,
+      from: {
+        address: 'smtp.mailtrap.live', // Kendi domaininize ait bir e-posta adresi
+        name: 'Your Application'
+      },
+      to: {
+        address: email,
+        name: 'User'
+      },
       subject: emailType === "VERIFY" ? "Verify your email" : "Reset your password",
       text: "Hello world?",
       html: emailType === "VERIFY" ?
@@ -100,6 +105,7 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
     return mailresponse;
 
   } catch (error: any) {
+    console.log(error.message);
     throw new Error(error.message);
   }
 }
