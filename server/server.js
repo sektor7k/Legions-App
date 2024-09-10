@@ -5,7 +5,7 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-dotenv.config(); 
+dotenv.config({ path: '../.env' }); 
 
 const app = express();
 const server = createServer(app);
