@@ -17,18 +17,18 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
     }
     
     var transport = nodemailer.createTransport({
-      host: "live.smtp.mailtrap.io",
-      port: 587,
+      host: "sandbox.smtp.mailtrap.io",
+      port: 2525,
       auth: {
-        user: "api",
-        pass: "ae6401ff1428345a2eaced42758d81e2"
+        user: "e23eb3d50d0da5",
+        pass: "23d4d71fae33ad"
       }
     });
     
     const mailOptions = {
       from: {
-        address: 'smtp.mailtrap.live', // Kendi domaininize ait bir e-posta adresi
-        name: 'Your Application'
+        address: 'castrumlegions@gmail.com', // Kendi domaininize ait bir e-posta adresi
+        name: 'Demo'
       },
       to: {
         address: email,

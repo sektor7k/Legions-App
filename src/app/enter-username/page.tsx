@@ -1,18 +1,8 @@
 "use client"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+
 
 import { Button } from "@/components/ui/button"
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
+
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/use-toast"
 import axios from "axios"
@@ -38,7 +28,8 @@ export default function EnterUsername() {
             const response = await axios.post('/api/user/edituser', { newUsername });
             update({ username: response.data.user.username })
             showToast("your username has been successfully updated")
-            router.push('/');
+            router.push("/");
+            router.refresh();
 
 
         } catch (error) {
@@ -80,12 +71,12 @@ export default function EnterUsername() {
                     />
                 </div>
             </div>
-           
-                <Button onClick={editUsername}
-                    variant={"default"}
-                >
-                    Save
-                </Button>
+
+            <Button onClick={editUsername}
+                variant={"default"}
+            >
+                Save
+            </Button>
         </div>
     )
 }
