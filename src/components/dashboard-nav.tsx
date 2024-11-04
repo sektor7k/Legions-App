@@ -137,6 +137,19 @@ export function DashboardNavHeader({
           );
         })}
       </TooltipProvider>
+      <div>
+        <Link
+          href={"/bet"}
+          className={cn(
+            'flex items-center bg-blue-900 px-4 rounded-md py-2 text-sm font-medium  backdrop-blur-sm bg-opacity-30 ',
+          )}
+        >
+          
+        <span>
+        Legions Bet
+        </span>
+        </Link>
+      </div>
     </nav>
   );
 }
