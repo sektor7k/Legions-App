@@ -14,7 +14,11 @@ export default function Tournaments() {
     useEffect(() => {
       const fetchTournaments = async () => {
         try {
-          const response = await axios.get("/api/tournament/getAllTournament");
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/api/tournament/getAllTournament`,{
+            headers: {
+                'Content-Type': 'application/json',
+              },
+          });
           console.log(response)
           setTournaments(response.data.tournaments);
         } catch (error) {

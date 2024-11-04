@@ -123,7 +123,7 @@ export default function ProfileAdresses() {
                         </Sheet>
                     </div>
                 </div>
-                <div className="flex flex-col w-full">
+                {/* <div className="flex flex-col w-full">
                     <p className="text-lg text-muted-foreground mb-3">BTC Adress</p>
                     <div className="flex items-center ">
                         <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
@@ -173,7 +173,7 @@ export default function ProfileAdresses() {
                             </SheetContent>
                         </Sheet>
                     </div>
-                </div>
+                </div> */}
                 <div className="flex flex-col w-full">
                     <p className="text-lg text-muted-foreground mb-3">Solana Adress</p>
                     <div className="flex items-center ">
@@ -226,7 +226,7 @@ export default function ProfileAdresses() {
                         </Sheet>
                     </div>
                 </div>
-                <div className="flex flex-col w-full">
+                {/* <div className="flex flex-col w-full">
                     <p className="text-lg text-muted-foreground mb-3">Sei Adress</p>
                     <div className="flex items-center ">
                         <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
@@ -378,7 +378,7 @@ export default function ProfileAdresses() {
                             </SheetContent>
                         </Sheet>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )

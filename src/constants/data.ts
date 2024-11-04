@@ -80,6 +80,13 @@ export function getNavItemsTournament(params?: { id: string }): NavItem[] {
       icon: 'swords',
       label: 'Chat'
     },
+    // {
+    //   title: 'Compcal',
+    //   href: `/t/${id}/compcal`,
+    //   icon: 'swords',
+    //   label: 'Compcal'
+    // },
+    
   ];
 }
 
