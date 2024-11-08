@@ -80,12 +80,12 @@ export function getNavItemsTournament(params?: { id: string }): NavItem[] {
       icon: 'swords',
       label: 'Chat'
     },
-    // {
-    //   title: 'Compcal',
-    //   href: `/t/${id}/compcal`,
-    //   icon: 'swords',
-    //   label: 'Compcal'
-    // },
+    {
+      title: 'Compcal',
+      href: `/t/${id}/compcal`,
+      icon: 'swords',
+      label: 'Compcal'
+    },
     
   ];
 }
@@ -123,6 +123,12 @@ export function getNavItemsTournamentAdmin(params?: { id: string }): NavItem[] {
       href: `/admin/edittournament/${id}/chat`,
       icon: 'swords',
       label: 'Chat'
+    },
+    {
+      title: 'Compcal',
+      href: `/admin/edittournament/${id}/compcal`,
+      icon: 'swords',
+      label: 'Compcal'
     },
   ];
 }
