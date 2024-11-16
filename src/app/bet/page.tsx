@@ -5,35 +5,41 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import OpenBets from "./_components/OpenBets";
 import ClosedBets from "./_components/ClosedBets";
+import MyBets from "./_components/MyBets";
+import History from "./_components/History";
+import AddBet from "./_components/AddBet";
 
 
 export default function BetsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("open");
-  const [activeTab2, setActiveTab2] = useState("mybet");
+  const [activeTab2, setActiveTab2] = useState("mybets");
 
   return (
     <div className="pt-28 w-full flex flex-row justify-center space-x-6">
       <div className="w-8/12 flex flex-col  items-center space-y-6">
         <div className="w-full flex flex-row items-center justify-between">
           <div className="flex flex-row space-x-2 bg-gray-900 py-1 px-3 rounded-md">
-            <Button
-              size={"sm"}
-              variant={"ghost"}
+            <button
               onClick={() => setActiveTab("open")}
-              className={`font-bold border-none  ${activeTab === "open" ? "text-blue-400 bg-blue-950 bg-opacity-70" : ""}`}
+              className={`font-bold px-3 h-9 border-none rounded-md transition-all duration-400 ease-in-out ${activeTab === "open"
+                ? "text-blue-400 bg-blue-950 bg-opacity-70"
+                : "text-gray-200"
+                }`}
             >
               OPEN BETS
-            </Button>
-            <Button
-              size={"sm"}
-              variant={"ghost"}
+            </button>
+            <button
               onClick={() => setActiveTab("closed")}
-              className={`font-bold border-none  ${activeTab === "closed" ? "text-blue-400 bg-blue-950 bg-opacity-70" : ""}`}
+              className={`font-bold px-3 h-9 border-none rounded-md transition-all duration-400 ease-in-out ${activeTab === "closed"
+                ? "text-blue-400 bg-blue-950 bg-opacity-70"
+                : "text-gray-200"
+                }`}
             >
               CLOSED BETS
-            </Button>
+            </button>
           </div>
+
 
           {/* Arama Çubuğu */}
           <div className="flex items-center">
@@ -56,18 +62,22 @@ export default function BetsPage() {
       <div className="w-3/12  flex flex-col h-96 bg-gray-900 rounded-md">
         <div className="flex flex-row space-x-2 pt-2 px-3 border-b border-gray-700">
           <button
-            onClick={() => setActiveTab2("mybet")}
-            className={`font-bold px-3 h-9 text-lg  rounded-none  ${activeTab2 === "mybet" ? "text-blue-700 border-gradient-bottom " : ""}`}
+            onClick={() => setActiveTab2("mybets")}
+            className={`font-bold px-3 h-9 text-lg  rounded-none transition-all duration-400 ease-in-out ${activeTab2 === "mybets" ? "text-blue-700 border-gradient-bottom " : "text-gray-200"}`}
           >
             MY BETS
           </button>
           <button
             onClick={() => setActiveTab2("history")}
-            className={`font-bold px-3 h-9 text-lg  rounded-none ${activeTab2 === "history" ? "text-blue-700 border-gradient-bottom  " : ""}`}
+            className={`font-bold px-3 h-9 text-lg  rounded-none transition-all duration-400 ease-in-out ${activeTab2 === "history" ? "text-blue-700 border-gradient-bottom  " : "text-gray-200"}`}
           >
             HISTORY
           </button>
         </div>
+        {activeTab2 === "mybets" && <MyBets />}
+        {activeTab2 === "history" && <History />}
+
+        <AddBet/>
       </div>
     </div >
   );
