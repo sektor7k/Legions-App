@@ -94,6 +94,7 @@
     height: 1px; /* Border'ın kalınlığını belirler */
     background: linear-gradient(to right, transparent, rgba(255, 255, 255, 1), transparent);
   }
+  
   /* globals.css veya uygun bir CSS dosyası */
 .bg-fixed {
   background-attachment: fixed;
