@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 import { withUt } from "uploadthing/tw";
 import daisyui from "daisyui"
+import { default as flattenColorPalette } from "tailwindcss/lib/util/flattenColorPalette";
 
 
 const config = withUt({
@@ -141,8 +142,20 @@ const config = withUt({
       },
     },
   },
-  plugins: [require('tailwindcss-animate'),daisyui,],
-}) satisfies Config 
+  plugins: [require('tailwindcss-animate'),daisyui,addVariablesForColors],
+}) satisfies Config
+
+
+function addVariablesForColors({ addBase, theme }: any) {
+  let allColors = flattenColorPalette(theme("colors"));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+ 
+  addBase({
+    ":root": newVars,
+  });
+}
 
 
 export default config
