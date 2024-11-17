@@ -3,6 +3,7 @@ import { connectDB } from '@/lib/mongodb';
 import Invite from '@/models/Invite';
 import Team, { TeamDocument, Member } from '@/models/Team';
 import { updateParticipantsCount } from '@/helpers/participantscount';
+import User from '@/models/User';
 
 export async function POST(request: NextRequest) {
     const { id, reply } = await request.json();
@@ -10,6 +11,9 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     try {
+        if (!Team || !User) {
+            return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
+        }
         // Invite'ı bul ve durumunu güncelle
         const invite = await Invite.findById(id).populate('userId', 'username image').populate('teamId', 'teamName teamImage');
 

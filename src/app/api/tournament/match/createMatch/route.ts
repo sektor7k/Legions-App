@@ -2,12 +2,13 @@ import { connectDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import Match from "@/models/Matches";
+import Team from "@/models/Team";
 
 export async function POST(request: Request) {
     try {
         await connectDB();
 
-        if (!Match) {
+        if (!Match || !Team) {
             return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
         }
 

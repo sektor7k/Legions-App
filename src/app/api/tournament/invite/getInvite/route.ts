@@ -2,6 +2,7 @@ import Team from '@/models/Team';
 import Invite from '@/models/Invite';
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
+import User from '@/models/User';
 
 export async function POST(request: NextRequest) {
     const reqBody = await request.json();
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     // Model kaydını kontrol edin
-    if (!Team || !Invite) {
+    if (!Team || !Invite || !User) {
         return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
     }
 

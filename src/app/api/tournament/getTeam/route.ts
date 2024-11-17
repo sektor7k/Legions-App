@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Team from '@/models/Team';
+import User from '@/models/User';
 
 export async function POST(request: NextRequest) {
     const reqBody = await request.json();
@@ -9,6 +10,10 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     try {
+
+        if (!User) {
+            return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
+        }
         // tournamentId'ye göre tüm takımları bul
         const teams = await Team.find({ tournamentId })
         .populate({
