@@ -1,50 +1,122 @@
+"use client"
+import axios from "axios";
 import Image from "next/image"
+import { useEffect, useState } from "react";
 import { FaForward } from "react-icons/fa";
 
-export default function OpenBets(){
-    return(
+interface Bet {
+    _id: string;
+    founderId: Founder;
+    tournamentId: Tournament;
+    matchId: Match;
+    selectedTeamId: string;
+    stake: Number;
+}
+
+interface Founder {
+    _id: string;
+    username: string;
+    image: string;
+}
+
+interface Tournament {
+    _id: string;
+    thumbnail: string,
+    tname: string,
+    organizer: string,
+    organizerAvatar: string
+}
+interface Match {
+    _id: string;
+    team1Id: Team,
+    team2Id: Team,
+    matchDate: string,
+    matchTime: string
+}
+interface Team {
+    _id: string;
+    teamName: string;
+    teamImage: string;
+}
+
+
+export default function OpenBets() {
+
+    const [bets, setBets] = useState<Bet[]>([]);
+
+    useEffect(() => {
+        const getOpenBet = async () => {
+            try {
+                const response = await axios.post('/api/bet/getOpenBet', {})
+                setBets(response.data.data)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getOpenBet();
+    }, [])
+    return (
         <div className="w-full flex flex-col space-y-4">
-                <div className="flex flex-row bg-gray-900  rounded-md">
+            {bets.map((bet) => (
+                <div key={bet._id} className="flex flex-row bg-gray-900  rounded-md">
                     <div className="flex flex-col w-4/5  pr-8">
                         <div className="relative flex flex-row items-center space-x-1 z-10 p-4">
                             <Image
-                                src={"https://utfs.io/f/9cbfacf8-1c8f-403c-887a-ef975a277763-1yxrb.png"}
+                                src={bet.tournamentId.organizerAvatar}
                                 height="20"
                                 width="20"
                                 alt="Organizer Avatar"
                                 className="h-6 w-6 rounded-full border-2 object-cover"
                             />
-                            <p className="font-bold text-sm text-gray-500">Valorant: Castrum X Valorant Cup 1</p>
+                            <p className="font-bold text-sm text-gray-500">{bet.tournamentId.organizer}: {bet.tournamentId.tname}</p>
                         </div>
                         <div className="flex flex-row justify-between">
                             <div
                                 className="p-4 rounded-bl-md text-white bg-gradient-to-r from-green-700/70 via-green-700/20 to-green-700/0 flex flex-row space-x-2"
                             >
-                                <FaForward className=" bg-green-600 p-1 w-6 h-6 rounded-md" /> <span className=" font-semibold text-green-400">1 OCTOBER / 01:00</span>
+                                <FaForward className=" bg-green-600 p-1 w-6 h-6 rounded-md" /> <span className=" font-semibold text-green-400">{bet.matchId.matchDate} / {`${bet.matchId.matchTime.slice(0, 2)}:${bet.matchId.matchTime.slice(2)}`}</span>
                             </div>
                             <div className="flex flex-row items-center justify-center space-x-4 transform -translate-y-6">
-                                <div className="relative flex flex-row items-center space-x-1 bg-green-700 bg-opacity-30 backdrop-blur-sm p-4 py-1 rounded-lg border-2 border-green-700">
+                                <div className="relative flex flex-row items-center space-x-1 bg-green-700 bg-opacity-30 backdrop-blur-sm p-4 py-1 rounded-lg border-2 border-green-700 min-w-40">
                                     <Image
-                                        src={"https://utfs.io/f/pc2uFj4UDvXVi3LATGBhkQG94m1xPtRgq7ezCElBV6Md5bSU"}
+                                        src={bet.matchId.team1Id.teamImage}
                                         height="100"
                                         width="100"
-                                        alt="Organizer Avatar"
+                                        alt="Team1"
                                         className="h-12 w-12 rounded-full border-2 object-cover"
                                     />
-                                    <p className="font-bold text-lg text-gray-100">FUT Esport</p>
+                                    <p className="font-bold text-lg text-gray-100">{bet.matchId.team1Id.teamName}</p>
+                                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
+                                        <Image
+                                            src={bet.matchId.team1Id._id === bet.selectedTeamId ? bet.founderId.image:"/green.png"}
+                                            height="100"
+                                            width="100"
+                                            alt="Team1"
+                                            className="h-6 w-6 rounded-full border-2 object-cover border-gray-900"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="font-bold text-lg">
                                     vs
                                 </div>
                                 <div className="relative flex flex-row items-center space-x-2  bg-red-700 bg-opacity-30 backdrop-blur-sm p-4 py-1 rounded-lg border-2 border-red-700">
                                     <Image
-                                        src={"https://utfs.io/f/ad1e0468-8d3e-4de6-8610-8b48f15bd78c-fq7esz.webp"}
+                                        src={bet.matchId.team2Id.teamImage}
                                         height="100"
                                         width="100"
-                                        alt="Organizer Avatar"
+                                        alt="Team2"
                                         className="h-12 w-12 rounded-full border-2 object-cover"
                                     />
-                                    <p className="font-bold text-lg text-gray-100">BBL Esport</p>
+                                    <p className="font-bold text-lg text-gray-100">{bet.matchId.team2Id.teamName}</p>
+                                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
+                                        <Image
+                                            src={bet.matchId.team2Id._id === bet.selectedTeamId ? bet.founderId.image:"/green.png"}
+                                            height="100"
+                                            width="100"
+                                            alt="Team1"
+                                            className="h-6 w-6 rounded-full border-2 object-cover border-gray-900"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -54,18 +126,18 @@ export default function OpenBets(){
                         <div className="absolute left-0 top-3 bottom-3 w-0.5 bg-gray-600 rounded-full"></div>
                         <div className="relative flex flex-row items-center space-x-1  ">
                             <Image
-                                src={"https://utfs.io/f/82168ae8-54cd-41c5-bf38-b7aefb6abec2-22uz0h.png"}
+                                src={bet.founderId.image}
                                 height="100"
                                 width="100"
-                                alt="Organizer Avatar"
+                                alt="user"
                                 className="h-8 w-8 rounded-full border-2 object-cover"
                             />
-                            <p className="font-semibold text-sm text-gray-100">Sektor7K</p>
+                            <p className="font-semibold text-sm text-gray-100">{bet.founderId.username}</p>
                         </div>
                         <button className="bg-blue-950 bg-opacity-50 hover:bg-none flex flex-col items-center p-2 rounded-md relative group transition-all duration-300 min-h-[60px] min-w-[120px]">
                             <div className="text-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 absolute">
                                 <p className="text-xs font-bold">PLACED BET OF</p>
-                                <p className="text-2xl font-extrabold text-blue-700">$500</p>
+                                <p className="text-2xl font-extrabold text-blue-700">${bet.stake.toString()}</p>
                             </div>
                             <p className="text-2xl font-bold  text-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 Play
@@ -77,80 +149,8 @@ export default function OpenBets(){
 
 
                 </div>
-                <div className="flex flex-row bg-gray-900  rounded-md">
-                    <div className="flex flex-col w-4/5  pr-8">
-                        <div className="relative flex flex-row items-center space-x-1 z-10 p-4">
-                            <Image
-                                src={"https://utfs.io/f/24a8d009-3c7b-44e0-a9de-79a884ed6abb-nbvj3q.jpg"}
-                                height="20"
-                                width="20"
-                                alt="Organizer Avatar"
-                                className="h-6 w-6 rounded-full border-2 object-cover"
-                            />
-                            <p className="font-bold text-sm text-gray-500">The Finals: The Finals x Cookie3 Cup 1#</p>
-                        </div>
-                        <div className="flex flex-row justify-between">
-                            <div
-                                className="p-4 rounded-bl-md text-white bg-gradient-to-r from-green-700/70 via-green-700/20 to-green-700/0 flex flex-row space-x-2"
-                            >
-                                <FaForward className=" bg-green-600 p-1 w-6 h-6 rounded-md" /> <span className=" font-semibold text-green-400">3 OCTOBER / 20:30</span>
-                            </div>
-                            <div className="flex flex-row items-center justify-center space-x-4 transform -translate-y-6">
-                                <div className="relative flex flex-row items-center space-x-1 bg-green-700 bg-opacity-30 backdrop-blur-sm p-4 py-1 rounded-lg border-2 border-green-700">
-                                    <Image
-                                        src={"https://utfs.io/f/61058261-496f-493e-8b08-e8bc36354b07-2drm.jpg"}
-                                        height="100"
-                                        width="100"
-                                        alt="Organizer Avatar"
-                                        className="h-12 w-12 rounded-full border-2 object-cover"
-                                    />
-                                    <p className="font-bold text-lg text-gray-100">Castrum GO</p>
-                                </div>
-                                <div className="font-bold text-lg">
-                                    vs
-                                </div>
-                                <div className="relative flex flex-row items-center space-x-2  bg-red-700 bg-opacity-30 backdrop-blur-sm p-4 py-1 rounded-lg border-2 border-red-700">
-                                    <Image
-                                        src={"https://utfs.io/f/cc031436-7333-4346-8688-37dd5fb7ac31-1zbfv.jpg"}
-                                        height="100"
-                                        width="100"
-                                        alt="Organizer Avatar"
-                                        className="h-12 w-12 rounded-full border-2 object-cover"
-                                    />
-                                    <p className="font-bold text-lg text-gray-100">CBU Esport</p>
-                                </div>
-                            </div>
+            ))}
 
-                        </div>
-                    </div>
-                    <div className="relative w-1/5 flex flex-col items-center justify-center space-y-1">
-                        <div className="absolute left-0 top-3 bottom-3 w-0.5 bg-gray-600 rounded-full"></div>
-                        <div className="relative flex flex-row items-center space-x-1  ">
-                            <Image
-                                src={"https://utfs.io/f/a871e06a-5b0d-422f-89a8-46e85f63f534-d6ph0f.41.42.png"}
-                                height="100"
-                                width="100"
-                                alt="Organizer Avatar"
-                                className="h-8 w-8 rounded-full border-2 object-cover"
-                            />
-                            <p className="font-semibold text-sm text-gray-100">SabitCan</p>
-                        </div>
-                        <button className="bg-blue-950 bg-opacity-50 hover:bg-none flex flex-col items-center p-2 rounded-md relative group transition-all duration-300 min-h-[60px] min-w-[120px]">
-                            <div className="text-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 absolute">
-                                <p className="text-xs font-bold">PLACED BET OF</p>
-                                <p className="text-2xl font-extrabold text-blue-700">$150</p>
-                            </div>
-                            <p className="text-2xl font-bold  text-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                Play
-                            </p>
-                        </button>
-
-
-                    </div>
-
-
-                </div>
-                
-            </div>
+        </div>
     )
 }
