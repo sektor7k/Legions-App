@@ -88,19 +88,19 @@ export default function AddBet() {
 
   function showErrorToast(message: string): void {
     toast({
-        variant: "destructive",
-        title: message,
-        description: "",
+      variant: "destructive",
+      title: message,
+      description: "",
     })
-}
+  }
 
-function showToast(message: string): void {
+  function showToast(message: string): void {
     toast({
-        variant: "default",
-        title: message,
-        description: "",
+      variant: "default",
+      title: message,
+      description: "",
     })
-}
+  }
 
 
   const placeBet = async () => {
@@ -108,18 +108,19 @@ function showToast(message: string): void {
     if (!tournament || !match || !team || !stake) {
       showErrorToast("Please fill in all fields.");
       return;
-  }
+    }
 
     try {
 
       const response = await axios.post('/api/bet/placeBet', {
         tournamentId: tournament,
         matchId: match,
-        selectedTeamId: team,
+        founderTeamId: team,
         stake: stake
       })
       showToast("Bet successfully created")
     } catch (error) {
+      showErrorToast("Error placing bet")
       console.error('Error placing bet:', error);
     }
   }
@@ -185,7 +186,7 @@ function showToast(message: string): void {
                             <p className="font-semibold text-base text-white">{match.team2Id.teamName}</p>
                           </div>
                           <div className="ml-auto text-gray-400 text-sm text-center">
-                            {match.matchDate} // {`${match.matchTime.slice(0,2)}:${match.matchTime.slice(2)}`}
+                            {match.matchDate} // {`${match.matchTime.slice(0, 2)}:${match.matchTime.slice(2)}`}
                           </div>
                         </div>
                       </SelectItem>

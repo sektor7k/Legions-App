@@ -23,9 +23,9 @@ export default function BetHeader() {
                         href={'/'}
                     >
                         <Image
-                            src={"/logoDark.png"}
+                            src={"/betlogo.png"}
                             alt="Logo"
-                            width={130}
+                            width={190}
                             height={100}
                         />
 
