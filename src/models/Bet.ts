@@ -4,9 +4,12 @@ export interface BetDocument extends Document {
     founderId: Types.ObjectId;
     tournamentId: Types.ObjectId;
     matchId: Types.ObjectId;
-    selectedTeamId: Types.ObjectId;
+    founderTeamId: Types.ObjectId;
     stake: Number;
-
+    status: 'open' | 'closed' | 'completed';
+    opponentId?: Types.ObjectId;
+    opponentTeamId?: Types.ObjectId;
+    winnerId?: Types.ObjectId;
 }
 
 const betSchema = new Schema<BetDocument>({
@@ -25,7 +28,7 @@ const betSchema = new Schema<BetDocument>({
         required: true,
         ref: 'Match',
     },
-    selectedTeamId: {
+    founderTeamId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'Team',
@@ -33,12 +36,30 @@ const betSchema = new Schema<BetDocument>({
     stake: {
         type: Number,  // Değiştirildi
         required: true,
-    }
+    },
+    status: {
+        type: String,
+        enum: ['open', 'closed', 'completed'],
+        default: 'open',
+        required: true,
+    },
+    opponentId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    opponentTeamId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Team'
+    },
+    winnerId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
 }, {
     timestamps: true,
 });
 
-
 const Bet = models.Bet || model<BetDocument>('Bet', betSchema);
 
 export default Bet;
+
