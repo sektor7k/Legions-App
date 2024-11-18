@@ -8,15 +8,19 @@ import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-
+    
     try {
-        await connectDB()
+      await connectDB()
+
+      const reqBody = await request.json();
+      const {status} = reqBody;
+        
 
         if (!Bet && !Match && !Team && !Tournament && !User) {
             return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
         }
 
-        const bets = await Bet.find({})
+        const bets = await Bet.find({status})
           .populate({
             path: 'founderId',
             select: 'username image'
@@ -39,8 +43,6 @@ export async function POST(request: NextRequest) {
               }
             ]
           });
-
-        console.log(bets)
 
         return NextResponse.json({ data: bets }, { status: 201 })
 
