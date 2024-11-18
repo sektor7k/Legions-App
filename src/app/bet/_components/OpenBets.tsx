@@ -3,17 +3,31 @@ import axios from "axios";
 import Image from "next/image"
 import { useEffect, useState } from "react";
 import { FaForward } from "react-icons/fa";
+import { Button } from "@/components/ui/button"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { toast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
+import { SquareArrowOutUpRight } from "lucide-react";
+import Link from "next/link";
 
 interface Bet {
     _id: string;
-    founderId: Founder;
+    founderId: User;
     tournamentId: Tournament;
     matchId: Match;
-    selectedTeamId: string;
+    founderTeamId: string;
     stake: Number;
 }
 
-interface Founder {
+interface User {
     _id: string;
     username: string;
     image: string;
@@ -43,11 +57,12 @@ interface Team {
 export default function OpenBets() {
 
     const [bets, setBets] = useState<Bet[]>([]);
+    const router = useRouter();
 
     useEffect(() => {
         const getOpenBet = async () => {
             try {
-                const response = await axios.post('/api/bet/getOpenBet', {})
+                const response = await axios.post('/api/bet/getOpenBet', { status: 'open' })
                 setBets(response.data.data)
             } catch (error) {
                 console.error(error);
@@ -55,6 +70,37 @@ export default function OpenBets() {
         }
         getOpenBet();
     }, [])
+
+    function showErrorToast(message: string): void {
+        toast({
+            variant: "destructive",
+            title: message,
+            description: "",
+        })
+    }
+
+    function showToast(message: string): void {
+        toast({
+            variant: "default",
+            title: message,
+            description: "",
+        })
+    }
+
+    const joinBet = async (betId: string ,opponentTeamId:string) => {
+        try {
+            const response = await axios.post('/api/bet/joinBet',{
+                id: betId,
+                opponentTeamId
+            })
+            
+            showToast("Successfully participated in bets")
+        } catch (error) {
+            router.refresh()
+            showErrorToast("Error placing bet")
+            console.error('Error placing bet:', error);
+        }
+    }
     return (
         <div className="w-full flex flex-col space-y-4">
             {bets.map((bet) => (
@@ -88,7 +134,7 @@ export default function OpenBets() {
                                     <p className="font-bold text-lg text-gray-100">{bet.matchId.team1Id.teamName}</p>
                                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
                                         <Image
-                                            src={bet.matchId.team1Id._id === bet.selectedTeamId ? bet.founderId.image:"/green.png"}
+                                            src={bet.matchId.team1Id._id === bet.founderTeamId ? bet.founderId.image : "/green.png"}
                                             height="100"
                                             width="100"
                                             alt="Team1"
@@ -110,7 +156,7 @@ export default function OpenBets() {
                                     <p className="font-bold text-lg text-gray-100">{bet.matchId.team2Id.teamName}</p>
                                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
                                         <Image
-                                            src={bet.matchId.team2Id._id === bet.selectedTeamId ? bet.founderId.image:"/green.png"}
+                                            src={bet.matchId.team2Id._id === bet.founderTeamId ? bet.founderId.image : "/green.png"}
                                             height="100"
                                             width="100"
                                             alt="Team1"
@@ -134,15 +180,120 @@ export default function OpenBets() {
                             />
                             <p className="font-semibold text-sm text-gray-100">{bet.founderId.username}</p>
                         </div>
-                        <button className="bg-blue-950 bg-opacity-50 hover:bg-none flex flex-col items-center p-2 rounded-md relative group transition-all duration-300 min-h-[60px] min-w-[120px]">
-                            <div className="text-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 absolute">
-                                <p className="text-xs font-bold">PLACED BET OF</p>
-                                <p className="text-2xl font-extrabold text-blue-700">${bet.stake.toString()}</p>
-                            </div>
-                            <p className="text-2xl font-bold  text-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                Play
-                            </p>
-                        </button>
+
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <button className="bg-blue-950 bg-opacity-50 hover:bg-none flex flex-col items-center p-2 rounded-md relative group transition-all duration-300 min-h-[60px] min-w-[120px]">
+                                    <div className="text-center transition-opacity duration-300 opacity-100 group-hover:opacity-0 absolute">
+                                        <p className="text-xs font-bold">PLACED BET OF</p>
+                                        <p className="text-2xl font-extrabold text-blue-700">${bet.stake.toString()}</p>
+                                    </div>
+                                    <p className="text-2xl font-bold  text-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        Play
+                                    </p>
+                                </button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[800px] bg-gray-950">
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        <div className="relative flex flex-row items-center space-x-1 ">
+                                            <Image
+                                                src={bet.tournamentId.organizerAvatar}
+                                                height="20"
+                                                width="20"
+                                                alt="Organizer Avatar"
+                                                className="h-8 w-8 rounded-full border-2 object-cover"
+                                            />
+                                            <p className="font-bold text-base text-gray-500">{bet.tournamentId.organizer}: {bet.tournamentId.tname}</p>
+                                        </div>
+                                    </DialogTitle>
+
+                                </DialogHeader>
+                                <div className="flex flex-col space-y-5">
+                                    <div className="flex flex-row items-center justify-center space-x-12">
+                                        <div className="relative flex flex-row items-center space-x-4">
+                                            <div className="relative">
+                                                <Image
+                                                    src={bet.matchId.team1Id.teamImage}
+                                                    height="100"
+                                                    width="100"
+                                                    alt="Team2"
+                                                    className="h-24 w-24 rounded-full border-2 object-cover"
+                                                />
+                                                <div className="absolute bottom-0 right-0 transform translate-x-1/2 translate-y-2 flex flex-row items-center   px-2 space-x-1">
+                                                    <Image
+                                                        src={bet.matchId.team1Id._id === bet.founderTeamId ? bet.founderId.image : "/green.png"}
+                                                        height="100"
+                                                        width="100"
+                                                        alt="founder"
+                                                        className="h-7 w-7 rounded-full border-2 object-cover border-gray-900"
+                                                    />
+                                                    <p className="text-sm text-gray-400 font-semibold">{bet.matchId.team1Id._id === bet.founderTeamId ? bet.founderId.username : "Avaliable"}</p>
+                                                </div>
+                                            </div>
+                                            <p className="font-bold text-3xl text-gray-100">{bet.matchId.team1Id.teamName}</p>
+
+                                        </div>
+                                        <div className="text-lg font-semibold text-gray-500">
+                                            VS
+                                        </div>
+                                        <div className="relative flex flex-row items-center space-x-4">
+                                            <div className="relative">
+                                                <Image
+                                                    src={bet.matchId.team2Id.teamImage}
+                                                    height="100"
+                                                    width="100"
+                                                    alt="Team2"
+                                                    className="h-24 w-24 rounded-full border-2 object-cover"
+                                                />
+                                                <div className="absolute bottom-0 right-0 transform translate-x-1/2 translate-y-2 flex flex-row items-center   px-2 space-x-1">
+                                                    <Image
+                                                        src={bet.matchId.team2Id._id === bet.founderTeamId ? bet.founderId.image : "/green.png"}
+                                                        height="100"
+                                                        width="100"
+                                                        alt="founder"
+                                                        className="h-7 w-7 rounded-full border-2 object-cover border-gray-900"
+                                                    />
+                                                    <p className="text-sm text-gray-400 font-semibold">{bet.matchId.team2Id._id === bet.founderTeamId ? bet.founderId.username : "Avaliable"}</p>
+                                                </div>
+                                            </div>
+                                            <p className="font-bold text-3xl text-gray-100">{bet.matchId.team2Id.teamName}</p>
+                                        </div>
+
+                                    </div>
+                                    <div
+                                        className="p-4 rounded-bl-md text-white bg-gradient-to-t from-green-700/0 via-blue-700/30 to-green-700/0 flex flex-row space-x-2 items-center justify-center"
+                                    >
+                                        <FaForward className="bg-blue-700 p-1 w-6 h-6 rounded-md" />
+                                        <span className="font-semibold text-blue-400">
+                                            {bet.matchId.matchDate} / {`${bet.matchId.matchTime.slice(0, 2)}:${bet.matchId.matchTime.slice(2)}`}
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <div className="flex flex-row space-x-2">
+                                            <p className="text-base font-semibold text-blue-700">Bet status:</p>
+                                            <p className="text-base font-semibold text-gray-300">Open</p>
+                                        </div>
+                                        <div className="flex flex-row space-x-2">
+                                            <p className="text-base font-semibold text-blue-700">Team to Bet On:</p>
+                                            <p className="text-base font-semibold text-gray-300">{bet.founderTeamId === bet.matchId.team1Id._id ? bet.matchId.team2Id.teamName : bet.matchId.team1Id.teamName}</p>
+                                        </div>
+                                        <div className="flex flex-row space-x-2">
+                                            <p className="text-base font-semibold text-blue-700">Stake amount:</p>
+                                            <p className="text-base font-semibold text-gray-300">${bet.stake.toString()}</p>
+                                        </div>
+                                        <div className="flex flex-row space-x-2 items-center">
+                                            <p className="text-base font-semibold text-blue-700">Go the tournament:</p>
+                                            <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/t/${bet.tournamentId._id}`}><SquareArrowOutUpRight className="h-5" /></Link>
+                                        </div>
+                                    </div>
+                                </div>
+                                <DialogFooter>
+
+                                    <Button onClick={()=>joinBet(bet._id,bet.founderTeamId === bet.matchId.team1Id._id ? bet.matchId.team2Id._id : bet.matchId.team1Id._id)} type="submit">Place a bet</Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
 
 
                     </div>
