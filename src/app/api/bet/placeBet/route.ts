@@ -14,22 +14,22 @@ export async function POST(request: NextRequest) {
 
         if (!session) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-          }
+        }
 
         const reqBody = await request.json();
-        const { tournamentId, matchId, selectedTeamId, stake } = reqBody;
+        const { tournamentId, matchId, founderTeamId, stake } = reqBody;
 
-        if (!tournamentId || !matchId || !selectedTeamId || !stake) {
+        if (!tournamentId || !matchId || !founderTeamId || !stake) {
             return NextResponse.json({ message: "All fields are required" }, { status: 400 });
-          }
+        }
 
-          const founderId = session.user.id
+        const founderId = session.user.id
 
         const bet = new Bet({
             founderId,
             tournamentId,
             matchId,
-            selectedTeamId,
+            founderTeamId,
             stake
         })
 
