@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Search } from "lucide-react";
@@ -8,8 +7,7 @@ import ClosedBets from "./_components/ClosedBets";
 import MyBets from "./_components/MyBets";
 import History from "./_components/History";
 import AddBet from "./_components/AddBet";
-
-
+ 
 export default function BetsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("open");
@@ -39,7 +37,6 @@ export default function BetsPage() {
               CLOSED BETS
             </button>
           </div>
-
 
           {/* Arama Çubuğu */}
           <div className="flex items-center">

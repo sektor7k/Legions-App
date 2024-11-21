@@ -5,6 +5,7 @@ import { default as flattenColorPalette } from "tailwindcss/lib/util/flattenColo
 
 
 const config = withUt({
+  important: false,
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
