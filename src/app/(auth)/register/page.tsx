@@ -93,45 +93,45 @@ export default function RegisterPage() {
         })
     }
 
-    async function registerMetamask() {
-        try {
-            if (!window.ethereum) {
-                window.alert("Please install MetaMask first.");
-                return;
-            }
+    // async function registerMetamask() {
+    //     try {
+    //         if (!window.ethereum) {
+    //             window.alert("Please install MetaMask first.");
+    //             return;
+    //         }
 
-            const provider = new ethers.BrowserProvider(window.ethereum);
-            const signer = await provider.getSigner();
-            const publicAddress = await signer.getAddress();
-            console.log("PUBLIC ADDRESS", publicAddress);
+    //         const provider = new ethers.BrowserProvider(window.ethereum);
+    //         const signer = await provider.getSigner();
+    //         const publicAddress = await signer.getAddress();
+    //         console.log("PUBLIC ADDRESS", publicAddress);
 
-            // Nonce oluşturma API'sine istek gönder
-            const response = await axios.post('/api/auth/crypto/generateNonce', { publicAddress });
-            console.log("RESPONSE", response.data);
+    //         // Nonce oluşturma API'sine istek gönder
+    //         const response = await axios.post('/api/auth/crypto/generateNonce', { publicAddress });
+    //         console.log("RESPONSE", response.data);
 
-            if (!response.data.nonce) {
-                console.error("Failed to fetch nonce");
-                return;
-            }
+    //         if (!response.data.nonce) {
+    //             console.error("Failed to fetch nonce");
+    //             return;
+    //         }
 
-            // Nonce'u imzala
-            const signedNonce = await signer.signMessage(response.data.nonce);
-            console.log("SIGNED NONCE", signedNonce);
+    //         // Nonce'u imzala
+    //         const signedNonce = await signer.signMessage(response.data.nonce);
+    //         console.log("SIGNED NONCE", signedNonce);
 
-            await axios.post('/api/auth/crypto/register', {
-                publicAddress,
-                signedNonce
-            });
-            router.push('/login')
+    //         await axios.post('/api/auth/crypto/register', {
+    //             publicAddress,
+    //             signedNonce
+    //         });
+    //         router.push('/login')
 
-            showToastWallet("Signup successfully!");
+    //         showToastWallet("Signup successfully!");
 
 
-        } catch (error: any) {
-            const errorMessage = error.response.data.message;
-            showErrorToast(errorMessage);
-        }
-    }
+    //     } catch (error: any) {
+    //         const errorMessage = error.response.data.message;
+    //         showErrorToast(errorMessage);
+    //     }
+    // }
 
 
     return (
@@ -209,7 +209,7 @@ export default function RegisterPage() {
                     <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
 
                     <div className="flex flex-col space-y-4">
-                        <button
+                        {/* <button
                             onClick={registerMetamask}
                             className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
                             type="submit"
@@ -244,7 +244,7 @@ export default function RegisterPage() {
                                 Metamask
                             </span>
                             <BottomGradient />
-                        </button>
+                        </button> */}
                         <button
                             onClick={() => signIn("github")}
                             className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
