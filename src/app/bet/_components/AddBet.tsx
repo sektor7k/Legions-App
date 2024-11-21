@@ -22,6 +22,8 @@ import { useEffect, useState } from "react";
 import { Slider } from "@/components/ui/slider"
 import { cn } from "@/lib/utils"
 import { toast } from "@/components/ui/use-toast";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 
 interface Tournament {
   _id: string;
@@ -50,6 +52,36 @@ export default function AddBet() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [team, setTeam] = useState<string>("");
   const [stake, setStake] = useState<string>("");
+
+  const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
+
+  const sendSol = async () => {
+    
+   
+    if (!publicKey) {
+      console.error("Wallet not connected");
+      return;
+    }
+   
+    try {
+      const recipientPubKey = new PublicKey("W8aVm1tZCgCjDc9butDHSuuhXUrQ6FYYG5SveF9x7dC");
+   
+      const transaction = new Transaction();
+      const sendSolInstruction = SystemProgram.transfer({
+        fromPubkey: publicKey,
+        toPubkey: recipientPubKey,
+        lamports: 0.1 * LAMPORTS_PER_SOL,
+      });
+   
+      transaction.add(sendSolInstruction);
+   
+      const signature = await sendTransaction(transaction, connection);
+      console.log(`Transaction signature: ${signature}`);
+    } catch (error) {
+      console.error("Transaction failed", error);
+    }
+  };
 
   // Tüm turnuvaları çek
   useEffect(() => {
@@ -109,6 +141,8 @@ export default function AddBet() {
       showErrorToast("Please fill in all fields.");
       return;
     }
+
+    // await sendSol();
 
     try {
 
@@ -272,6 +306,9 @@ export default function AddBet() {
           <DialogFooter>
             <Button type="submit" disabled={!team || !stake} onClick={placeBet}>
               Place Bet
+            </Button>
+            <Button onClick={sendSol}>
+              Send sol
             </Button>
           </DialogFooter>
         </DialogContent>
