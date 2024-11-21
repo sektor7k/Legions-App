@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { extractRouterConfig } from "uploadthing/server";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { Wallet } from "@/context/WalletProvider";
 
 
 
@@ -31,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Provider>
-      <body
+        <body
           className={cn(
             "min-h-screen font-sans antialiased dark",
             fontSans.variable
@@ -46,7 +47,11 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <main>{children}</main>
+              <main>
+                <Wallet>
+                  {children}
+                </Wallet>
+              </main>
               <Toaster />
             </ThemeProvider>
           </div>
