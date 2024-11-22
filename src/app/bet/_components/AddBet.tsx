@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -18,12 +19,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { ElementRef, useEffect, useRef, useState } from "react";
 import { Slider } from "@/components/ui/slider"
 import { cn } from "@/lib/utils"
 import { toast } from "@/components/ui/use-toast";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import Link from "next/link";
+import { TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
+
 
 interface Tournament {
   _id: string;
@@ -53,33 +57,107 @@ export default function AddBet() {
   const [team, setTeam] = useState<string>("");
   const [stake, setStake] = useState<string>("");
 
+  const closeRef = useRef<ElementRef<"button">>(null);
+
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
 
+  
+
   const sendSol = async () => {
-    
-   
+
+
     if (!publicKey) {
       console.error("Wallet not connected");
       return;
     }
-   
+
     try {
       const recipientPubKey = new PublicKey("W8aVm1tZCgCjDc9butDHSuuhXUrQ6FYYG5SveF9x7dC");
-   
+
       const transaction = new Transaction();
       const sendSolInstruction = SystemProgram.transfer({
         fromPubkey: publicKey,
         toPubkey: recipientPubKey,
         lamports: 0.1 * LAMPORTS_PER_SOL,
       });
-   
+
       transaction.add(sendSolInstruction);
-   
+
       const signature = await sendTransaction(transaction, connection);
       console.log(`Transaction signature: ${signature}`);
+      return signature;
     } catch (error) {
       console.error("Transaction failed", error);
+    }
+  };
+
+  const sendUsdc = async (stake:number) => {
+    if (!publicKey) {
+      console.error("Wallet not connected");
+      return;
+    }
+  
+    try {
+      const recipientPubKey = new PublicKey("W8aVm1tZCgCjDc9butDHSuuhXUrQ6FYYG5SveF9x7dC"); // Alıcının cüzdan adresi
+      const usdcMintAddress = new PublicKey("Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr"); // USDC mint adresi
+      const amount = stake * 10 ** 6; // 1 USDC = 10^6 lamports
+  
+      // Gönderenin token hesabını alın
+      const senderTokenAddress = await getAssociatedTokenAddress(
+        usdcMintAddress,
+        publicKey // Gönderen cüzdan adresi
+      );
+  
+      // Gönderen token hesabını kontrol et
+      const senderAccountInfo = await getAccount(connection, senderTokenAddress);
+      if (!senderAccountInfo) {
+        throw new Error("Gönderenin token hesabı bulunamadı");
+      }
+  
+      // Alıcının token hesabını alın
+      const recipientTokenAddress = await getAssociatedTokenAddress(
+        usdcMintAddress,
+        recipientPubKey // Alıcının cüzdan adresi
+      );
+  
+      const transaction = new Transaction();
+  
+      // Alıcının token hesabı yoksa oluştur
+      const recipientAccountInfo = await connection.getAccountInfo(recipientTokenAddress);
+      if (!recipientAccountInfo) {
+        transaction.add(
+          createAssociatedTokenAccountInstruction(
+            publicKey,
+            recipientTokenAddress,
+            recipientPubKey,
+            usdcMintAddress
+          )
+        );
+      }
+  
+      // Transfer talimatını ekle
+      transaction.add(
+        createTransferInstruction(
+          senderTokenAddress,
+          recipientTokenAddress,
+          publicKey,
+          amount,
+          [],
+          TOKEN_PROGRAM_ID
+        )
+      );
+  
+      // İşlem ücret ödeyicisini belirt
+      transaction.feePayer = publicKey;
+  
+      // İşlemi gönder
+      const signature = await sendTransaction(transaction, connection);
+      console.log(`Transaction signature: ${signature}`);
+      return signature;
+    } catch (error) {
+      console.error("İşlem başarısız:", error);
+      throw error; // Hata fırlat
     }
   };
 
@@ -126,38 +204,54 @@ export default function AddBet() {
     })
   }
 
-  function showToast(message: string): void {
+  function showToast(message: string, txHash:string): void {
     toast({
       variant: "default",
       title: message,
-      description: "",
+      description: (
+        <Link 
+          href={`https://solscan.io/tx/${txHash}?cluster=devnet`}
+          className="text-gray-100 hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          https://solscan.io/tx/{txHash.slice(0, 10)}...
+        </Link>
+      ),
     })
   }
 
 
   const placeBet = async () => {
-
     if (!tournament || !match || !team || !stake) {
       showErrorToast("Please fill in all fields.");
       return;
     }
-
-    // await sendSol();
-
+  
+    // Ödeme işlemi
+    const paymentSuccessful = await sendUsdc(parseInt(stake));
+  
+    if (!paymentSuccessful) {
+       showErrorToast("Payment failed. Please try again.");
+      return;
+    }
+  
+    // Ödeme başarılıysa bahis kaydı
     try {
-
       const response = await axios.post('/api/bet/placeBet', {
         tournamentId: tournament,
         matchId: match,
         founderTeamId: team,
-        stake: stake
-      })
-      showToast("Bet successfully created")
+        stake: stake,
+      });
+      showToast("Bet successfully created",paymentSuccessful);
+      closeRef?.current?.click();
     } catch (error) {
-      showErrorToast("Error placing bet")
-      console.error('Error placing bet:', error);
+      showErrorToast("Error placing bet");
+      console.error("Error placing bet:", error);
     }
-  }
+  };
+  
 
   return (
     <div className="mt-auto p-3 border-t border-gray-700">
@@ -304,12 +398,17 @@ export default function AddBet() {
             </div>
           </div>
           <DialogFooter>
+            <div className="flex justify-between w-full">
+            <DialogClose ref={closeRef} asChild>
+              <Button type="button" variant={"ghost"}>
+                Cancel
+              </Button>
+            </DialogClose>
             <Button type="submit" disabled={!team || !stake} onClick={placeBet}>
               Place Bet
             </Button>
-            <Button onClick={sendSol}>
-              Send sol
-            </Button>
+            </div>
+            
           </DialogFooter>
         </DialogContent>
       </Dialog>
