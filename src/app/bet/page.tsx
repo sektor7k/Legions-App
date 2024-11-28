@@ -56,23 +56,16 @@ export default function BetsPage() {
         {activeTab === "open" && <OpenBets />}
         {activeTab === "closed" && <ClosedBets />}
       </div>
-      <div className="w-3/12  flex flex-col h-96 bg-gray-900 rounded-md">
+      <div className="w-3/12  flex flex-col h-[600px] bg-gray-900 rounded-md">
         <div className="flex flex-row space-x-2 pt-2 px-3 border-b border-gray-700">
           <button
-            onClick={() => setActiveTab2("mybets")}
-            className={`font-bold px-3 h-9 text-lg  rounded-none transition-all duration-400 ease-in-out ${activeTab2 === "mybets" ? "text-blue-700 border-gradient-bottom " : "text-gray-200"}`}
+            
+            className={`font-bold px-3 h-9 text-lg  rounded-none transition-all duration-400 ease-in-out border-gradient-bottom `}
           >
-            MY BETS
+            Activity Feed
           </button>
-          <button
-            onClick={() => setActiveTab2("history")}
-            className={`font-bold px-3 h-9 text-lg  rounded-none transition-all duration-400 ease-in-out ${activeTab2 === "history" ? "text-blue-700 border-gradient-bottom  " : "text-gray-200"}`}
-          >
-            HISTORY
-          </button>
+          
         </div>
-        {activeTab2 === "mybets" && <MyBets />}
-        {activeTab2 === "history" && <History />}
 
         <AddBet/>
       </div>
