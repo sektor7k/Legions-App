@@ -20,6 +20,8 @@ import {
     SheetDescription,
 } from "@/components/ui/sheet";
 import { CheckCircle, Copy, ExternalLink, LogOut } from "lucide-react";
+import MyBets from "./MyBets";
+import Activity from "./Activity";
 
 export default function BetDashboard() {
     const [balance, setBalance] = useState(0);
@@ -27,7 +29,7 @@ export default function BetDashboard() {
     const { connection } = useConnection();
     const { publicKey, disconnect } = useWallet();
     const [copied, setCopied] = useState(false);
-    const [activeTab, setActiveTab] = useState("open");
+    const [activeTab, setActiveTab] = useState("mybets");
 
 
     const handleCopy = async () => {
@@ -169,8 +171,8 @@ export default function BetDashboard() {
                         <div className="flex flex-col w-full h-full bg-gray-800 pt-2 p-4 space-y-4">
                             <div className="flex flex-row justify-center items-center space-x-2 bg-gray-950/70 p-1 rounded-lg">
                                 <button
-                                    onClick={() => setActiveTab("open")}
-                                    className={`font-bold w-full h-9 border-none rounded-lg transition-all duration-400 ease-in-out ${activeTab === "open"
+                                    onClick={() => setActiveTab("mybets")}
+                                    className={`font-bold w-full h-9 border-none rounded-lg transition-all duration-400 ease-in-out ${activeTab === "mybets"
                                         ? "bg-gray-800 bg-opacity-70"
                                         : "text-gray-600"
                                         }`}
@@ -178,8 +180,8 @@ export default function BetDashboard() {
                                     My Bets
                                 </button>
                                 <button
-                                    onClick={() => setActiveTab("closed")}
-                                    className={`font-bold w-full h-9 border-none rounded-lg transition-all duration-400 ease-in-out ${activeTab === "closed"
+                                    onClick={() => setActiveTab("activity")}
+                                    className={`font-bold w-full h-9 border-none rounded-lg transition-all duration-400 ease-in-out ${activeTab === "activity"
                                         ? "bg-gray-800 bg-opacity-70"
                                         : "text-gray-600"
                                         }`}
@@ -187,9 +189,10 @@ export default function BetDashboard() {
                                     Activity
                                 </button>
                             </div>
-                            <div className="bg-gray-900 h-full rounded-lg">
-
-                            </div>
+                            
+                            {activeTab === "mybets" && <MyBets />}
+                            {activeTab === "activity" && <Activity />}
+                            
                         </div>
 
                     </SheetContent>
