@@ -5,8 +5,9 @@ import { Search } from "lucide-react";
 import OpenBets from "./_components/OpenBets";
 import ClosedBets from "./_components/ClosedBets";
 import MyBets from "./_components/MyBets";
-import History from "./_components/History";
+import History from "./_components/Activity";
 import AddBet from "./_components/AddBet";
+import ActivityFeed from "./_components/ActivityFeed";
  
 export default function BetsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,15 +58,13 @@ export default function BetsPage() {
         {activeTab === "closed" && <ClosedBets />}
       </div>
       <div className="w-3/12  flex flex-col h-[600px] bg-gray-900 rounded-md">
-        <div className="flex flex-row space-x-2 pt-2 px-3 border-b border-gray-700">
-          <button
-            
-            className={`font-bold px-3 h-9 text-lg  rounded-none transition-all duration-400 ease-in-out border-gradient-bottom `}
-          >
-            Activity Feed
-          </button>
+        <div className="flex flex-row justify-center items-center space-x-2 pt-2 px-3 border-b border-gray-700">
+         <p className="text-xl text-center text-gray-300 text-nowrap font-bold border-gradient-bottom w-60">
+          Activity Feed
+         </p>
           
         </div>
+        <ActivityFeed/>
 
         <AddBet/>
       </div>
