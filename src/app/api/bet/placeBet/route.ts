@@ -30,7 +30,8 @@ export async function POST(request: NextRequest) {
             tournamentId,
             matchId,
             founderTeamId,
-            stake
+            stake,
+            status: "open"
         })
 
         const savedBet = await bet.save();

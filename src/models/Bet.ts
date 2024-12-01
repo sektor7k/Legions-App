@@ -40,7 +40,6 @@ const betSchema = new Schema<BetDocument>({
     status: {
         type: String,
         enum: ['open', 'closed', 'completed'],
-        default: 'open',
         required: true,
     },
     opponentId: {
