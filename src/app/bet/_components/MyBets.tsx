@@ -2,6 +2,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { FaForward } from "react-icons/fa6";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function MyBets() {
     const [expandedId, setExpandedId] = useState<number | null>(null);
@@ -221,7 +222,10 @@ export default function MyBets() {
                                     {expandedId === bet.id ? <ChevronUp /> : <ChevronDown />}
                                 </button>
                                 {bet.betstatus === "won" ? (
-                                    <button > Claim</button>
+                                    <button className=" bg-green-600 py-1 p-4 rounded-lg bg-gradient-to-r from-green-800 via-green-500/40 to-green-800 hover:bg-opacity-50 "
+                                    >
+                                        Claim
+                                    </button>
                                 ) : (
                                     <div></div>
                                 )}
