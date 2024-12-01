@@ -1,15 +1,71 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { FaForward } from "react-icons/fa6";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+interface Bet {
+    _id: string;
+    founderId: User;
+    tournamentId: Tournament;
+    matchId: Match;
+    founderTeamId: string;
+    stake: Number;
+    opponentId?: User;
+    opponentTeamId?: string;
+    betstatus:string;
+}
+
+interface User {
+    _id: string;
+    username: string;
+    image: string;
+}
+
+interface Tournament {
+    _id: string;
+    thumbnail: string,
+    tname: string,
+    organizer: string,
+    organizerAvatar: string
+}
+interface Match {
+    _id: string;
+    team1Id: Team,
+    team2Id: Team,
+    matchDate: string,
+    matchTime: string
+}
+interface Team {
+    _id: string;
+    teamName: string;
+    teamImage: string;
+}
 
 export default function MyBets() {
+
+    const [myBets, mySetBets] = useState<Bet[]>([]);
+
     const [expandedId, setExpandedId] = useState<number | null>(null);
 
     const toggleDetails = (id: number) => {
         setExpandedId(expandedId === id ? null : id);
     };
+
+    useEffect(() => {
+        const getUserBet = async () => {
+            try {
+                const response = await axios.post("/api/bet/getUserBet")
+                mySetBets(response.data);
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getUserBet();
+
+
+    }, [])
 
     const bets = [
         {
