@@ -325,7 +325,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
 
     return (
-        <div className=" flex flex-col w-full justify-center items-center space-y-3">
+        <div className=" flex flex-col w-full justify-center items-center space-y-3 relative z-auto">
             <div className=" flex flex-col justify-start space-y-3 bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm p-3 px-8 rounded-lg">
                 <p className=" text-red-700 font-semibold">
                     CURRENT PHASE

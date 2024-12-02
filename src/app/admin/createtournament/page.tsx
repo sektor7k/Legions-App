@@ -143,7 +143,7 @@ export default function CreateTournament() {
     }
 
     return (
-        <div className=" flex items-center justify-center w-full ">
+        <div className=" flex flex-col items-center justify-center w-screen  ">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-2/5">
                     <FormField

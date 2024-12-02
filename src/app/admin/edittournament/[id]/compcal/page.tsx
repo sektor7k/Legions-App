@@ -145,7 +145,7 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
     }
 
     return (
-        <div className=" max-w-6xl mx-auto p-8 space-y-8">
+        <div className=" max-w-6xl mx-auto p-8 space-y-8 w-screen">
             <div className="flex flex-col justify-center items-center">
                 <p className="text-4xl font-extrabold border-gradient-bottom px-8 p-1">Compcal</p>
                 <p className="text-gray-400 text-sm font-semibold">Check match dates in the tournament.</p>

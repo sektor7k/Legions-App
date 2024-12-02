@@ -28,7 +28,7 @@ export default function EditTournaments() {
     
 
     return (
-        <div className="flex flex-col items-center justify-center mt-8 px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center justify-center mt-8 px-4 sm:px-6 lg:px-8 ">
             <div className="flex flex-col justify-center items-center">
                 <p className="text-4xl font-extrabold border-gradient-bottom px-8 p-1">EDIT TOURNAMENTS</p>
                 <p className="text-gray-400 text-sm font-semibold">View tournaments powered by Castrum Legions!</p>
