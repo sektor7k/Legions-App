@@ -7,6 +7,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 
 interface Bet {
+    createdAt: string | number | Date;
     _id: string;
     founderId: User;
     tournamentId: Tournament;
@@ -44,7 +45,7 @@ interface Team {
     teamImage: string;
 }
 
-export default function MyBetsCards(){
+export default function MyBetsCards() {
 
 
     const { data: session } = useSession();
@@ -60,9 +61,16 @@ export default function MyBetsCards(){
         const getUserBet = async () => {
             try {
                 const response = await axios.post("/api/bet/getUserBet");
-
                 if (response.data.data && Array.isArray(response.data.data)) {
-                    mySetBets(response.data.data);
+                    const sortedBets = response.data.data.sort((a: Bet, b: Bet) => {
+
+                        if (a.betstatus === "ongoing" && b.betstatus !== "ongoing") return -1;
+                        if (a.betstatus !== "ongoing" && b.betstatus === "ongoing") return 1;
+
+
+                        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                    });
+                    mySetBets(sortedBets);
                 } else {
                     console.error("Invalid data format from API:", response.data.data);
                 }
@@ -167,10 +175,22 @@ export default function MyBetsCards(){
                                             className="h-7 w-7 rounded-full"
                                         />
                                         <p className=" font-bold text-gray-500 text-xs">
-                                            {bet.founderId.username}
+                                            {
+                                                bet.matchId.team1Id._id === bet.founderTeamId
+                                                    ? bet.founderId.username
+                                                    : bet.opponentId?.username
+                                                        ? bet.opponentId?.username
+                                                        : "user"
+                                            }
                                         </p>
                                         <p className=" font-bold">
-                                            ${bet.stake.toString()}
+                                        ${
+                                                bet.matchId.team1Id._id === bet.founderTeamId
+                                                    ? bet.stake.toString()
+                                                    : bet.opponentId?._id
+                                                        ? bet.stake.toString()
+                                                        : "--"
+                                            }
                                         </p>
 
                                     </div>
@@ -237,10 +257,22 @@ export default function MyBetsCards(){
                                             className="h-7 w-7 rounded-full"
                                         />
                                         <p className=" font-bold text-gray-500 text-xs">
-                                            {bet.matchId.team2Id._id === bet.opponentTeamId ? bet.opponentId?.username || "user" : "user"}
+                                            {
+                                                bet.matchId.team2Id._id === bet.founderTeamId
+                                                    ? bet.founderId.username
+                                                    : bet.opponentId?.username
+                                                        ? bet.opponentId?.username
+                                                        : "/user"
+                                            }
                                         </p>
                                         <p className=" font-bold">
-                                            ${bet.matchId.team2Id._id === bet.opponentTeamId ? bet.stake.toString() : "--"}
+                                        ${
+                                                bet.matchId.team2Id._id === bet.founderTeamId
+                                                    ? bet.stake.toString()
+                                                    : bet.opponentId?._id
+                                                        ? bet.stake.toString()
+                                                        : "--"
+                                            }
                                         </p>
 
                                     </div>
