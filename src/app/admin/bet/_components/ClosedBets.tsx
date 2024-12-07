@@ -1,11 +1,12 @@
 "use client"
 import axios from "axios";
 import Image from "next/image"
-import { useEffect, useState } from "react";
+import { ElementRef, useEffect, useRef, useState } from "react";
 import { FaForward } from "react-icons/fa";
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -24,7 +25,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { toast } from "@/components/ui/use-toast";
 interface Bet {
+    createdAt: string | number | Date;
     _id: string;
     founderId: User;
     tournamentId: Tournament;
@@ -67,26 +70,40 @@ export default function ClosedBets() {
     const [bets, setBets] = useState<Bet[]>([]);
     const [winnerId, setWinnerId] = useState<string>("")
 
+    const closeRef = useRef<ElementRef<"button">>(null);
+
     useEffect(() => {
-        const getOpenBet = async () => {
+        const getClosedBet = async () => {
             try {
-                const response = await axios.post('/api/bet/getClosedBet', { status: 'closed' })
-                setBets(response.data.data)
+                const response = await axios.post('/api/bet/getClosedBet', { status: 'closed' });
+
+                if (response.data.data && Array.isArray(response.data.data)) {
+                    // Zamana göre sıralama: En yeni en üstte
+                    const sortedBets = response.data.data.sort((a: Bet, b: Bet) =>
+                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    );
+
+                    setBets(sortedBets);
+                } else {
+                    console.error("Invalid data format from API:", response.data.data);
+                }
             } catch (error) {
-                console.error(error);
+                console.error("Failed to fetch closed bets:", error);
             }
-        }
-        getOpenBet();
-    }, [])
+        };
+
+        getClosedBet();
+    }, []);
+
 
     const setWinner = async (betId: string) => {
         try {
-            const response = await axios.post('/api/bet/setWinner',{
+            const response = await axios.post('/api/bet/setWinner', {
                 betId,
                 winnerId
             });
-            console.log(response.data);
-            
+            closeRef?.current?.click();
+
         } catch (error) {
             console.error("Something error", error);
         }
@@ -302,12 +319,19 @@ export default function ClosedBets() {
                                                     </SelectGroup>
                                                 </SelectContent>
                                             </Select>
-                                            <Button onClick={()=>setWinner(bet._id)} size={"sm"}>Set Winner</Button>
+
                                         </div>
                                     </div>
                                 </div>
                                 <DialogFooter>
-
+                                    <div className="flex justify-between w-full">
+                                        <DialogClose ref={closeRef} asChild>
+                                            <Button type="button" variant={"ghost"}>
+                                                Cancel
+                                            </Button>
+                                        </DialogClose>
+                                        <Button onClick={() => setWinner(bet._id)} size={"sm"}>Set Winner</Button>
+                                    </div>
 
                                 </DialogFooter>
                             </DialogContent>

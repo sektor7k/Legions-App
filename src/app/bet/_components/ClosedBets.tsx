@@ -17,6 +17,7 @@ import Link from "next/link";
 import { SquareArrowOutUpRight } from "lucide-react";
 
 interface Bet {
+    createdAt: string | number | Date;
     _id: string;
     founderId: User;
     tournamentId: Tournament;
@@ -59,16 +60,28 @@ export default function ClosedBets() {
     const [bets, setBets] = useState<Bet[]>([]);
 
     useEffect(() => {
-        const getOpenBet = async () => {
+        const getClosedBet = async () => {
             try {
-                const response = await axios.post('/api/bet/getClosedBet', { status: 'closed' })
-                setBets(response.data.data)
+                const response = await axios.post('/api/bet/getClosedBet', { status: 'closed' });
+    
+                if (response.data.data && Array.isArray(response.data.data)) {
+                    // Zamana göre sıralama: En yeni en üstte
+                    const sortedBets = response.data.data.sort((a: Bet, b: Bet) => 
+                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    );
+    
+                    setBets(sortedBets);
+                } else {
+                    console.error("Invalid data format from API:", response.data.data);
+                }
             } catch (error) {
-                console.error(error);
+                console.error("Failed to fetch closed bets:", error);
             }
-        }
-        getOpenBet();
-    }, [])
+        };
+    
+        getClosedBet();
+    }, []);
+    
     return (
         <div className="w-full flex flex-col space-y-4">
             {bets.map((bet) => (

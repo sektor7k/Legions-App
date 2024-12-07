@@ -23,6 +23,7 @@ import Link from "next/link";
 import { TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 
 interface Bet {
+    createdAt: string | number | Date;
     _id: string;
     founderId: User;
     tournamentId: Tournament;
@@ -71,138 +72,28 @@ export default function OpenBets() {
     useEffect(() => {
         const getOpenBet = async () => {
             try {
-                const response = await axios.post('/api/bet/getOpenBet', { status: 'open' })
-                setBets(response.data.data)
+                const response = await axios.post('/api/bet/getOpenBet', { status: 'open' });
+    
+                if (response.data.data && Array.isArray(response.data.data)) {
+                    // Zamana göre sıralama: En yeni en üstte
+                    const sortedBets = response.data.data.sort((a: Bet, b: Bet) => 
+                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                    );
+    
+                    setBets(sortedBets);
+                } else {
+                    console.error("Invalid data format from API:", response.data.data);
+                }
             } catch (error) {
-                console.error(error);
+                console.error("Failed to fetch open bets:", error);
             }
-        }
+        };
+    
         getOpenBet();
-    }, [])
+    }, []);
 
-    function showErrorToast(message: string): void {
-        toast({
-            variant: "destructive",
-            title: message,
-            description: "",
-        })
-    }
+  
 
-    function showToast(message: string, txHash: string): void {
-        toast({
-            variant: "default",
-            title: message,
-            description: (
-                <Link
-                    href={`https://solscan.io/tx/${txHash}?cluster=devnet`}
-                    className="text-gray-100 hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    https://solscan.io/tx/{txHash.slice(0, 10)}...
-                </Link>
-            ),
-        })
-    }
-
-    const sendUsdc = async (stake: number) => {
-        if (!publicKey) {
-            console.error("Wallet not connected");
-            return;
-        }
-
-        try {
-            const recipientPubKey = new PublicKey("W8aVm1tZCgCjDc9butDHSuuhXUrQ6FYYG5SveF9x7dC"); // Alıcının cüzdan adresi
-            const usdcMintAddress = new PublicKey("Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr"); // USDC mint adresi
-            const amount = stake * 10 ** 6; // 1 USDC = 10^6 lamports
-
-            // Gönderenin token hesabını alın
-            const senderTokenAddress = await getAssociatedTokenAddress(
-                usdcMintAddress,
-                publicKey // Gönderen cüzdan adresi
-            );
-
-            // Gönderen token hesabını kontrol et
-            const senderAccountInfo = await getAccount(connection, senderTokenAddress);
-            if (!senderAccountInfo) {
-                throw new Error("Gönderenin token hesabı bulunamadı");
-            }
-
-            // Alıcının token hesabını alın
-            const recipientTokenAddress = await getAssociatedTokenAddress(
-                usdcMintAddress,
-                recipientPubKey // Alıcının cüzdan adresi
-            );
-
-            const transaction = new Transaction();
-
-            // Alıcının token hesabı yoksa oluştur
-            const recipientAccountInfo = await connection.getAccountInfo(recipientTokenAddress);
-            if (!recipientAccountInfo) {
-                transaction.add(
-                    createAssociatedTokenAccountInstruction(
-                        publicKey,
-                        recipientTokenAddress,
-                        recipientPubKey,
-                        usdcMintAddress
-                    )
-                );
-            }
-
-            // Transfer talimatını ekle
-            transaction.add(
-                createTransferInstruction(
-                    senderTokenAddress,
-                    recipientTokenAddress,
-                    publicKey,
-                    amount,
-                    [],
-                    TOKEN_PROGRAM_ID
-                )
-            );
-
-            // İşlem ücret ödeyicisini belirt
-            transaction.feePayer = publicKey;
-
-            // İşlemi gönder
-            const signature = await sendTransaction(transaction, connection);
-            console.log(`Transaction signature: ${signature}`);
-            return signature;
-        } catch (error) {
-            console.error("İşlem başarısız:", error);
-            throw error; // Hata fırlat
-        }
-    };
-
-
-    const joinBet = async (betId: string, opponentTeamId: string, stake: number) => {
-
-        if (!betId || !opponentTeamId || !stake) {
-            showErrorToast("Please fill in all fields.");
-            return;
-        }
-
-        // Ödeme işlemi
-        const paymentSuccessful = await sendUsdc(stake);
-
-        if (!paymentSuccessful) {
-            showErrorToast("Payment failed. Please try again.");
-            return;
-        }
-
-        try {
-            const response = await axios.post('/api/bet/joinBet', {
-                id: betId,
-                opponentTeamId
-            })
-            showToast("Successful joining Bet", paymentSuccessful);
-            closeRef?.current?.click();
-        } catch (error) {
-            router.refresh()
-            showErrorToast("Error placing bet")
-            console.error('Error placing bet:', error);
-        }
-    }
     return (
         <div className="w-full flex flex-col space-y-4">
             {bets.map((bet) => (
@@ -400,7 +291,6 @@ export default function OpenBets() {
                                                 Cancel
                                             </Button>
                                         </DialogClose>
-                                        <Button onClick={() => joinBet(bet._id, bet.founderTeamId === bet.matchId.team1Id._id ? bet.matchId.team2Id._id : bet.matchId.team1Id._id, bet.stake)} type="submit">Place a bet</Button>
 
                                     </div>
 

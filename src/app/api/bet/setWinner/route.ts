@@ -13,9 +13,8 @@ export async function POST(request: NextRequest) {
         const { winnerId, betId } = reqBody;
 
 
-        const setWinner = await Bet.findByIdAndUpdate(betId, { winnerId });
+        const setWinner = await Bet.findByIdAndUpdate(betId, { winnerId, status: "completed" });
 
-        console.log(setWinner)
 
         return NextResponse.json({ data: null }, { status: 201 })
 
