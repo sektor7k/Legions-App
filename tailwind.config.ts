@@ -160,7 +160,7 @@ const config = withUt({
   		}
   	}
   },
-  plugins: [require('tailwindcss-animate'),daisyui,addVariablesForColors],
+  plugins: [require('tailwindcss-animate'),daisyui,addVariablesForColors,require('tailwind-scrollbar-hide')],
 }) satisfies Config
 
 

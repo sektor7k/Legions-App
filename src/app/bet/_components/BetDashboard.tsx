@@ -98,7 +98,7 @@ export default function BetDashboard() {
                     </SheetTrigger>
                     <SheetContent
                         side={"bet"}
-                        className="bg-gray-900 w-[503px] p-0 flex flex-col"
+                        className="bg-gray-900 w-[503px] p-0 flex flex-col "
                     >
                         <SheetHeader>
                             <SheetTitle>

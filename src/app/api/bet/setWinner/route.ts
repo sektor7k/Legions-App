@@ -19,14 +19,13 @@ export async function POST(request: NextRequest) {
 
         const winnerUser = await User.findById(winnerId, 'username image');
 
-        console.log(winnerUser)
 
         if (!winnerUser) {
             return NextResponse.json({ message: "Winner user not found" }, { status: 404 });
         }
 
         try {
-            await axios.post('/api/bet/stream', {
+            await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/api/bet/stream`, {
                 status: 'won',
                 amount: stake,
                 username: winnerUser.username,

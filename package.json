@@ -71,6 +71,7 @@
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "tailwind-merge": "^2.4.0",
+    "tailwind-scrollbar-hide": "^1.1.7",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.167.0",
     "three-obj-loader": "^1.1.3",
