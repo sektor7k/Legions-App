@@ -96,11 +96,12 @@ export default function ClosedBets() {
     }, []);
 
 
-    const setWinner = async (betId: string) => {
+    const setWinner = async (betId: string, stake:string) => {
         try {
             const response = await axios.post('/api/bet/setWinner', {
                 betId,
-                winnerId
+                winnerId,
+                stake
             });
             closeRef?.current?.click();
 
@@ -330,7 +331,7 @@ export default function ClosedBets() {
                                                 Cancel
                                             </Button>
                                         </DialogClose>
-                                        <Button onClick={() => setWinner(bet._id)} size={"sm"}>Set Winner</Button>
+                                        <Button onClick={() => setWinner(bet._id, bet.stake.toString())} size={"sm"}>Set Winner</Button>
                                     </div>
 
                                 </DialogFooter>

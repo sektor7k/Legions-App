@@ -260,7 +260,6 @@ export default function AddBet() {
         console.error("Error adding to activity feed:", activityError);
       }
 
-      // 📢 Modalı kapatma (eğer referans varsa)
       closeRef?.current?.click();
     } catch (error) {
       showErrorToast("Error placing bet");

@@ -21,6 +21,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import Link from "next/link";
 import { TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
+import { useSession } from "next-auth/react";
 
 interface Bet {
     createdAt: string | number | Date;
@@ -68,18 +69,19 @@ export default function OpenBets() {
 
     const { publicKey, sendTransaction } = useWallet();
     const { connection } = useConnection();
+    const { data: session } = useSession();
 
     useEffect(() => {
         const getOpenBet = async () => {
             try {
                 const response = await axios.post('/api/bet/getOpenBet', { status: 'open' });
-    
+
                 if (response.data.data && Array.isArray(response.data.data)) {
                     // Zamana göre sıralama: En yeni en üstte
-                    const sortedBets = response.data.data.sort((a: Bet, b: Bet) => 
+                    const sortedBets = response.data.data.sort((a: Bet, b: Bet) =>
                         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
                     );
-    
+
                     setBets(sortedBets);
                 } else {
                     console.error("Invalid data format from API:", response.data.data);
@@ -88,10 +90,10 @@ export default function OpenBets() {
                 console.error("Failed to fetch open bets:", error);
             }
         };
-    
+
         getOpenBet();
     }, []);
-    
+
 
     function showErrorToast(message: string): void {
         toast({
@@ -209,6 +211,18 @@ export default function OpenBets() {
                 opponentTeamId
             })
             showToast("Successful joining Bet", paymentSuccessful);
+
+            try {
+                await axios.post('/api/bet/stream', {
+                    status: 'join',
+                    amount: stake,
+                    username: session?.user.username,
+                    userAvatar: session?.user.image
+                });
+            } catch (activityError) {
+                console.error("Error adding to activity feed:", activityError);
+            }
+
             closeRef?.current?.click();
         } catch (error) {
             router.refresh()
