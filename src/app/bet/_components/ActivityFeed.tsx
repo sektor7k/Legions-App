@@ -1,77 +1,92 @@
+"use client"
+import axios from "axios";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+
+interface StreamProp {
+    _id: string;
+    username: string;
+    userAvatar: string;
+    message: string;
+    createdAt: string | number | Date;
+}
+
+// Yardımcı fonksiyon
+function timeAgo(date: string | number | Date): string {
+    const now = new Date();
+    const past = new Date(date); // string, number veya Date kabul edilir
+    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+    if (diffInSeconds < 60) {
+        return `${diffInSeconds} seconds ago`;
+    } else if (diffInSeconds < 3600) { // 60 * 60 = 3600
+        const minutes = Math.floor(diffInSeconds / 60);
+        return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 86400) { // 24 * 60 * 60 = 86400
+        const hours = Math.floor(diffInSeconds / 3600);
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 604800) { // 7 * 24 * 60 * 60 = 604800
+        const days = Math.floor(diffInSeconds / 86400);
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 2629800) { // 30.44 * 24 * 60 * 60 = 2629800 (ortalama 1 ay)
+        const weeks = Math.floor(diffInSeconds / 604800);
+        return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+    } else {
+        const months = Math.floor(diffInSeconds / 2629800); // Ortalama 1 ay 30.44 gün
+        return `${months} month${months > 1 ? 's' : ''} ago`;
+    }
+}
+
 
 export default function ActivityFeed() {
-    const activities = [
-        { 
-            id: 1,
-            avatar: "https://utfs.io/f/fd125ff2-37e5-4c14-9b36-fbcaa3bacb6a-d6ph0f.35.56.png",
-            username: "onder21",
-            message: "has opened a bet with $20 on Team A!",
-            timestamp: "2m ago",
-        },
-        {
-            id: 2,
-            avatar: "https://utfs.io/f/a871e06a-5b0d-422f-89a8-46e85f63f534-d6ph0f.41.42.png",
-            username: "sabit",
-            message: "joined the bet with $40 on Team B!",
-            timestamp: "5m ago",
-        },
-        {
-            id: 3,
-            avatar: "https://utfs.io/f/e3cdfa5f-3272-4aeb-9a99-c4be0a181a7b-ayurua.png",
-            username: "Fall",
-            message: "won $400 from the bet on Team A! Congratulations!",
-            timestamp: "10m ago",
-        },
-        {
-            id: 4,
-            avatar: "https://utfs.io/f/fd125ff2-37e5-4c14-9b36-fbcaa3bacb6a-d6ph0f.35.56.png",
-            username: "onder21",
-            message: "has opened a bet with $20 on Team A!",
-            timestamp: "2m ago",
-        },
-        {
-            id: 5,
-            avatar: "https://utfs.io/f/a871e06a-5b0d-422f-89a8-46e85f63f534-d6ph0f.41.42.png",
-            username: "sabit",
-            message: "joined the bet with $40 on Team B!",
-            timestamp: "5m ago",
-        },
-        {
-            id: 6,
-            avatar: "https://utfs.io/f/e3cdfa5f-3272-4aeb-9a99-c4be0a181a7b-ayurua.png",
-            username: "Fall",
-            message: "won $400 from the bet on Team A! Congratulations!",
-            timestamp: "10m ago",
-        },
-    ];
+
+    const [streams, setStream] = useState<StreamProp[]>([]);
+
+    useEffect(() => {
+        const getStream = async () => {
+            try {
+                const response = await axios.post('/api/bet/getStream');
+                const sortedStreams = response.data.data.sort((a: StreamProp, b: StreamProp) => 
+                    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                );
+                setStream(sortedStreams);
+            } catch (error) {
+                console.error("Sometimes error", error);
+            }
+        }
+        getStream();
+    }, [])
+
 
     return (
         <div className="flex flex-col h-full overflow-y-scroll p-4 ">
-            {activities.map((activity) => (
-                <div
-                    key={activity.id}
-                    className="flex flex-row items-center shadow-sm rounded-lg p-3 mb-2 space-x-3"
-                >
-                    {/* Avatar */}
-                    <Image
-                        src={activity.avatar}
-                        alt={activity.username}
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 rounded-full"
-                    />
+            {streams.map((stream) => (
+                <div key={stream._id} className=" flex flex-row items-center justify-between">
+                    <div
+                        className="flex flex-row items-center shadow-sm rounded-lg p-3 mb-2 space-x-3"
+                    >
+                        {/* Avatar */}
+                        <Image
+                            src={stream.userAvatar}
+                            alt={stream.username}
+                            width={40}
+                            height={40}
+                            className="h-10 w-10 rounded-full"
+                        />
 
-                    {/* Message */}
-                    <div className="flex flex-col">
-                        <span className="font-semibold text-gray-300">
-                            {activity.username}
-                        </span>
-                        <p className="text-sm text-gray-400">{activity.message}</p>
+                        {/* Message */}
+                        <div className="flex flex-col">
+                            <span className="font-semibold text-gray-300">
+                                {stream.username}
+                            </span>
+                            <p className="text-sm text-gray-400">{stream.message}</p>
+                        </div>
                     </div>
-
                     {/* Timestamp */}
-                    <span className="ml-auto text-xs text-gray-500">{activity.timestamp}</span>
+                    <time className="text-xs opacity-60 text-nowrap">
+                        {timeAgo(stream.createdAt)}
+                    </time>
+
                 </div>
             ))}
         </div>
