@@ -70,6 +70,7 @@
     "siwe": "^2.3.2",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
+    "swr": "^2.2.5",
     "tailwind-merge": "^2.4.0",
     "tailwind-scrollbar-hide": "^1.1.7",
     "tailwindcss-animate": "^1.0.7",

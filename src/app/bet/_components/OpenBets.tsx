@@ -22,6 +22,7 @@ import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana
 import Link from "next/link";
 import { TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 import { useSession } from "next-auth/react";
+import useSWR, { mutate } from 'swr';
 
 interface Bet {
     createdAt: string | number | Date;
@@ -59,10 +60,18 @@ interface Team {
     teamImage: string;
 }
 
+const fetcher = (url: string) =>
+    axios.post(url, { status: 'open' })
+        .then(res =>
+            res.data.data.sort((a: Bet, b: Bet) =>
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            )
+        );
 
 export default function OpenBets() {
 
-    const [bets, setBets] = useState<Bet[]>([]);
+    const { data: bets = [], mutate } = useSWR<Bet[]>('/api/bet/getOpenBet', fetcher);
+
     const router = useRouter();
 
     const closeRef = useRef<ElementRef<"button">>(null);
@@ -71,28 +80,6 @@ export default function OpenBets() {
     const { connection } = useConnection();
     const { data: session } = useSession();
 
-    useEffect(() => {
-        const getOpenBet = async () => {
-            try {
-                const response = await axios.post('/api/bet/getOpenBet', { status: 'open' });
-
-                if (response.data.data && Array.isArray(response.data.data)) {
-                    // Zamana göre sıralama: En yeni en üstte
-                    const sortedBets = response.data.data.sort((a: Bet, b: Bet) =>
-                        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-                    );
-
-                    setBets(sortedBets);
-                } else {
-                    console.error("Invalid data format from API:", response.data.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch open bets:", error);
-            }
-        };
-
-        getOpenBet();
-    }, []);
 
 
     function showErrorToast(message: string): void {
@@ -211,6 +198,7 @@ export default function OpenBets() {
                 opponentTeamId
             })
             showToast("Successful joining Bet", paymentSuccessful);
+            mutate();
 
             try {
                 await axios.post('/api/bet/stream', {
@@ -445,3 +433,5 @@ export default function OpenBets() {
         </div>
     )
 }
+
+

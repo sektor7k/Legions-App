@@ -28,6 +28,7 @@ import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana
 import Link from "next/link";
 import { TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
 import { useSession } from "next-auth/react";
+import { mutate } from 'swr';
 
 
 interface Tournament {
@@ -248,6 +249,7 @@ export default function AddBet() {
       });
 
       showToast("Bet successfully created", paymentSuccessful);
+      mutate('/api/bet/getOpenBet');
 
       try {
         await axios.post('/api/bet/stream', {
@@ -265,7 +267,7 @@ export default function AddBet() {
       showErrorToast("Error placing bet");
       console.error("Error placing bet:", error);
     }
-  };
+  }; 
 
 
 

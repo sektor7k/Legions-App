@@ -11,7 +11,6 @@ interface StreamProp {
     createdAt: string | number | Date;
 }
 
-// Yardımcı fonksiyon
 function timeAgo(date: string | number | Date): string {
     const now = new Date();
     const past = new Date(date); // string, number veya Date kabul edilir
@@ -55,7 +54,7 @@ export default function ActivityFeed() {
             }
         }
         getStream();
-    }, [])
+    }, []) 
 
 
     return (
