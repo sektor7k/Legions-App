@@ -120,7 +120,7 @@ export default function MyBetsCards() {
     }
 
     return (
-        <div className="flex flex-col justify-center space-y-4">
+        <div className="flex flex-col justify-center space-y-4 overflow-y-auto  ">
             {/* Bet Block */}
             {
                 myBets.map((bet) => (

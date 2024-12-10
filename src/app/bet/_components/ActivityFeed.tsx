@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function ActivityFeed() {
     const activities = [
-        {
+        { 
             id: 1,
             avatar: "https://utfs.io/f/fd125ff2-37e5-4c14-9b36-fbcaa3bacb6a-d6ph0f.35.56.png",
             username: "onder21",

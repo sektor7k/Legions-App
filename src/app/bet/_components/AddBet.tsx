@@ -27,6 +27,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import Link from "next/link";
 import { TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, createTransferInstruction, getAccount, getAssociatedTokenAddress } from "@solana/spl-token";
+import { useSession } from "next-auth/react";
 
 
 interface Tournament {
@@ -62,7 +63,8 @@ export default function AddBet() {
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
 
-  
+  const { data: session } = useSession()
+
 
   const sendSol = async () => {
 
@@ -92,37 +94,37 @@ export default function AddBet() {
     }
   };
 
-  const sendUsdc = async (stake:number) => {
+  const sendUsdc = async (stake: number) => {
     if (!publicKey) {
       console.error("Wallet not connected");
       return;
     }
-  
+
     try {
       const recipientPubKey = new PublicKey("W8aVm1tZCgCjDc9butDHSuuhXUrQ6FYYG5SveF9x7dC"); // Alıcının cüzdan adresi
       const usdcMintAddress = new PublicKey("Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr"); // USDC mint adresi
       const amount = stake * 10 ** 6; // 1 USDC = 10^6 lamports
-  
+
       // Gönderenin token hesabını alın
       const senderTokenAddress = await getAssociatedTokenAddress(
         usdcMintAddress,
         publicKey // Gönderen cüzdan adresi
       );
-  
+
       // Gönderen token hesabını kontrol et
       const senderAccountInfo = await getAccount(connection, senderTokenAddress);
       if (!senderAccountInfo) {
         throw new Error("Gönderenin token hesabı bulunamadı");
       }
-  
+
       // Alıcının token hesabını alın
       const recipientTokenAddress = await getAssociatedTokenAddress(
         usdcMintAddress,
         recipientPubKey // Alıcının cüzdan adresi
       );
-  
+
       const transaction = new Transaction();
-  
+
       // Alıcının token hesabı yoksa oluştur
       const recipientAccountInfo = await connection.getAccountInfo(recipientTokenAddress);
       if (!recipientAccountInfo) {
@@ -135,7 +137,7 @@ export default function AddBet() {
           )
         );
       }
-  
+
       // Transfer talimatını ekle
       transaction.add(
         createTransferInstruction(
@@ -147,10 +149,10 @@ export default function AddBet() {
           TOKEN_PROGRAM_ID
         )
       );
-  
+
       // İşlem ücret ödeyicisini belirt
       transaction.feePayer = publicKey;
-  
+
       // İşlemi gönder
       const signature = await sendTransaction(transaction, connection);
       console.log(`Transaction signature: ${signature}`);
@@ -204,12 +206,12 @@ export default function AddBet() {
     })
   }
 
-  function showToast(message: string, txHash:string): void {
+  function showToast(message: string, txHash: string): void {
     toast({
       variant: "default",
       title: message,
       description: (
-        <Link 
+        <Link
           href={`https://solscan.io/tx/${txHash}?cluster=devnet`}
           className="text-gray-100 hover:underline"
           target="_blank"
@@ -227,15 +229,15 @@ export default function AddBet() {
       showErrorToast("Please fill in all fields.");
       return;
     }
-  
+
     // Ödeme işlemi
     const paymentSuccessful = await sendUsdc(parseInt(stake));
-  
+
     if (!paymentSuccessful) {
-       showErrorToast("Payment failed. Please try again.");
+      showErrorToast("Payment failed. Please try again.");
       return;
     }
-  
+
     // Ödeme başarılıysa bahis kaydı
     try {
       const response = await axios.post('/api/bet/placeBet', {
@@ -244,14 +246,29 @@ export default function AddBet() {
         founderTeamId: team,
         stake: stake,
       });
-      showToast("Bet successfully created",paymentSuccessful);
+
+      showToast("Bet successfully created", paymentSuccessful);
+
+      try {
+        await axios.post('/api/bet/stream', {
+          status: 'open',
+          amount: stake,
+          username: session?.user.username, 
+          userAvatar: session?.user.image 
+        });
+      } catch (activityError) {
+        console.error("Error adding to activity feed:", activityError);
+      }
+
+      // 📢 Modalı kapatma (eğer referans varsa)
       closeRef?.current?.click();
     } catch (error) {
       showErrorToast("Error placing bet");
       console.error("Error placing bet:", error);
     }
   };
-  
+
+
 
   return (
     <div className="mt-auto p-3 border-t border-gray-700">
@@ -399,16 +416,16 @@ export default function AddBet() {
           </div>
           <DialogFooter>
             <div className="flex justify-between w-full">
-            <DialogClose ref={closeRef} asChild>
-              <Button type="button" variant={"ghost"}>
-                Cancel
+              <DialogClose ref={closeRef} asChild>
+                <Button type="button" variant={"ghost"}>
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit" disabled={!team || !stake} onClick={placeBet}>
+                Place Bet
               </Button>
-            </DialogClose>
-            <Button type="submit" disabled={!team || !stake} onClick={placeBet}>
-              Place Bet
-            </Button>
             </div>
-            
+
           </DialogFooter>
         </DialogContent>
       </Dialog>
