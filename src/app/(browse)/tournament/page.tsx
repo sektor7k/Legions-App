@@ -1,35 +1,30 @@
 "use client"
-import { useRouter } from "next/navigation";
 import { CardDemo } from "./_components/Card";
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import useSWR from "swr";
 
+interface TournamentsProps {
+    _id: string
+    name: string;
+    thumbnail: string;
+    thumbnailGif: string;
+    organizer: string;
+    organizerAvatar: string;
+    participants: number;
+    capacity: number;
+    date: string;
+}
+const fetcher = (url: string) => axios.get(url).then(res => res.data.tournaments);
 
 export default function Tournaments() {
 
-    const router = useRouter()
+    const { data: tournaments = [], error } = useSWR<TournamentsProps[]>('/api/tournament/getAllTournament', fetcher);
 
-    const [tournaments, setTournaments] = useState([]);
+    const router = useRouter();
 
-    useEffect(() => {
-      const fetchTournaments = async () => {
-        try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/api/tournament/getAllTournament`,{
-            headers: {
-                'Content-Type': 'application/json',
-              },
-          });
-          console.log(response)
-          setTournaments(response.data.tournaments);
-        } catch (error) {
-          console.error("Failed to fetch tournaments:", error);
-        }
-      };
-  
-      fetchTournaments();
-    }, []);
-
-
+    if (error) return <div>Failed to load tournaments</div>;
+    if (!tournaments) return <div>Loading...</div>;
     return (
         <div className="flex flex-col items-center justify-center mt-8 px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col justify-center items-center">
@@ -41,7 +36,7 @@ export default function Tournaments() {
                     <div className="overflow-y-auto max-h-[calc(80vh-5rem)] p-2">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {tournaments.map((tournament:any) => (
-                                <button onClick={()=>router.push(`/t/${tournament._id}`)} key={tournament.id}>
+                                <button onClick={()=>router.push(`/t/${tournament._id}`)} key={tournament._id}>
                                     <CardDemo name={tournament.tname} thumbnail={tournament.thumbnail} thumbnailGif={tournament.thumbnailGif} organizer={tournament.organizer} organizerAvatar={tournament.organizerAvatar} participants={tournament.participants} capacity={tournament.capacity} date={tournament.starts} />
 
                                 </button>
