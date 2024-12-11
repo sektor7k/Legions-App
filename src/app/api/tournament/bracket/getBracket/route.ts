@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
+
     if (!Team || !Bracket) {
         return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
     }
