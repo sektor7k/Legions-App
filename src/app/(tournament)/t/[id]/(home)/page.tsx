@@ -1,42 +1,41 @@
 "use client"
-import { Button } from "@/components/ui/button"
 import axios from "axios";
 import { Check } from "lucide-react"
 import Image from "next/image"
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import Countdown from "./_components/Countdown";
-import { parse, format } from 'date-fns';
-import React from "react";
+import React, { useMemo } from "react";
 import RegisterTournament from "./_components/RegisterTournament";
+import { parse } from "date-fns";
+import useSWR from 'swr';
+
+interface Tournament {
+    id: string;
+    tname: string;
+    tdescription: string;
+    thumbnail: string;
+    currentphase: 'Drafting' | 'Registration' | 'checkin' | 'live' | 'Finished';
+    checkin: string;
+    checkinTime: string;
+    starts: string;
+    startsTime: string;
+    ends: string;
+    endsTime: string;
+    teamsize: number;
+    teamcount: number;
+    region: string;
+    bracket: string;
+    sponsors: string[];
+    prizePool: { _id: string; key: string; value: number }[];
+}
+
+const fetcher = (url: string, id: any) => axios.post(url, { id }).then(res => res.data);
 
 export default function TournamentPage({ params }: { params: { id: string } }) {
 
-    const [tournament, setTournament] = useState<any>(null);
-    const router = useRouter();
-    const [startDateTime, setStartDateTime] = useState<Date | null>(null);
-
-    useEffect(() => {
-        // ID'yi URL'den al
-        const fetchTournament = async () => {
-            try {
-                const res = await axios.post(`/api/tournament/getTournamentDetail`, { id: params.id });
-
-                const formattedData = {
-                    ...res.data,
-                    checkinTime: formatTime(res.data.checkinTime),
-                    startsTime: formatTime(res.data.startsTime),
-                    endsTime: formatTime(res.data.endsTime),
-                };
-                console.log(res.data)
-                setTournament(formattedData);
-            } catch (error) {
-                console.error('Error fetching tournament:', error);
-            }
-        };
-
-        fetchTournament();
-    }, [params.id]);
+    //  Turnuva verisini çek
+    const { data: tournament, error } = useSWR<Tournament>(['/api/tournament/getTournamentDetail', params.id] as const,
+        ([url, id]) => fetcher(url, id)
+    );
 
     function formatTime(timeString: string): string {
         if (timeString.length === 4) {
@@ -47,51 +46,48 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
         return timeString;
     }
 
-    function removeOrdinalSuffix(dateStr: any) {
+    const formattedTournament = useMemo(() => {
+        if (!tournament) return null;
+        return {
+            ...tournament,
+            checkinTime: formatTime(tournament.checkinTime),
+            startsTime: formatTime(tournament.startsTime),
+            endsTime: formatTime(tournament.endsTime),
+        };
+    }, [tournament]);
+
+    function removeOrdinalSuffix(dateStr: string) {
         return dateStr.replace(/(\d+)(st|nd|rd|th)/, '$1');
     }
-
+    // Tarih işlemleri
     function getCombinedDate(startDate: string, startTime: string): Date {
-        const dateFormat = 'MMMM d, yyyy'; // For example: August 23, 2024
-        const timeFormat = 'HH:mm'; // For example: 14:30
+        const dateFormat = 'MMMM d, yyyy';
+        const timeFormat = 'HH:mm';
         const combinedDateTimeFormat = `${dateFormat} ${timeFormat}`;
-
-        // Remove ordinal suffix from the date
-        const cleanDate = removeOrdinalSuffix(startDate);
-        // Combine cleaned date and time into a single string
-        const combinedDateTimeString = `${cleanDate} ${startTime}`;
-
-        // Parse the combined date and time string
+        const combinedDateTimeString = `${removeOrdinalSuffix(startDate)} ${startTime}`;
         const combinedDate = parse(combinedDateTimeString, combinedDateTimeFormat, new Date());
 
-        // Check if the result is invalid
         if (isNaN(combinedDate.getTime())) {
             console.error('Invalid date:', combinedDateTimeString);
-            return new Date(); // or handle the error as needed
+            return new Date();
         }
 
         return combinedDate;
     }
 
 
-    useEffect(() => {
-        if (tournament && tournament.starts) {
-            const startDate = tournament.starts;
-            const startTime = tournament.startsTime ?? '00:00'; // Varsayılan saat
-            const combinedDateTime = getCombinedDate(startDate, startTime);
-            setStartDateTime(combinedDateTime); // State güncelleme
-        } else {
-            console.error("tournament veya tournament.starts değeri mevcut değil.");
-        }
-    }, [tournament]);
+
+    const startDateTime = useMemo(() => {
+        if (!formattedTournament) return new Date();
+        if (!formattedTournament.starts) return new Date();
+        const startTime = formattedTournament.startsTime ?? '00:00';
+        return getCombinedDate(formattedTournament.starts, startTime);
+    }, [formattedTournament]);
 
 
-
-    if (!tournament) return <div>Loading...</div>;
 
     const phases = ["Drafting", "Registration", "checkin", "live", "Finished"];
-
-    const currentPhase = tournament.currentphase;
+    const currentPhase = tournament?.currentphase as "Drafting" | "Registration" | "checkin" | "live" | "Finished";
 
     const getPhaseBgClass = (phase: string) => {
         const phaseIndex = phases.indexOf(phase);
@@ -109,6 +105,9 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
         const currentPhaseIndex = phases.indexOf(currentPhase);
         return index <= currentPhaseIndex - 1 ? "border-green-400" : "border-gray-400";
     };
+
+    if (error) return <div>Error loading tournament</div>;
+    if (!tournament) return <div>Loading...</div>;
 
     return (
         <div className=" flex flex-col w-full justify-center items-center space-y-3">
@@ -205,7 +204,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm py-16 px-8 rounded-lg md:flex-row md:space-x-32">
 
-                {tournament.sponsors && tournament.sponsors.map((sponsorUrl:any, index:any) => (
+                {tournament.sponsors && tournament.sponsors.map((sponsorUrl: any, index: any) => (
                     <Image
                         key={index} // Benzersiz anahtar
                         src={sponsorUrl} // Sponsor URL'si
