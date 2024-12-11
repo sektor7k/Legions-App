@@ -1,8 +1,8 @@
-// components/Countdown.tsx
+
 import React, { useState, useEffect } from 'react';
 
 interface CountdownProps {
-  targetDate: Date; // Geri sayımın bitiş tarihi
+  targetDate: Date; 
 }
 
 export default function Countdown({ targetDate }:CountdownProps){
@@ -14,7 +14,6 @@ export default function Countdown({ targetDate }:CountdownProps){
   });
 
   useEffect(() => {
-    console.log(targetDate)
     const updateCountdown = () => {
       const now = new Date();
       const timeDifference = targetDate.getTime() - now.getTime();

@@ -1,3 +1,4 @@
+
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,15 +24,18 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import useSWR from "swr";
 
 
 interface RegisterTournamentProps {
     id: string
 }
 
+const fetcher = (url: string, params: any) => axios.post(url, params).then(res => res.data);
+
 export default function RegisterTournament({ id }: RegisterTournamentProps) {
+
     const [isFirstDialogOpen, setIsFirstDialogOpen] = useState(false);
     const [isSecondDialogOpen, setIsSecondDialogOpen] = useState(false);
     const [isthreeialogOpen, setthreeDialogOpen] = useState(false);
@@ -41,17 +45,20 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
     const [status, setStatus] = useState("public")
 
     const closeRef = useRef<ElementRef<"button">>(null);
-    const router = useRouter();
     const { data: session } = useSession();
 
     const [teams, setTeams] = useState([]);
 
-    const [isRegistered, setIsRegistered] = useState(false);
-    const [hasPendingInvite, setHasPendingInvite] = useState(false);
 
-
-
-
+    const { data, error, mutate } = useSWR(
+        session?.user?.id && id 
+            ? ['/api/tournament/checkRegistration', { userId: session.user.id, tournamentId: id }] 
+            : null,
+        ([url, params]) => fetcher(url, params)
+    );
+    const isRegistered = data?.isRegistered ?? false;
+    const hasPendingInvite = data?.hasPendingInvite ?? false;
+    
 
     const openSecondDialog = () => {
         setIsFirstDialogOpen(false);
@@ -64,7 +71,6 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
         try {
             const response = await axios.post('/api/tournament/getTeamPublic', { tournamentId: id, status: "public" });
             setTeams(response.data);
-            console.log(response.data)
         } catch (error) {
             console.error('Error fetching teams:', error);
         }
@@ -109,9 +115,8 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                     },
                 ]
             });
-            setIsRegistered(true)
+            mutate();
             showToast("Create team successfully")
-            router.refresh();
             closeRef?.current?.click();
 
         } catch (error) {
@@ -132,31 +137,14 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                 leadId,
             });
             showToast("Invite team successfully")
-            setHasPendingInvite(true)
+            mutate();
         } catch (error) {
             showErrorToast("Error Invite team")
             console.error('Error sending invite:', error);
         }
     };
 
-    useEffect(() => {
-        const checkRegistrationStatus = async () => {
-                try {
-                    const response = await axios.post('/api/tournament/checkRegistration', {
-                        userId: session?.user.id,
-                        tournamentId: id
-                    });
-                    console.log(response.data)
 
-                    setIsRegistered(response.data.isRegistered);
-                    setHasPendingInvite(response.data.hasPendingInvite);
-                } catch (error) {
-                    console.error('Error checking registration status:', error);
-                }
-            }
-
-        checkRegistrationStatus();
-    }, [session, status, id]);
 
     return (
         <div>
