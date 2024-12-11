@@ -1,45 +1,16 @@
 "use client"
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import TCard from "./_components/Cards";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import {  useMemo } from "react";
 import axios from "axios";
+import useSWR from "swr";
 
+const fetcher = (url: string, tournamentId: any) => axios.post(url, { tournamentId }).then((res) => res.data)
 export default function Page({ params }: { params: { id: string } }) {
-    const [bracket, setBracket] = useState<any>(null);
- 
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Bracket verisini çek
-                const bracketResponse = await axios.post('/api/tournament/bracket/getBracket', {
-                    tournamentId: params.id,
-                });
-                console.log(bracketResponse.data)
-    
-                if (bracketResponse.status === 200) {
-                    setBracket(bracketResponse.data);
-                } else {
-                    console.error('Error fetching bracket', bracketResponse.data.message);
-                }
-    
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-    
-        fetchData();
-    }, [params.id]);
-
+    const { data: bracket, error, mutate } = useSWR(
+        params.id ? ['/api/tournament/bracket/getBracket',  params.id ] : null,
+        ([url, params]) => fetcher(url, params)
+    );
 
     const generateRounds = (teamCount: number) => {
         const rounds = [];
@@ -54,11 +25,14 @@ export default function Page({ params }: { params: { id: string } }) {
     };
 
 
-    const rounds = bracket ? generateRounds(bracket.teams.length) : [];
+    const rounds = useMemo(() => (bracket ? generateRounds(bracket.teams.length) : []), [bracket]);
 
+    if (error?.response?.status === 404) return <div></div>;
+    if (error) return <div>Hata oluştu: {error.message}</div>;
+    if (!bracket) return <div>Yükleniyor...</div>;
     return (
         <div className="flex flex-col items-center mt-10 pl-10 overflow-x-auto">
-            
+
             {bracket && (
                 <div className="flex flex-row justify-center mr-3 mt-8">
                     {rounds.map((teamsInRound, roundIndex) => (
@@ -71,7 +45,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                 .map((team: any, index: number) => (
                                     <TCard
                                         key={index}
-                                        team={team}   />
+                                        team={team} />
                                 ))}
                         </ol>
                     ))}
