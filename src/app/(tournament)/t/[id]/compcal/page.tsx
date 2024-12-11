@@ -1,6 +1,6 @@
 "use client"
 import axios from "axios";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 interface Team {
     teamName: string;
@@ -14,24 +14,29 @@ interface Match {
     matchTime: string;
 }
 
+const fetcher = (url: string, params: any) => 
+    axios.post(url, params).then(res =>
+        res.data.data.sort((a: Match, b: Match) => {
+            // Parse matchDate into a standard date format to ensure accurate sorting
+            const parseDateTime = (date: string, time: string) => {
+                const [month, day, year] = date.replace(/(st|nd|rd|th),/g, '').split(' ');
+                const formattedDate = `${month} ${day}, ${year} ${time.slice(0, 2)}:${time.slice(2, 4)}`;
+                return new Date(formattedDate);
+            };
+
+            const dateA = parseDateTime(a.matchDate, a.matchTime);
+            const dateB = parseDateTime(b.matchDate, b.matchTime);
+            return dateB.getTime() - dateA.getTime(); // Sort descending by date and time
+        })
+    );
+
 export default function CompcalPage({ params }: { params: { id: string } }) {
 
-    const [matches, setMatches] = useState<Match[]>([]);
+    const { data: matches = [], error } = useSWR<Match[]>(params.id ? ['/api/tournament/match/getMatch', { tournamentId: params.id }] : null, ([url, params]) => fetcher(url, params));
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const matchResponse = await axios.post('/api/tournament/match/getMatch', { tournamentId: params.id });
 
-                setMatches(matchResponse.data.data);
-
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-    }, [params.id]);
+    if (error) return <div>Failed to load</div>;
+    if (!matches) return <div>Loading...</div>;
 
     return (
         <div className=" max-w-6xl mx-auto p-8 space-y-8">
