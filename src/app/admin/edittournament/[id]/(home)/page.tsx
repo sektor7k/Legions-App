@@ -40,13 +40,14 @@ import * as React from "react"
 import { ChevronsUpDown } from "lucide-react"
 
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from "@/components/ui/command"
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
 
 const frameworks = [
     {
@@ -338,52 +339,29 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
-                            <DialogTitle>Edit Tournament Prize Pool</DialogTitle>
+                            <DialogTitle>Edit Current Phase</DialogTitle>
                         </DialogHeader>
 
-                        <Popover open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={open}
-                                    className="w-[200px] justify-between"
-                                >
-                                    {currentphase
-                                        ? frameworks.find((framework) => framework.value === currentphase)?.label
-                                        : "Select framework..."}
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[200px] p-0">
-                                <Command>
-                                    <CommandInput placeholder="Search framework..." />
-                                    <CommandList>
-                                        <CommandEmpty>No framework found.</CommandEmpty>
-                                        <CommandGroup>
-                                            {frameworks.map((framework) => (
-                                                <CommandItem
-                                                    key={framework.value}
-                                                    value={framework.value}
-                                                    onSelect={(currentValue) => {
-                                                        setValue(currentValue === currentphase ? "" : currentValue)
-                                                        setOpen(false)
-                                                    }}
-                                                >
-                                                    <Check
-                                                        className={cn(
-                                                            "mr-2 h-4 w-4",
-                                                            currentphase === framework.value ? "opacity-100" : "opacity-0"
-                                                        )}
-                                                    />
-                                                    {framework.label}
-                                                </CommandItem>
-                                            ))}
-                                        </CommandGroup>
-                                    </CommandList>
-                                </Command>
-                            </PopoverContent>
-                        </Popover>
+                        <Select
+                            onValueChange={(value) => setValue(value)}
+                            defaultValue={currentphase}
+                        >
+                            <SelectTrigger className="w-[200px]">
+                                <SelectValue placeholder="Select a phase" />
+                            </SelectTrigger>
+
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Phases</SelectLabel>
+                                    {frameworks.map((framework) => (
+                                        <SelectItem key={framework.value} value={framework.value}>
+                                            
+                                            {framework.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
 
 
                         <DialogFooter>
