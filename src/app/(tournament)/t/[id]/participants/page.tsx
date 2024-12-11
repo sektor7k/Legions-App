@@ -22,43 +22,31 @@ import { useSession } from 'next-auth/react';
 import { toast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 import { DialogClose } from '@radix-ui/react-dialog';
+import useSWR from 'swr';
 
+const fetcher = (url: string, params: any) => axios.post(url, params).then((res) => res.data);
 
 export default function ParticipantsPage({ params }: { params: { id: string } }) {
 
-    const [teams, setTeams] = useState([]);
+
     const { data: session } = useSession()
     const closeRef = useRef<ElementRef<"button">>(null);
-    const router = useRouter();
-    const [isRegistered, setIsRegistered] = useState(false);
-    const [hasPendingInvite, setHasPendingInvite] = useState(false);
 
+    const { data: teams, error: teamsError, mutate: teamsMutate } = useSWR(
+        params?.id ? ['/api/tournament/getTeam', { tournamentId: params.id }] : null,
+        ([url, params]) => fetcher(url, params)
+    );
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Takımları çek
-                const teamsResponse = await axios.post('/api/tournament/getTeam', { tournamentId: params.id });
-                setTeams(teamsResponse.data);
+    const { data: registrationData, error: registrationError, mutate: registrationMutate } = useSWR(
+        session?.user?.id && params.id
+            ? ['/api/tournament/checkRegistration', { userId: session.user.id, tournamentId: params.id }]
+            : null,
+        ([url, params]) => fetcher(url, params)
+    );
 
-                // Kayıt durumunu kontrol et
-                const registrationResponse = await axios.post('/api/tournament/checkRegistration', {
-                    userId: session?.user.id,
-                    tournamentId: params.id
-                });
-                console.log(registrationResponse.data);
+    const isRegistered = registrationData?.isRegistered ?? false;
+    const hasPendingInvite = registrationData?.hasPendingInvite ?? false;
 
-                setIsRegistered(registrationResponse.data.isRegistered);
-                setHasPendingInvite(registrationResponse.data.hasPendingInvite);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        if (session?.user.id) {
-            fetchData();
-        }
-    }, [session, params.id]);
 
 
     function showErrorToast(message: string): void {
@@ -88,7 +76,8 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 leadId,
             });
             showToast("Invite team successfully")
-            setHasPendingInvite(true);
+            registrationMutate();
+
         } catch (error) {
             showErrorToast("Error Invite team")
             console.error('Error sending invite:', error);
@@ -102,13 +91,8 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 memberId,
             });
             showToast("Member removed successfully");
-            setTeams((prevTeams: any) =>
-                prevTeams.map((team: any) =>
-                    team._id === teamId
-                        ? { ...team, members: team.members.filter((member: any) => member.memberId._id !== memberId) }
-                        : team
-                )
-            );
+            teamsMutate();
+            registrationMutate();
         } catch (error) {
             showErrorToast("Error removing member");
             console.error('Error removing member:', error);
@@ -120,13 +104,18 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
             const response = await axios.post('/api/tournament/deleteTeam', { teamId });
             showToast("Team deleted successfully");
 
-            setTeams(prevTeams => prevTeams.filter((team: any) => team._id !== teamId));
+            teamsMutate();
+            registrationMutate();
         } catch (error) {
             showErrorToast("Error deleting team");
             console.error('Error deleting team:', error);
         }
     };
 
+    if (teamsError) return <div>Takım verileri yüklenirken hata oluştu: {teamsError.message}</div>;
+    if (registrationError) return <div>Kayıt verileri yüklenirken hata oluştu: {registrationError.message}</div>;
+
+    if (!teams || !registrationData) return <div>Yükleniyor...</div>;
 
     return (
         <div className="max-w-6xl mx-auto p-8 space-y-8">
@@ -135,7 +124,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 <p className="text-gray-400 text-sm font-semibold">Find the best team to fight and join.</p>
             </div>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {teams?.map((team: any, index) => (
+                {teams?.map((team: any, index: any) => (
                     <div key={index} className="p-6 bg-black bg-opacity-40 backdrop-blur-sm rounded-md shadow-lg space-y-2">
                         <div className="flex flex-wrap items-center justify-between mb-4 border-gradient-bottom pb-4">
                             <div className="flex items-center space-x-4">
