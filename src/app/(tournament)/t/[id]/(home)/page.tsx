@@ -7,6 +7,8 @@ import React, { useMemo } from "react";
 import RegisterTournament from "./_components/RegisterTournament";
 import { parse } from "date-fns";
 import useSWR from 'swr';
+import LoadingAnimation from "@/components/loadingAnimation";
+import ErrorAnimation from "@/components/errorAnimation";
 
 interface Tournament {
     id: string;
@@ -106,8 +108,8 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
         return index <= currentPhaseIndex - 1 ? "border-green-400" : "border-gray-400";
     };
 
-    if (error) return <div>Error loading tournament</div>;
-    if (!tournament) return <div>Loading...</div>;
+    if (error) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
+    if (!tournament) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;
 
     return (
         <div className=" flex flex-col w-full justify-center items-center space-y-3">

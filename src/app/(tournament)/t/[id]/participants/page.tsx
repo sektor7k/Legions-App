@@ -23,6 +23,8 @@ import { toast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 import { DialogClose } from '@radix-ui/react-dialog';
 import useSWR from 'swr';
+import ErrorAnimation from '@/components/errorAnimation';
+import LoadingAnimation from '@/components/loadingAnimation';
 
 const fetcher = (url: string, params: any) => axios.post(url, params).then((res) => res.data);
 
@@ -112,10 +114,11 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
         }
     };
 
-    if (teamsError) return <div>Takım verileri yüklenirken hata oluştu: {teamsError.message}</div>;
-    if (registrationError) return <div>Kayıt verileri yüklenirken hata oluştu: {registrationError.message}</div>;
-
-    if (!teams || !registrationData) return <div>Yükleniyor...</div>;
+    if (teamsError?.response?.status === 404) return <div className=" flex h-screen z-20 justify-center items-center bg-black/40 backdrop-blur-xl ">
+        <p className="text-4xl text-gray-400">Team not yet created </p>
+    </div>;
+    if (teamsError) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
+    if (!teams) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;
 
     return (
         <div className="max-w-6xl mx-auto p-8 space-y-8">

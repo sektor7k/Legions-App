@@ -12,7 +12,7 @@ export default function Page() {
   const username = session?.user?.username || 'defaultUsername';
 
   const breadcrumbItems = [
-    { title: 'Dashboard', link: `/u/${username}` }, // Dinamik dashboard linki
+    { title: 'Dashboard', link: `/u/${username}/profile` }, // Dinamik dashboard linki
     { title: 'Profile', link: `/u/${username}/profile/` } // Dinamik profile linki
   ];
 
@@ -42,7 +42,6 @@ export default function Page() {
       <div className='border-l min min-h-screen w-full p-8'>
         <ProfileAdresses />
       </div>
-
 
     </div>
   );

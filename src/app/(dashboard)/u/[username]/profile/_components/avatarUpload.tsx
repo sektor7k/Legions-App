@@ -124,7 +124,7 @@ function showToast(message: string): void {
               </Button>
             </DialogClose>
             <Button 
-              variant={"primary"}
+              variant={"secondary"}
             >
               Save
             </Button>

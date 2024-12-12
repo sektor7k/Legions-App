@@ -1,4 +1,6 @@
 "use client"
+import ErrorAnimation from "@/components/errorAnimation";
+import LoadingAnimation from "@/components/loadingAnimation";
 import axios from "axios";
 import useSWR from "swr";
 
@@ -35,8 +37,7 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
     const { data: matches = [], error } = useSWR<Match[]>(params.id ? ['/api/tournament/match/getMatch', { tournamentId: params.id }] : null, ([url, params]) => fetcher(url, params));
 
 
-    if (error) return <div>Failed to load</div>;
-    if (!matches) return <div>Loading...</div>;
+
 
     return (
         <div className=" max-w-6xl mx-auto p-8 space-y-8">

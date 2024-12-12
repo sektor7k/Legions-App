@@ -74,7 +74,7 @@ export default function ProfileSocial() {
     return (
         <div className="flex flex-col items-center space-y-4">
             <div className=" flex flex-row justify-start items-center w-full">
-                <h2 className="scroll-m-20 pb-2 text-2xl font-semibold tracking-tight first:mt-0 w-64">
+                <h2 className="scroll-m-20 pb-2 pr-2 text-2xl text-nowrap font-semibold tracking-tight first:mt-0 w-64">
                     Social Handle
                 </h2>
                 <button className="border border-1 border-gray-500 w-full h-0"></button>
@@ -192,7 +192,7 @@ export default function ProfileSocial() {
                                     </Button>
                                 </SheetClose>
                                 <Button onClick={handleSaveChanges}
-                                    variant={"primary"}
+                                    variant={"secondary"}
                                 >
                                     Save
                                 </Button>
