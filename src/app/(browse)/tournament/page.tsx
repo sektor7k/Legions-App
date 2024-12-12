@@ -1,8 +1,10 @@
 "use client"
+import LoadingAnimation from "@/components/loadingAnimation";
 import { CardDemo } from "./_components/Card";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import ErrorAnimation from "@/components/errorAnimation";
 
 interface TournamentsProps {
     _id: string
@@ -23,8 +25,6 @@ export default function Tournaments() {
 
     const router = useRouter();
 
-    if (error) return <div>Failed to load tournaments</div>;
-    if (!tournaments) return <div>Loading...</div>;
     return (
         <div className="flex flex-col items-center justify-center mt-8 px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col justify-center items-center">
