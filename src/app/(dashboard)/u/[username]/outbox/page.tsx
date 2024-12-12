@@ -1,46 +1,38 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { Badge } from "@/components/ui/badge";
 import { useSession } from 'next-auth/react';
 import { Button } from "@/components/ui/button";
 import { toast } from '@/components/ui/use-toast';
-import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
+import ErrorAnimation from '@/components/errorAnimation';
+import LoadingAnimation from '@/components/loadingAnimation';
+
+const fetcher = (url: string, params: any) => 
+    axios.post(url, params).then(res => 
+        res.data.sort((a: any, b: any) => {
+            if (a.status === 'pending' && b.status !== 'pending') return -1;
+            if (a.status !== 'pending' && b.status === 'pending') return 1;
+            return new Date(b.invitedAt).getTime() - new Date(a.invitedAt).getTime();
+        })
+    );
 
 export default function OutboxPage() {
-    const [invites, setInvites] = useState<any[]>([]);
-    const { data: session, status } = useSession();
-    const router = useRouter();
-    useEffect(() => {
-        const fetchInvites = async () => {
-            if (status === 'authenticated' && session?.user?.id) {
-                try {
-                    const userId = session.user.id;
-
-                    // API'den davetleri alın
-                    const response = await axios.post(`/api/tournament/invite/getOutbox`, { userId });
-                    console.log(response.data);
-
-                    if (Array.isArray(response.data)) {
-                        setInvites(response.data);
-                    } else {
-                        console.error('Unexpected response format:', response.data);
-                    }
-                } catch (error) {
-                    console.error('Error fetching invites:', error);
-                }
-            }
-        };
-
-        fetchInvites();
-    }, [session, status]);
+    const { data: session } = useSession();
+    const { data: invites = [], error, mutate } = useSWR(
+        session?.user.id 
+            ? ['/api/tournament/invite/getOutbox', { userId: session.user.id }] 
+            : null, 
+        ([url, params]) => fetcher(url, params)
+    );
 
     function showErrorToast(message: string): void {
         toast({
             variant: "destructive",
             title: message,
             description: "",
-        })
+        });
     }
 
     function showToast(message: string): void {
@@ -48,20 +40,20 @@ export default function OutboxPage() {
             variant: "default",
             title: message,
             description: "",
-        })
+        });
     }
 
     const handleDeleteInvite = async (inviteId: string) => {
         try {
             await axios.post(`/api/tournament/invite/deleteInvite`, { inviteId });
-            setInvites(invites.filter(invite => invite._id !== inviteId));
-            showToast("Delete invite successfully")
-            router.refresh();
+            mutate();
+            showToast("Delete invite successfully");
         } catch (error) {
-            showErrorToast("Delete invite Error")
+            showErrorToast("Delete invite Error");
             console.error('Error deleting invite:', error);
         }
     };
+
 
     return (
         <div className="max-w-4xl mx-auto p-8 space-y-8">
@@ -70,48 +62,42 @@ export default function OutboxPage() {
                 <p className="text-center text-gray-500">No outbox available.</p>
             ) : (
                 <div className="space-y-4 overflow-y-auto max-h-[80vh]">
-                    {invites
-                        .sort((a: any, b: any) => {
-                            if (a.status === 'pending' && b.status !== 'pending') return -1;
-                            if (a.status !== 'pending' && b.status === 'pending') return 1;
-                            return new Date(b.invitedAt).getTime() - new Date(a.invitedAt).getTime();
-                        })
-                        .map((invite: any, index) => (
-                            <div key={index} className="p-6 rounded-lg bg-black bg-opacity-40 backdrop-blur-sm">
-                                <div className="flex items-center space-x-4">
-                                    <img
-                                        src={invite.teamId.teamImage}
-                                        alt={invite.teamId.teamName}
-                                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
-                                    />
-                                    <div className="flex-1 text-white">
-                                        <h2 className="text-lg font-semibold">{invite.teamId.teamName}</h2>
-                                        <p className="text-xs text-gray-400">
-                                            Sent at: {new Date(invite.invitedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                        </p>
-                                    </div>
-                                    <div className="flex justify-end items-center space-x-2">
-                                        {invite.status === 'pending' && (
-                                            <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                onClick={() => handleDeleteInvite(invite._id)}
-                                            >
-                                                Delete
-                                            </Button>
-                                        )}
-                                        <Badge
-                                            variant="default"
-                                            className={`${invite.status === 'accepted' ? 'bg-green-500 text-white' :
-                                                invite.status === 'rejected' ? 'bg-red-500 text-white' :
-                                                    'bg-yellow-500 text-white'} px-4 py-2 rounded-full`}
+                    {invites.map((invite: any, index: any) => (
+                        <div key={index} className="p-6 rounded-lg bg-black bg-opacity-40 backdrop-blur-sm">
+                            <div className="flex items-center space-x-4">
+                                <img
+                                    src={invite.teamId.teamImage}
+                                    alt={invite.teamId.teamName}
+                                    className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+                                />
+                                <div className="flex-1 text-white">
+                                    <h2 className="text-lg font-semibold">{invite.teamId.teamName}</h2>
+                                    <p className="text-xs text-gray-400">
+                                        Sent at: {new Date(invite.invitedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                    </p>
+                                </div>
+                                <div className="flex justify-end items-center space-x-2">
+                                    {invite.status === 'pending' && (
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            onClick={() => handleDeleteInvite(invite._id)}
                                         >
-                                            {invite.status.charAt(0).toUpperCase() + invite.status.slice(1)}
-                                        </Badge>
-                                    </div>
+                                            Delete
+                                        </Button>
+                                    )}
+                                    <Badge
+                                        variant="default"
+                                        className={`${invite.status === 'accepted' ? 'bg-green-500 text-white' :
+                                            invite.status === 'rejected' ? 'bg-red-500 text-white' :
+                                                'bg-yellow-500 text-white'} px-4 py-2 rounded-full`}
+                                    >
+                                        {invite.status.charAt(0).toUpperCase() + invite.status.slice(1)}
+                                    </Badge>
                                 </div>
                             </div>
-                        ))}
+                        </div>
+                    ))}
                 </div>
             )}
         </div>
