@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     try {
-        const team = await Team.findOne({ tournamentId, 'members.memberId': userId });
+        const team = await Team.findOne({ tournamentId, 'members.memberId': userId, isDeleted: false });
 
         const teamsInTournament = await Team.find({ tournamentId }).select('_id');
 

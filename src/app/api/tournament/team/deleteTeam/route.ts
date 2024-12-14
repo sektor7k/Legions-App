@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     try {
-        const team = await Team.findByIdAndDelete(teamId);
+        const team = await Team.findByIdAndUpdate(teamId, { isDeleted: true })
 
         if (!team) {
             return NextResponse.json({ message: 'Team not found' }, { status: 404 });

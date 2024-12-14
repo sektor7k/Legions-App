@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import Match from "@/models/Matches"; // Matches modelini import edin
 import Team from "@/models/Team";
 
-export async function POST(request: Request) {
+export async function POST(request: Request) { 
     try {
         await connectDB();
 
