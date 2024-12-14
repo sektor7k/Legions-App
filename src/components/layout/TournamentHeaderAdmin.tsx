@@ -1,12 +1,7 @@
 "use client"
 import { cn } from '@/lib/utils';
 import { MobileSidebar } from './mobile-sidebar-tournament';
-import { UserNav } from './user-nav';
-import Link from 'next/link';
-
-import Image from 'next/image';
 import { DashboardNavTournament } from '../dashboard-nav';
-import { useSession } from 'next-auth/react';
 import { getNavItemsTournamentAdmin } from '@/constants/data';
 
 type TournamentHeaderProps = {
@@ -19,21 +14,9 @@ export default function TournamentHeaderAdmin({ id }: TournamentHeaderProps) {
 
 
     return (
-        <div className="supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-black bg-opacity-30 backdrop-blur">
-            <nav className="flex h-14 items-center justify-between px-4">
-                <div className="hidden lg:block">
-                    <Link
-                        href={'/'}
-                    >
-                        <Image
-                            src={"/logoDark.png"}
-                            alt="Logo"
-                            width={130}
-                            height={100}
-                        />
-
-                    </Link>
-                </div>
+        <div className="fixed left-0 right-0 top-0  border-b z-50 bg-black bg-opacity-30 backdrop-blur">
+            <nav className="flex h-14 items-center justify-center px-4">
+               
 
                 <div className="hidden lg:block gap-2">
                     <DashboardNavTournament
@@ -45,9 +28,7 @@ export default function TournamentHeaderAdmin({ id }: TournamentHeaderProps) {
                     <MobileSidebar id={id} />
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <UserNav />
-                </div>
+               
             </nav>
         </div>
     );
