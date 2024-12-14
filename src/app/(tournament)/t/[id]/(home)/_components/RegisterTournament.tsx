@@ -69,7 +69,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
         setIsFirstDialogOpen(false);
         setthreeDialogOpen(true);
         try {
-            const response = await axios.post('/api/tournament/getTeamPublic', { tournamentId: id, status: "public" });
+            const response = await axios.post('/api/tournament/team/getTeamPublic', { tournamentId: id, status: "public" });
             setTeams(response.data);
         } catch (error) {
             console.error('Error fetching teams:', error);
@@ -103,7 +103,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
 
     const createTeam = async () => {
         try {
-            const response = await axios.post('/api/tournament/createTeam', {
+            const response = await axios.post('/api/tournament/team/createTeam', {
                 tournamentId: id,
                 teamName: teamName,
                 teamImage: teamImage,

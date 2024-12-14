@@ -71,7 +71,7 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
         const fetchData = async () => {
             try {
                 const [teamsResponse, matchResponse] = await Promise.all([
-                    axios.post('/api/tournament/getTeam', { tournamentId: params.id }),
+                    axios.post('/api/tournament/team/getTeam', { tournamentId: params.id }),
                     axios.post('/api/tournament/match/getMatch', { tournamentId: params.id })
                 ]);
 

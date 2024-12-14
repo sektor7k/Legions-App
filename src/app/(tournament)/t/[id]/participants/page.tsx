@@ -35,7 +35,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
     const closeRef = useRef<ElementRef<"button">>(null);
 
     const { data: teams, error: teamsError, mutate: teamsMutate } = useSWR(
-        params?.id ? ['/api/tournament/getTeam', { tournamentId: params.id }] : null,
+        params?.id ? ['/api/tournament/team/getTeam', { tournamentId: params.id }] : null,
         ([url, params]) => fetcher(url, params)
     );
 
@@ -88,7 +88,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
     const handleRemoveMember = async (teamId: string, memberId: string) => {
         try {
-            const response = await axios.post('/api/tournament/deleteuserTeam', {
+            const response = await axios.post('/api/tournament/team/deleteuserTeam', {
                 teamId,
                 memberId,
             });
@@ -103,7 +103,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
     const handleDeleteTeam = async (teamId: string) => {
         try {
-            const response = await axios.post('/api/tournament/deleteTeam', { teamId });
+            const response = await axios.post('/api/tournament/team/deleteTeam', { teamId });
             showToast("Team deleted successfully");
 
             teamsMutate();

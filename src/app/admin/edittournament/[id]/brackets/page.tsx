@@ -33,7 +33,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 }
 
                 // Takımları çek
-                const teamsResponse = await axios.post('/api/tournament/getTeam', { tournamentId: params.id });
+                const teamsResponse = await axios.post('/api/tournament/team/getTeam', { tournamentId: params.id });
                 setTeams(teamsResponse.data);
 
 

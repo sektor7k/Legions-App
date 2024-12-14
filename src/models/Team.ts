@@ -10,6 +10,7 @@ export interface TeamDocument extends Document {
   teamName: string;
   teamImage: string;
   status: string;
+  isDeleted: boolean;
   members: Member[];
   createdAt: Date;
   updatedAt: Date;
@@ -45,6 +46,11 @@ const teamSchema = new Schema<TeamDocument>({
     type: String,
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
   members: [memberSchema],
 }, {
   timestamps: true, // createdAt ve updatedAt alanlarını otomatik olarak ekler
@@ -58,7 +64,7 @@ teamSchema.pre('findOneAndDelete', async function (next) {
     // Bu takım ile ilgili tüm davetleri sil
     await Invite.deleteMany({ teamId: team._id });
     next();
-  } catch (error:any) {
+  } catch (error: any) {
     next(error);
   }
 });
