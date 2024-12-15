@@ -123,7 +123,7 @@ export default function ProfileUser() {
                                     </Button>
                                 </DialogClose>
                                 <Button onClick={editUsername}
-                                    variant={"primary"}
+                                    variant={"secondary"}
                                 >
                                     Save
                                 </Button>

@@ -21,7 +21,7 @@ const fetcher = (url: string, params: any) =>
 export default function InboxPage() {
     const { data: session, status } = useSession();
 
-    const { data: invites = [], error, mutate } = useSWR(session?.user.id ? ['/api/tournament/invite/getInvite', { leadId: session.user.id }] : null, ([url, params]) => fetcher(url, params));
+    const { data: invites, error, mutate } = useSWR(session?.user.id ? ['/api/tournament/invite/getInvite', { leadId: session.user.id }] : null, ([url, params]) => fetcher(url, params));
 
 
     function showErrorToast(message: string): void {
@@ -67,6 +67,8 @@ export default function InboxPage() {
         }
     };
 
+    if (error) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
+    if (!invites) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;
     
     return (
         <div className="max-w-4xl mx-auto p-8 space-y-8 ">

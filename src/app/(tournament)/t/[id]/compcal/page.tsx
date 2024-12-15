@@ -34,10 +34,11 @@ const fetcher = (url: string, params: any) =>
 
 export default function CompcalPage({ params }: { params: { id: string } }) {
 
-    const { data: matches = [], error } = useSWR<Match[]>(params.id ? ['/api/tournament/match/getMatch', { tournamentId: params.id }] : null, ([url, params]) => fetcher(url, params));
+    const { data: matches , error } = useSWR<Match[]>(params.id ? ['/api/tournament/match/getMatch', { tournamentId: params.id }] : null, ([url, params]) => fetcher(url, params));
 
 
-
+    if (error) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
+    if (!matches) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;
 
     return (
         <div className=" max-w-6xl mx-auto p-8 space-y-8">
@@ -47,12 +48,11 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
             </div>
 
             <div className="space-y-6">
-                {matches.map((match, index) => (
+                {matches?.map((match, index) => (
                     <div
                         key={index}
                         className="flex flex-row justify-between items-center bg-black rounded-md min-h-20 bg-opacity-40 backdrop-blur-sm p-4 px-0"
                     >
-                        {/* Team 1 */}
                         <div className="flex flex-col items-center justify-center w-1/4">
                             <img
                                 src={match.team1Id.teamImage || "/defaultteam.png"}
@@ -62,7 +62,6 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
                             <div className="font-bold text-center">{match.team1Id.teamName || "Team"}</div>
                         </div>
 
-                        {/* Match Time and Date */}
                         <div className="flex flex-col justify-center items-center w-1/2">
                             <p className="text-3xl font-extrabold font-mono border-gradient-bottom w-40 text-center">
                                 {`${match.matchTime.slice(0, 2)}:${match.matchTime.slice(2)}`}
@@ -72,7 +71,6 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
                             </div>
                         </div>
 
-                        {/* Team 2 */}
                         <div className="flex flex-col items-center justify-center w-1/4">
                             <img
                                 src={match.team2Id.teamImage || "/defaultteam.png"}

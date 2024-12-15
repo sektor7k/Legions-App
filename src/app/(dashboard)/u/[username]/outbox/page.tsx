@@ -9,8 +9,8 @@ import useSWR from 'swr';
 import ErrorAnimation from '@/components/errorAnimation';
 import LoadingAnimation from '@/components/loadingAnimation';
 
-const fetcher = (url: string, params: any) => 
-    axios.post(url, params).then(res => 
+const fetcher = (url: string, params: any) =>
+    axios.post(url, params).then(res =>
         res.data.sort((a: any, b: any) => {
             if (a.status === 'pending' && b.status !== 'pending') return -1;
             if (a.status !== 'pending' && b.status === 'pending') return 1;
@@ -20,10 +20,10 @@ const fetcher = (url: string, params: any) =>
 
 export default function OutboxPage() {
     const { data: session } = useSession();
-    const { data: invites = [], error, mutate } = useSWR(
-        session?.user.id 
-            ? ['/api/tournament/invite/getOutbox', { userId: session.user.id }] 
-            : null, 
+    const { data: invites , error, mutate } = useSWR(
+        session?.user.id
+            ? ['/api/tournament/invite/getOutbox', { userId: session.user.id }]
+            : null,
         ([url, params]) => fetcher(url, params)
     );
 
@@ -53,6 +53,9 @@ export default function OutboxPage() {
             console.error('Error deleting invite:', error);
         }
     };
+    
+    if (error) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
+    if (!invites) return <div className=" flex h-screen justify-center items-center -translate-y-36"><LoadingAnimation /></div>;
 
 
     return (
