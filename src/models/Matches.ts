@@ -6,6 +6,7 @@ export interface MatchDocument extends Document {
   team2Id: Types.ObjectId;
   matchDate: string;
   matchTime: string;
+  isDeleted: boolean;
 }
 
 const matchSchema = new Schema<MatchDocument>({
@@ -32,6 +33,10 @@ const matchSchema = new Schema<MatchDocument>({
     type: String,
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  }
 }, {
   timestamps: true, // createdAt ve updatedAt alanlarını otomatik olarak ekler
 });
