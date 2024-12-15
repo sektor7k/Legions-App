@@ -139,158 +139,83 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                 </div>
                             </div>
                             <div className="w-auto">
-                                {team.status === "private" ? (
 
-                                    session?.user.id === team.members.find((member: any) => member.isLead)?.memberId._id ? (
-                                        <TooltipProvider>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Dialog>
-                                                        <DialogTrigger asChild>
-                                                            <Button
-                                                                variant="ghost"
-                                                                className='rounded-full w-10 h-10 p-0'
-                                                            >
-                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-                                                                    <path d="M4.293 18.293a1 1 0 0 1 0 1.414l-1.414 1.414a1 1 0 0 1-1.414-1.414l1.414-1.414a1 1 0 0 1 1.414 0zM5 13.5V16h2.5L18.207 5.293l-2.5-2.5L5 13.5zm9.207-10.207l2.5 2.5 1.586-1.586a1 1 0 0 0-1.414-1.414L14.207 3.293z" />
-                                                                </svg>
-                                                            </Button>
-                                                        </DialogTrigger>
-                                                        <DialogContent className="sm:max-w-[425px]">
-                                                            <DialogHeader>
-                                                                <DialogTitle>Edit Team: {team.teamName}</DialogTitle>
-                                                                <DialogDescription>
-                                                                    Manage your team members or delete the team.
-                                                                </DialogDescription>
-                                                            </DialogHeader>
-                                                            <div className="grid gap-4 py-4">
-                                                                {team.members.map((member: any, idx: any) => (
-                                                                    <div key={idx} className="flex items-center justify-between">
-                                                                        <div className="flex items-center space-x-3">
-                                                                            <img
-                                                                                src={member.memberId.image}
-                                                                                alt={member.memberId.username}
-                                                                                className="w-10 h-10 rounded-full object-cover"
-                                                                            />
-                                                                            <span className="text-base font-medium text-coolGray-900">
-                                                                                {member.memberId.username}
-                                                                            </span>
-                                                                        </div>
-                                                                        <div className="flex items-center space-x-2">
-                                                                            {member.isLead && (
-                                                                                <Badge variant="destructive">Lead</Badge>
-                                                                            )}
-                                                                            {!member.isLead && (
-
-                                                                                <DialogClose ref={closeRef} asChild>
-                                                                                    <Button
-                                                                                        variant="default"
-                                                                                        size="sm"
-                                                                                        onClick={() => handleRemoveMember(team._id, member.memberId._id)}
-                                                                                    >
-                                                                                        Drop
-                                                                                    </Button>
-                                                                                </DialogClose>
-                                                                            )}
-                                                                        </div>
+                                {session?.user.id === team.members.find((member: any) => member.isLead)?.memberId._id ? (
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            className='rounded-full w-10 h-10 p-0'
+                                                        >
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                                                                <path d="M4.293 18.293a1 1 0 0 1 0 1.414l-1.414 1.414a1 1 0 0 1-1.414-1.414l1.414-1.414a1 1 0 0 1 1.414 0zM5 13.5V16h2.5L18.207 5.293l-2.5-2.5L5 13.5zm9.207-10.207l2.5 2.5 1.586-1.586a1 1 0 0 0-1.414-1.414L14.207 3.293z" />
+                                                            </svg>
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent className="sm:max-w-[425px]">
+                                                        <DialogHeader>
+                                                            <DialogTitle>Edit Team</DialogTitle>
+                                                            <DialogDescription>
+                                                                Manage your team members or delete the team.
+                                                            </DialogDescription>
+                                                        </DialogHeader>
+                                                        <div className="grid gap-4 py-4">
+                                                            {team.members.map((member: any, idx: any) => (
+                                                                <div key={idx} className="flex items-center justify-between">
+                                                                    <div className="flex items-center space-x-3">
+                                                                        <img
+                                                                            src={member.memberId.image}
+                                                                            alt={member.memberId.username}
+                                                                            className="w-10 h-10 rounded-full object-cover"
+                                                                        />
+                                                                        <span className="text-base font-medium text-coolGray-900">
+                                                                            {member.memberId.username}
+                                                                        </span>
                                                                     </div>
-                                                                ))}
-                                                            </div>
-                                                            <DialogFooter>
-                                                                <DialogClose ref={closeRef} asChild>
-                                                                    <Button
-                                                                        variant={"destructive"}
-                                                                        onClick={() => handleDeleteTeam(team._id)}
-                                                                    >
-                                                                        Delete Team
-                                                                    </Button>
-                                                                </DialogClose>
-                                                            </DialogFooter>
-                                                        </DialogContent>
-                                                    </Dialog>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>Edit Team</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
-                                    ) : (
-                                        <Badge variant="default">Private</Badge>
-                                    )
+                                                                    <div className="flex items-center space-x-2">
+                                                                        {member.isLead && (
+                                                                            <Badge variant="destructive">Lead</Badge>
+                                                                        )}
+                                                                        {!member.isLead && (
+
+                                                                            <DialogClose ref={closeRef} asChild>
+                                                                                <Button
+                                                                                    variant="default"
+                                                                                    size="sm"
+                                                                                    onClick={() => handleRemoveMember(team._id, member.memberId._id)}
+                                                                                >
+                                                                                    Drop
+                                                                                </Button>
+                                                                            </DialogClose>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <DialogFooter>
+                                                            <DialogClose ref={closeRef} asChild>
+                                                                <Button
+                                                                    variant={"destructive"}
+                                                                    onClick={() => handleDeleteTeam(team._id)}
+                                                                >
+                                                                    Delete Team
+                                                                </Button>
+                                                            </DialogClose>
+                                                        </DialogFooter>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Edit Team</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                 ) : (
-                                    session?.user.id === team.members.find((member: any) => member.isLead)?.memberId._id ? (
-                                        <TooltipProvider>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Dialog>
-                                                        <DialogTrigger asChild>
-                                                            <Button
-                                                                variant="ghost"
-                                                                className='rounded-full w-10 h-10 p-0'
-                                                            >
-                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-                                                                    <path d="M4.293 18.293a1 1 0 0 1 0 1.414l-1.414 1.414a1 1 0 0 1-1.414-1.414l1.414-1.414a1 1 0 0 1 1.414 0zM5 13.5V16h2.5L18.207 5.293l-2.5-2.5L5 13.5zm9.207-10.207l2.5 2.5 1.586-1.586a1 1 0 0 0-1.414-1.414L14.207 3.293z" />
-                                                                </svg>
-                                                            </Button>
-                                                        </DialogTrigger>
-                                                        <DialogContent className="sm:max-w-[425px]">
-                                                            <DialogHeader>
-                                                                <DialogTitle>Edit Team: {team.teamName}</DialogTitle>
-                                                                <DialogDescription>
-                                                                    Manage your team members or delete the team.
-                                                                </DialogDescription>
-                                                            </DialogHeader>
-                                                            <div className="grid gap-4 py-4">
-                                                                {team.members.map((member: any, idx: any) => (
-                                                                    <div key={idx} className="flex items-center justify-between">
-                                                                        <div className="flex items-center space-x-3">
-                                                                            <img
-                                                                                src={member.memberId.image}
-                                                                                alt={member.memberId.username}
-                                                                                className="w-10 h-10 rounded-full object-cover"
-                                                                            />
-                                                                            <span className="text-base font-medium text-coolGray-900">
-                                                                                {member.memberId.username}
-                                                                            </span>
-                                                                        </div>
-                                                                        <div className="flex items-center space-x-2">
-                                                                            {member.isLead && (
-                                                                                <Badge variant="destructive">Lead</Badge>
-                                                                            )}
-                                                                            {!member.isLead && (
-
-                                                                                <DialogClose ref={closeRef} asChild>
-                                                                                    <Button
-                                                                                        variant="default"
-                                                                                        size="sm"
-                                                                                        onClick={() => handleRemoveMember(team._id, member.memberId._id)}
-                                                                                    >
-                                                                                        Drop
-                                                                                    </Button>
-                                                                                </DialogClose>
-                                                                            )}
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                            <DialogFooter>
-                                                                <DialogClose ref={closeRef} asChild>
-                                                                    <Button
-                                                                        variant={"destructive"}
-                                                                        onClick={() => handleDeleteTeam(team._id)}
-                                                                    >
-                                                                        Delete Team
-                                                                    </Button>
-                                                                </DialogClose>
-                                                            </DialogFooter>
-                                                        </DialogContent>
-                                                    </Dialog>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>Edit Team</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
+                                    team.status === "private" ? (
+                                        <Badge variant="default">Private</Badge>
                                     ) : (
                                         <TooltipProvider>
                                             <Tooltip>
@@ -316,6 +241,10 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                         </TooltipProvider>
                                     )
                                 )}
+
+
+
+
                             </div>
                         </div>
 
