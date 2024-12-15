@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (!bracket) {
-            return NextResponse.json({ message: 'Bracket not found' }, { status: 404 });
+            return NextResponse.json(null, { status: 200 });
         }
 
         return NextResponse.json(bracket, { status: 200 });

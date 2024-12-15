@@ -16,15 +16,15 @@ export async function POST(request: Request) {
         const reqBody = await request.json();
         const { id } = reqBody;
 
-        const res = await Match.findByIdAndDelete(id);
+        const res = await Match.findByIdAndUpdate(id, { isDeleted: true });
 
         return NextResponse.json({
             message: "Match deleted successfully",
             data: res,
         },
-        {
-            status: 200,
-        })
+            {
+                status: 200,
+            })
 
     } catch (error) {
         if (error instanceof mongoose.Error.ValidationError) {

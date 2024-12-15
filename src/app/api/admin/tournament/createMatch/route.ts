@@ -15,8 +15,6 @@ export async function POST(request: Request) {
         const reqBody = await request.json();
         const { tournamentId, team1Id, team2Id, matchDate, matchTime } = reqBody;
 
-        console.log(tournamentId, team1Id, team2Id, matchDate, matchTime);
-
         // Yeni maçı oluştur
         const match = new Match({
             tournamentId,

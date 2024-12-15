@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import Match from "@/models/Matches"; // Matches modelini import edin
 import Team from "@/models/Team";
 
-export async function POST(request: Request) { 
+export async function POST(request: Request) {
     try {
         await connectDB();
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
         const reqBody = await request.json();
         const { tournamentId } = reqBody;
 
-        const matches = await Match.find({ tournamentId })
+        const matches = await Match.find({ tournamentId, isDeleted: false })
             .populate({
                 path: "team1Id",
                 select: "teamName teamImage",
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
             });
 
         return NextResponse.json(
-            { message: "getMatches successfully", data: matches },
+            matches,
             { status: 200 }
         );
 

@@ -46,11 +46,9 @@ export function Tournamnets({
           Active
         </Badge>
       </TableCell>
-      <TableCell className="hidden md:table-cell">{`$50`}</TableCell>
-      <TableCell className="hidden md:table-cell">130</TableCell>
-      <TableCell className="hidden md:table-cell">
-        Yes
-      </TableCell>
+      <TableCell className="hidden md:table-cell">{participants}/{capacity}</TableCell>
+      <TableCell className="hidden md:table-cell">{date}</TableCell>
+
       <TableCell>
         <Button aria-haspopup="true" size="icon" variant="ghost" onClick={() => router.push(`/admin/edittournament/${id}`)}>
           <ArrowUpRight className="h-4 w-4" />
