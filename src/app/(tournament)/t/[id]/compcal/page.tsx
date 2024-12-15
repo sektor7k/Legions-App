@@ -18,7 +18,7 @@ interface Match {
 
 const fetcher = (url: string, params: any) => 
     axios.post(url, params).then(res =>
-        res.data.data.sort((a: Match, b: Match) => {
+        res.data.sort((a: Match, b: Match) => {
             // Parse matchDate into a standard date format to ensure accurate sorting
             const parseDateTime = (date: string, time: string) => {
                 const [month, day, year] = date.replace(/(st|nd|rd|th),/g, '').split(' ');
@@ -28,7 +28,7 @@ const fetcher = (url: string, params: any) =>
 
             const dateA = parseDateTime(a.matchDate, a.matchTime);
             const dateB = parseDateTime(b.matchDate, b.matchTime);
-            return dateB.getTime() - dateA.getTime(); // Sort descending by date and time
+            return dateA.getTime() - dateB.getTime(); // Sort ascending by date and time
         })
     );
 

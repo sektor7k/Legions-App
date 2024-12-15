@@ -12,38 +12,16 @@ import TCard from "./_components/Cards";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
+import useSWR from "swr";
+
+const fetcher = (url: string, params: any) => axios.post(url, params).then((res) => res.data);
 
 export default function Page({ params }: { params: { id: string } }) {
+
     const [teamvalue, setteamValue] = useState("");
-    const [bracket, setBracket] = useState<any>(null);
-    const [allteams, setTeams] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Bracket verisini çek
-                const bracketResponse = await axios.post('/api/tournament/bracket/getBracket', {
-                    tournamentId: params.id,
-                });
-
-                if (bracketResponse.status === 200) {
-                    setBracket(bracketResponse.data);
-                } else {
-                    console.error('Error fetching bracket', bracketResponse.data.message);
-                }
-
-                // Takımları çek
-                const teamsResponse = await axios.post('/api/tournament/team/getTeam', { tournamentId: params.id });
-                setTeams(teamsResponse.data);
-
-
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-    }, [params.id]);
+    const { data: bracket, error, mutate } = useSWR(['/api/tournament/bracket/getBracket', { tournamentId: params.id }], ([url, params]) => fetcher(url, params));
+    const { data: allteams, error: errorTeams } = useSWR(['/api/tournament/team/getTeam', { tournamentId: params.id }], ([url, params]) => fetcher(url, params));
 
 
     const generateRounds = (teamCount: number) => {
@@ -65,15 +43,13 @@ export default function Page({ params }: { params: { id: string } }) {
         }
 
         try {
-            const response = await axios.post('/api/tournament/bracket/createBracket', {
+            const response = await axios.post('/api/admin/tournament/createBracket', {
                 teamCount: teamvalue,
                 tournamentId: params.id,
             });
 
             if (response.status === 200) {
-                console.log('Bracket created successfully', response.data);
-                setBracket(response.data);
-                 window.location.reload()
+                await mutate();
             } else {
                 console.error('Error creating bracket', response.data.message);
             }
@@ -84,10 +60,10 @@ export default function Page({ params }: { params: { id: string } }) {
 
     const deleteBracket = async () => {
         try {
-            const response = await axios.post('/api/tournament/bracket/deleteBracket', {
+            const response = await axios.post('/api/admin/tournament/deleteBracket', {
                 bracketId: bracket._id
             })
-            window.location.reload()
+            await  mutate();
         } catch (error) {
             console.error('Error creating bracket:', error);
         }
@@ -99,9 +75,9 @@ export default function Page({ params }: { params: { id: string } }) {
         <div className="flex flex-col items-center mt-10 pl-10 overflow-x-auto">
             {bracket ? (
                 <div>
-                    <Button 
-                    variant={"destructive"}
-                    onClick={deleteBracket}
+                    <Button
+                        variant={"destructive"}
+                        onClick={deleteBracket}
                     >Delete Bracket</Button>
                 </div>
             ) :

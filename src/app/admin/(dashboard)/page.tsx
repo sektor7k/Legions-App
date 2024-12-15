@@ -12,7 +12,7 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data.tournamen
 
 export default function ProductsPage() {
 
-  const router = useRouter();
+  const router = useRouter(); 
 
   const { data: tournaments, error, mutate } = useSWR('api/tournament/getAllTournament', (url) => fetcher(url));
 
@@ -20,8 +20,6 @@ export default function ProductsPage() {
 
   return (
     <div className='flex flex-col justify-center gap-6'>
-
-
 
       <div className="flex items-center">
 
