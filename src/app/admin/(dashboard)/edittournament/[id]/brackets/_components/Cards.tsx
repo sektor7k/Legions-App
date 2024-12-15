@@ -17,6 +17,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { mutate } from "swr";
 interface TCardProps {
     tournamentId: string;
     team?: {
@@ -56,13 +57,13 @@ export default function TCard({ tournamentId, team, allteams }: TCardProps) {
 
     const addTeamBracket = async () => {
         try {
-            const response = await axios.post('/api/tournament/bracket/updateBracket', {
+            const response = await axios.post('/api/admin/tournament/updateBracket', {
                 bracketTeamId: team?._id,
                 teamId: selectTeam,
                 score: teamscore
             });
             showToast("Update bracket successfully")
-            router.refresh();
+            await  mutate(['/api/tournament/bracket/getBracket',{ tournamentId }])
             closeRef?.current?.click();
 
         } catch (error) {
@@ -72,7 +73,7 @@ export default function TCard({ tournamentId, team, allteams }: TCardProps) {
     }
 
     return (
-        <div className="h-16 w-32 bg-red-800 bg-opacity-50 border-2 border-red-800 backdrop-blur-sm rounded-sm relative with-connector grid grid-cols-3">
+        <div className="h-16 w-32 bg-gray-800 bg-opacity-50 border-2 border-gray-800 backdrop-blur-sm rounded-sm relative with-connector grid grid-cols-3">
 
             <Dialog >
                 <DialogTrigger asChild>
