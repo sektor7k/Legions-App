@@ -21,11 +21,7 @@ export interface UserDocument {
   };
   wallets?: {
     evm?: string;
-    btc?: string;
     solana?: string;
-    sei?: string;
-    aptos?: string;
-    sui?: string;
   };
   cryptoLoginNonce?: {
     nonce: string;

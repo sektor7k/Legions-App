@@ -20,11 +20,7 @@ interface ExtendedUser extends NextAuthUser {
   };
   wallets: {
     evm?: string;
-    btc?: string;
     solana?: string;
-    sei?: string;
-    aptos?: string;
-    sui?: string;
   };
 }
 
