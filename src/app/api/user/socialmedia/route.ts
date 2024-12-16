@@ -12,26 +12,29 @@ export async function POST(request: NextRequest) {
         await connectDB()
 
         const reqBody = await request.json();
-        console.log(reqBody)
+        const {twitter, discord, telegram} = reqBody;
 
-        const session = await getServerSession({ ...authOptions });
+       
+
+        const session = await getServerSession(authOptions );
 
         if (!session || !session.user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+        
 
         const userId = session.user.id;
 
         const updateData: any = {};
 
-        if (reqBody.socialMedia?.twitter) {
-            updateData["socialMedia.twitter"] = reqBody.socialMedia.twitter;
+        if (twitter) {
+            updateData["socialMedia.twitter"] = twitter;
         }
-        if (reqBody.socialMedia?.discord) {
-            updateData["socialMedia.discord"] = reqBody.socialMedia.discord;
+        if (discord) {
+            updateData["socialMedia.discord"] = discord;
         }
-        if (reqBody.socialMedia?.telegram) {
-            updateData["socialMedia.telegram"] = reqBody.socialMedia.telegram;
+        if (telegram) {
+            updateData["socialMedia.telegram"] = telegram;
         }
 
         if (Object.keys(updateData).length === 0) {

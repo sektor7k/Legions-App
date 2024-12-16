@@ -3,7 +3,8 @@ import { connectDB } from '@/lib/mongodb';
 import Invite from '@/models/Invite';
 import Team from '@/models/Team';
 
-export async function POST(request: NextRequest) { 
+ 
+export async function POST(request: NextRequest) {
     const reqBody = await request.json();
     const { userId } = reqBody;
 
@@ -18,15 +19,11 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-        // 🕒 API Gecikmesi (3 saniye)
-        await new Promise(resolve => setTimeout(resolve, 3000)); // 3 saniyelik gecikme
-
         const invites = await Invite.find({ userId })
             .populate({
                 path: 'teamId',
                 select: 'teamName teamImage'
             });
-
         return NextResponse.json(invites, { status: 200 });
     } catch (error) {
         console.error('Error fetching invites:', error);
