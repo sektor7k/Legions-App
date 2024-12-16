@@ -18,7 +18,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Badge } from "@/components/ui/badge"
-import { UploadDropzone } from "@/utils/uploadthing";
+import { UploadButton, UploadDropzone } from "@/utils/uploadthing";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch"
@@ -197,16 +197,8 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                         </DialogDescription>
                     </DialogHeader>
                     <div className="flex flex-col justify-center items-center space-y-4">
-                        <div className="border rounded-md outline-dashed w-60 h-60">
-                            <UploadDropzone
-                                appearance={{
-                                    label: {
-                                        color: "#FFFFFF"
-                                    },
-                                    allowedContent: {
-                                        color: "#FFFFFF"
-                                    }
-                                }}
+                        <div className="border rounded-md outline-dashed p-5">
+                            <UploadButton     
                                 onClientUploadComplete={(res) => {
                                     console.log(res);
                                     const uploadedUrl = res?.[0]?.url;

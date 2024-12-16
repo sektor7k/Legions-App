@@ -6,14 +6,12 @@ import { updateParticipantsCount } from "@/helpers/participantscount";
 
 export async function POST(request: Request) {
   try {
-    await connectDB(); // Veritabanına bağlan
+    await connectDB(); 
 
-    const reqBody = await request.json(); // İstek gövdesini al
+    const reqBody = await request.json(); 
     const { tournamentId, teamName, teamImage, status, members } = reqBody;
 
-    console.log(tournamentId, teamName, teamImage, status, members)
 
-    // Yeni takım oluştur
     const team = new Team({
       tournamentId,
       teamName,
@@ -22,7 +20,6 @@ export async function POST(request: Request) {
       members,
     });
 
-    // Takımı kaydet
     const savedTeam = await team.save();
 
     await updateParticipantsCount({
