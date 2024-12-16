@@ -16,35 +16,29 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
+import { mutate } from "swr";
 
-export default function ProfileSocial() {
+interface SocialMedia {
+    twitter: string | undefined;
+    discord: string | undefined;
+    telegram: string | undefined;
 
-    const [twitter, setTwitter] = useState('');
-    const [discord, setDiscord] = useState('');
-    const [telegram, setTelegram] = useState('');
+}
+
+export default function ProfileSocial({ telegram, twitter, discord }: SocialMedia) {
+
+    const [twitterN, setTwitter] = useState('');
+    const [discordN, setDiscord] = useState('');
+    const [telegramN, setTelegram] = useState('');
     const closeRef = useRef<ElementRef<"button">>(null);
-    const router = useRouter()
     const { toast } = useToast()
-    const { data: session, update } = useSession();
-
 
     const handleSaveChanges = async () => {
-        const socialMedia: Partial<Record<string, string>> = {};
-        if (twitter) socialMedia.twitter = twitter;
-        if (discord) socialMedia.discord = discord;
-        if (telegram) socialMedia.telegram = telegram;
 
         try {
-            const response = await axios.post('/api/user/socialmedia', { socialMedia });
-            update({
-                socialMedia: {
-                    twitter: socialMedia.twitter || session?.user.socialMedia?.twitter,
-                    discord: socialMedia.discord || session?.user.socialMedia?.discord,
-                    telegram: socialMedia.telegram || session?.user.socialMedia?.telegram,
-                }
-            });
+            const response = await axios.post('/api/user/socialmedia', { twitter: twitterN, discord: discordN, telegram: telegramN });
             showToast("Social media links successfully updated")
-            router.refresh();
+            await mutate(['/api/user/getUser'])
             closeRef?.current?.click();
 
         } catch (error) {
@@ -57,16 +51,16 @@ export default function ProfileSocial() {
     function showErrorToast(message: string): void {
         toast({
             variant: "destructive",
-            title: "Edit Username failed",
-            description: message,
+            title: message,
+            description: "",
         })
     }
 
     function showToast(message: string): void {
         toast({
             variant: "default",
-            title: "Social Handle Update",
-            description: message,
+            title: message,
+            description: "",
         })
     }
 
@@ -84,14 +78,14 @@ export default function ProfileSocial() {
                 <div className="p-3 bg-black rounded-l-lg">
                     <FaXTwitter className="w-6 h-6" />
                 </div>
-                {session?.user?.socialMedia?.twitter ? (
+                {twitter ? (
                     <a
-                        href={`https://twitter.com/${session.user.socialMedia.twitter}`}
+                        href={`https://twitter.com/${twitter}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8 "
                     >
-                        @{session.user.socialMedia.twitter}
+                        @{twitter}
                     </a>
                 ) : (
                     <p className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8">
@@ -104,13 +98,13 @@ export default function ProfileSocial() {
                 <div className="p-3 bg-black rounded-l-lg">
                     <FaDiscord className="w-6 h-6" />
                 </div>
-                {session?.user?.socialMedia?.discord ? (
+                {discord ? (
                     <a
                         href={`#`}
                         rel="noopener noreferrer"
                         className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8 "
                     >
-                        @{session.user.socialMedia.discord}
+                        @{discord}
                     </a>
                 ) : (
                     <p className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8">
@@ -123,14 +117,14 @@ export default function ProfileSocial() {
                 <div className="p-3 bg-black rounded-l-lg">
                     <FaTelegram className="w-6 h-6" />
                 </div>
-                {session?.user?.socialMedia?.telegram ? (
+                {telegram ? (
                     <a
-                        href={`https://t.me/${session.user.socialMedia.telegram}`}
+                        href={`https://t.me/${telegram}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8 "
                     >
-                        @{session.user.socialMedia.telegram}
+                        @{telegram}
                     </a>
                 ) : (
                     <p className="bg-black bg-opacity-40 p-3 w-full rounded-r-lg px-8">

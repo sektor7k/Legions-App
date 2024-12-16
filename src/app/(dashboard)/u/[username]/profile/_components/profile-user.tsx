@@ -17,15 +17,23 @@ import { ElementRef, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
-export default function ProfileUser() {
+import { mutate } from "swr";
 
-    const { data: session, update } = useSession();
-    const username = session?.user?.username || 'Username';
-    const email = session?.user?.email || 'user@gmail.com';
+interface UserProps {
+    id: string | undefined;
+    username: string | undefined;
+    email: string | undefined;
+    image: string | undefined;
+}
+
+export default function ProfileUser({ id, username, email, image }: UserProps) {
+
+    const name = username || 'Username';
+    const mail = email || 'user@gmail.com';
     const closeRef = useRef<ElementRef<"button">>(null);
-    const [newUsername, setNewUsername] = useState(username);
-    const router = useRouter()
+    const [newUsername, setNewUsername] = useState(mail);
     const { toast } = useToast()
+    const {update} =useSession();
 
 
 
@@ -33,10 +41,9 @@ export default function ProfileUser() {
         try {
             const response = await axios.post('/api/user/edituser', { newUsername });
             update({ username: response.data.user.username })
-            console.log(response.data.user.username)
-            router.refresh();
-            closeRef?.current?.click();
             showToast("your username has been successfully updated")
+            await mutate(['/api/user/getUser'])
+            closeRef?.current?.click();
 
         } catch (error) {
             console.log(error)
@@ -72,8 +79,8 @@ export default function ProfileUser() {
 
             </div>
             <div className="flex flex-col justify-start">
-                <h1 className="text-3xl font-bold">{username}</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{email}</p>
+                <h1 className="text-3xl font-bold">{name}</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{mail}</p>
 
                 <div>
                     <Dialog>
@@ -101,20 +108,10 @@ export default function ProfileUser() {
                                         id="username"
                                         className=""
                                         placeholder="alex"
-                                        defaultValue={username}
+                                        defaultValue={name}
                                         onChange={(e) => setNewUsername(e.target.value)}
                                     />
                                 </div>
-                                {/* <div className="flex flex-row items-center justify-start space-x-11">
-                                    <Label htmlFor="username" className="text-right">
-                                        New Email
-                                    </Label>
-                                    <Input
-                                        id="username"
-                                        className=""
-                                        placeholder="alex@gmail.com"
-                                    />
-                                </div> */}
                             </div>
                             <div className="flex justify-between ">
                                 <DialogClose ref={closeRef} asChild>

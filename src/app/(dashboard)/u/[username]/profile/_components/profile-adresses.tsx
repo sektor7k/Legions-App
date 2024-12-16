@@ -12,31 +12,28 @@ import {
 } from "@/components/ui/sheet"
 import { Label } from "@/components/ui/label";
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import { ElementRef, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+import { mutate } from "swr";
 
-export default function ProfileAdresses() {
+interface Adress {
+    evm: string | undefined;
+    solana: string | undefined;
+}
+
+export default function ProfileAdresses({ evm, solana }: Adress) {
 
     const [walletAddress, setWalletAddress] = useState('');
-    const { data: session, update } = useSession();
     const closeRef = useRef<ElementRef<"button">>(null);
-    const router = useRouter()
     const { toast } = useToast()
 
 
     const handleSaveChanges = async (walletType: string) => {
         try {
             const response = await axios.post('/api/user/wallets', { walletType, address: walletAddress });
-            update({
-                wallets: {
-                    ...session?.user?.wallets,
-                    [walletType]: walletAddress
-                }
-            });
             showToast(`${walletType.toUpperCase()} adress updated successfully`)
-            router.refresh();
+            await mutate(['/api/user/getUser'])
             closeRef?.current?.click();
         } catch (error) {
             showErrorToast("Error updating wallet address")
@@ -47,16 +44,16 @@ export default function ProfileAdresses() {
     function showErrorToast(message: string): void {
         toast({
             variant: "destructive",
-            title: "Wallet Address Updated failed",
-            description: message,
+            title: message,
+            description: "",
         })
     }
 
     function showToast(message: string): void {
         toast({
             variant: "default",
-            title: "Wallet Address Updated",
-            description: message,
+            title: message,
+            description: "",
         })
     }
 
@@ -78,7 +75,7 @@ export default function ProfileAdresses() {
                         <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
                             <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=032" alt="" className="w-5" />
                         </div>
-                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">{session?.user?.wallets?.evm || "No Address"}</p>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">{evm || "No Address"}</p>
                         <Sheet >
                             <SheetTrigger>
                                 <Button variant={"ghost"} className=" rounded-r-xl rounded-l-none ">
@@ -130,7 +127,7 @@ export default function ProfileAdresses() {
                         <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
                             <img src="https://cryptologos.cc/logos/solana-sol-logo.svg?v=032" alt="" className="w-9" />
                         </div>
-                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">{session?.user?.wallets?.solana || "No Address"}</p>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">{solana || "No Address"}</p>
 
                         <Sheet >
                             <SheetTrigger>
@@ -151,11 +148,11 @@ export default function ProfileAdresses() {
                                     <Label htmlFor="solana" className="text-right">
                                         Adress
                                     </Label>
-                                    <Input 
-                                    id="solana" 
-                                    placeholder="0xd40F6*************************************" 
-                                    className="col-span-3" 
-                                    onChange={(e) => setWalletAddress(e.target.value)}
+                                    <Input
+                                        id="solana"
+                                        placeholder="0xd40F6*************************************"
+                                        className="col-span-3"
+                                        onChange={(e) => setWalletAddress(e.target.value)}
                                     />
                                 </div>
                                 <SheetFooter>
