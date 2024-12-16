@@ -32,6 +32,7 @@ const Room = mongoose.model('Room', roomSchema);
 
 const messageSchema = new mongoose.Schema({
     roomId: { type: String, required: true },
+    userId: {type:String, required: true},
     userName: { type: String, required: true },
     text: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
@@ -63,9 +64,9 @@ app.get('/api/rooms', async (req, res) => {
 
 app.post('/api/rooms/:roomId/messages', async (req, res) => {
     try {
-        const { text, userName, avatar } = req.body;
+        const { text,userId, userName, avatar } = req.body;
         const { roomId } = req.params;
-        const newMessage = new Message({ roomId, userName, text, avatar });
+        const newMessage = new Message({ roomId, userId, userName, text, avatar });
         await newMessage.save();
         io.to(roomId).emit('receive_msg', newMessage); // Mesaj gönderimi
         res.status(201).json(newMessage);

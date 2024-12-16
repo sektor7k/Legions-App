@@ -7,6 +7,8 @@ import ProfileSocial from './_components/profile-social';
 import ProfileAdresses from './_components/profile-adresses';
 import axios from 'axios';
 import useSWR from 'swr';
+import ErrorAnimation from '@/components/errorAnimation';
+import LoadingAnimation from '@/components/loadingAnimation';
 
 interface UserProps {
   id: string;
@@ -40,9 +42,8 @@ export default function Page() {
     { title: 'Profile', link: `/u/${username}/profile/` } // Dinamik profile linki
   ];
 
-  if(error){
-    return <div>error</div>
-  }
+  if (error) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
+    if (!user) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;
 
   return (
     <div className="flex flex-col justify-between lg:flex-row">

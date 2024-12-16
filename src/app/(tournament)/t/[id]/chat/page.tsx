@@ -9,14 +9,13 @@ import { Button } from "@/components/ui/button";
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5001");
 
 export default function ChatPage({ params }: { params: { id: string } }) {
-    const [messages, setMessages] = useState<{ userName: string; text: string; createdAt: string, avatar: string }[]>([]);
+    const [messages, setMessages] = useState<{ userId: string, userName: string; text: string; createdAt: string, avatar: string }[]>([]);
     const [currentMsg, setCurrentMsg] = useState("");
 
     const { data: session } = useSession();
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
 
-    // Bağlantı ve olay dinleyicileri
     useEffect(() => {
         if (!params.id) return;
 
@@ -49,6 +48,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
 
         const msgData = {
             roomId: params.id,
+            userId: session.user.id,
             userName: session.user.username,
             text: currentMsg,
             createdAt: new Date().toISOString(),
@@ -73,7 +73,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                     <div className="overflow-y-auto h-[calc(87vh-5rem)] p-2 px-6">
                         <div className="space-y-4">
                             {messages.map((message, index) => {
-                                const isCurrentUser = message.userName === session?.user?.username;
+                                const isCurrentUser = message.userId === session?.user?.id;
                                 return (
                                     <div
                                         key={index}
