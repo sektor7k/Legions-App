@@ -1,49 +1,71 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { io, Socket } from "socket.io-client";
 import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
+import axios from "axios";
+import useSWR, {mutate} from 'swr';
 
+const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
-// Socket.io bağlantısı
-const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5001");
+const MessageItem = React.memo(({ message, isCurrentUser }: { message: { userId: string; userName: string; text: string; createdAt: string; avatar: string }, isCurrentUser: boolean }) => (
+        <div className={`chat ${isCurrentUser ? "chat-end" : "chat-start"}`}>
+            <div className="chat-image avatar">
+                <div className="w-10 rounded-full">
+                    <img src={message.avatar} alt={message.userName} />
+                </div>
+            </div>
+            <div className="chat-header font-bold">{message.userName}</div>
+            <div className={`chat-bubble ${isCurrentUser ? "bg-gray-800 text-white" : "bg-gray-200 text-black"}`}>{message.text}</div>
+            <div className="chat-footer">
+                <time className="text-xs opacity-60">{new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}</time>
+            </div>
+        </div>
+    ));
 
 export default function ChatPage({ params }: { params: { id: string } }) {
-    const [messages, setMessages] = useState<{ userId: string, userName: string; text: string; createdAt: string, avatar: string }[]>([]);
     const [currentMsg, setCurrentMsg] = useState("");
-
     const { data: session } = useSession();
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const socketRef = useRef<Socket | null>(null);
 
+    const { data: messages = [], error } = useSWR(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`,
+        fetcher
+    );
 
     useEffect(() => {
-        if (!params.id) return;
+        if (!socketRef.current) {
+            socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5001");
 
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`)
-            .then(response => response.json())
-            .then(data => {
-                setMessages(data);
-            })
-            .catch(error => console.error('Mesajları alma hatası:', error));
+            socketRef.current.on("receive_msg", (msgData) => {
+                mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, 
+                    (currentData: { userId: string; userName: string; text: string; createdAt: string; avatar: string }[] | undefined) => 
+                    [...(currentData || []), msgData], 
+                    false
+                );
+            });
+        }
 
-        socket.emit("join_room", params.id);
-
-        socket.on("receive_msg", (msgData) => {
-            setMessages(prevMessages => [...prevMessages, msgData]);
-        });
+        socketRef.current.emit("join_room", params.id);
 
         return () => {
-            socket.off("receive_msg");
+            socketRef.current?.off("receive_msg");
+            socketRef.current?.disconnect();
+            socketRef.current = null;
         };
-    }, [params.id, socket]);
-    useEffect(() => {
-        scrollToBottom(); // Her yeni mesajda en alta kaydır
-    }, [messages]);
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+    }, [params.id]);
 
-    const sendData = async () => {
+
+
+    const scrollToBottom = useCallback(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const sendData = useCallback(async () => {
         if (currentMsg === "" || !session?.user?.username) return;
 
         const msgData = {
@@ -55,16 +77,25 @@ export default function ChatPage({ params }: { params: { id: string } }) {
             avatar: session.user.image,
         };
 
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(msgData),
-        });
+        try {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, msgData);
+            setCurrentMsg(""); // Sadece input'u temizle
+        } catch (error) {
+            console.error('Mesaj gönderme hatası:', error);
+        }
+    }, [currentMsg, session, params.id]);
 
-        setCurrentMsg("");
-    };
+    
+
+    const renderedMessages = useMemo(() => {
+        return messages.map((message: { userId: string; userName: string; text: string; createdAt: string; avatar: string }, index: number) => (
+            <MessageItem 
+                key={index} 
+                message={message} 
+                isCurrentUser={message.userId === session?.user?.id} 
+            />
+        ));
+    }, [messages, session?.user?.id]);
 
     return (
         <div className="flex items-center justify-center mt-2 px-4 sm:px-6 lg:px-4 overflow-y-hidden">
@@ -72,36 +103,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                 <div className="bg-black p-4 bg-opacity-50 backdrop-blur-md border-gradient rounded-lg min-h-[calc(90vh-2rem)]">
                     <div className="overflow-y-auto h-[calc(87vh-5rem)] p-2 px-6">
                         <div className="space-y-4">
-                            {messages.map((message, index) => {
-                                const isCurrentUser = message.userId === session?.user?.id;
-                                return (
-                                    <div
-                                        key={index}
-                                        className={`chat ${isCurrentUser ? "chat-end" : "chat-start"}`}
-                                    >
-                                        <div className="chat-image avatar">
-                                            <div className="w-10 rounded-full">
-                                                <img
-                                                    src={message.avatar}
-                                                    alt={message.userName}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="chat-header font-bold">
-                                            {message.userName}
-                                        </div>
-                                        <div className={`chat-bubble ${isCurrentUser ? "bg-gray-800 text-white" : "bg-gray-200 text-black"}`}>
-                                            {message.text}
-                                        </div>
-                                        {/* <div className="chat-footer opacity-50">Delivered</div> */}
-                                        <div className="chat-footer ">
-                                            <time className="text-xs opacity-60">
-                                                {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                            </time>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                            {renderedMessages}
                             <div ref={messagesEndRef} />
                         </div>
                     </div>
@@ -115,8 +117,8 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                                 onChange={(e) => setCurrentMsg(e.target.value)}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                        e.preventDefault(); // Varsayılan enter davranışını engelle
-                                        sendData(); // Mesajı gönder
+                                        e.preventDefault();
+                                        sendData();
                                     }
                                 }}
                             />
@@ -128,6 +130,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                                 </svg>
                             </button>
+
                         </div>
                     </div>
                 </div>
@@ -135,3 +138,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         </div>
     );
 }
+
+
+
+
