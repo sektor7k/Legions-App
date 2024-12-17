@@ -5,7 +5,7 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: '../.env' }); 
+dotenv.config({ path: '../.env' });
 
 const app = express();
 const server = createServer(app);
@@ -31,11 +31,11 @@ const roomSchema = new mongoose.Schema({
 const Room = mongoose.model('Room', roomSchema);
 
 const messageSchema = new mongoose.Schema({
-    roomId: { type: String, required: true },
-    userId: {type:String, required: true},
+    roomId: { type: String, required: true, index: true },
+    userId: { type: String, required: true, },
     userName: { type: String, required: true },
     text: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
+    createdAt: { type: Date, default: Date.now, index: true },
     avatar: { type: String, required: true },
 }, { timestamps: true });
 
@@ -64,11 +64,17 @@ app.get('/api/rooms', async (req, res) => {
 
 app.post('/api/rooms/:roomId/messages', async (req, res) => {
     try {
-        const { text,userId, userName, avatar } = req.body;
+        const { text, userId, userName, avatar } = req.body;
         const { roomId } = req.params;
         const newMessage = new Message({ roomId, userId, userName, text, avatar });
         await newMessage.save();
-        io.to(roomId).emit('receive_msg', newMessage); // Mesaj gönderimi
+        io.to(roomId).emit('receive_msg', {
+            userId: newMessage.userId,
+            userName: newMessage.userName,
+            text: newMessage.text,
+            createdAt: newMessage.createdAt,
+            avatar: newMessage.avatar
+        }); // Mesaj gönderimi
         res.status(201).json(newMessage);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
@@ -78,7 +84,9 @@ app.post('/api/rooms/:roomId/messages', async (req, res) => {
 app.get('/api/rooms/:roomId/messages', async (req, res) => {
     try {
         const { roomId } = req.params;
-        const messages = await Message.find({ roomId }).sort({ createdAt: 1 });
+        const messages = await Message.find({ roomId })
+        .select('userId userName text createdAt avatar')
+        .sort({ createdAt: 1 });
         res.status(200).json(messages);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
@@ -87,17 +95,10 @@ app.get('/api/rooms/:roomId/messages', async (req, res) => {
 
 io.on('connection', (socket) => {
     console.log(`Kullanıcı bağlandı: ${socket.id}`);
-    
+
     socket.on('join_room', (roomId) => {
         socket.join(roomId);
         console.log(`Kullanıcı ${socket.id} odaya katıldı: ${roomId}`);
-    });
-
-    socket.on('send_msg', async (data) => {
-        const { roomId, userName, text } = data;
-        const newMessage = new Message({ roomId, userName, text });
-        await newMessage.save(); // Mesajı veritabanına kaydet
-        io.to(roomId).emit('receive_msg', newMessage); // Mesajı odadaki diğer kullanıcılara gönder
     });
 
     socket.on('disconnect', () => {
