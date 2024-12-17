@@ -3,24 +3,21 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from "react"
 import { io, Socket } from "socket.io-client";
 import { useSession } from "next-auth/react";
 import axios from "axios";
-import useSWR, {mutate} from 'swr';
+import useSWR, { mutate } from 'swr';
+import { Button } from "@/components/ui/button";
+import { Ghost, Menu } from "lucide-react";
+
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { toast } from "@/components/ui/use-toast";
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
+const fetcher2 = (url: string, params: any) => axios.post(url, params).then(res => res.data);
 
-const MessageItem = React.memo(({ message, isCurrentUser }: { message: { userId: string; userName: string; text: string; createdAt: string; avatar: string }, isCurrentUser: boolean }) => (
-        <div className={`chat ${isCurrentUser ? "chat-end" : "chat-start"}`}>
-            <div className="chat-image avatar">
-                <div className="w-10 rounded-full">
-                    <img src={message.avatar} alt={message.userName} />
-                </div>
-            </div>
-            <div className="chat-header font-bold">{message.userName}</div>
-            <div className={`chat-bubble ${isCurrentUser ? "bg-gray-800 text-white" : "bg-gray-200 text-black"}`}>{message.text}</div>
-            <div className="chat-footer">
-                <time className="text-xs opacity-60">{new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}</time>
-            </div>
-        </div>
-    ));
+
 
 export default function ChatPage({ params }: { params: { id: string } }) {
     const [currentMsg, setCurrentMsg] = useState("");
@@ -33,14 +30,24 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         fetcher
     );
 
+    const { data: myTeam, error: errorTeam } = useSWR(
+        session?.user.id ? ['/api/tournament/team/getTeamLead', { tournamentId: params.id, leadId: session.user.id }] : null,
+        ([url, params]) => fetcher2(url, params)
+    );
+
+    const { data: checkUser, error: errorCheck } = useSWR(
+        session?.user.id && params.id ? ['/api/tournament/checkRegistration', { userId: session?.user.id, tournamentId: params.id }] : null, ([url, params]) => fetcher2(url, params)
+    );
+
+
     useEffect(() => {
         if (!socketRef.current) {
             socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5001");
 
             socketRef.current.on("receive_msg", (msgData) => {
-                mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, 
-                    (currentData: { userId: string; userName: string; text: string; createdAt: string; avatar: string }[] | undefined) => 
-                    [...(currentData || []), msgData], 
+                mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`,
+                    (currentData: { userId: string; userName: string; text: string; createdAt: string; avatar: string }[] | undefined) =>
+                        [...(currentData || []), msgData],
                     false
                 );
             });
@@ -54,8 +61,6 @@ export default function ChatPage({ params }: { params: { id: string } }) {
             socketRef.current = null;
         };
     }, [params.id]);
-
-
 
     const scrollToBottom = useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -75,27 +80,117 @@ export default function ChatPage({ params }: { params: { id: string } }) {
             text: currentMsg,
             createdAt: new Date().toISOString(),
             avatar: session.user.image,
+            messageType: 'text'
         };
 
         try {
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, msgData);
-            setCurrentMsg(""); // Sadece input'u temizle
+            setCurrentMsg(""); 
         } catch (error) {
             console.error('Mesaj gönderme hatası:', error);
         }
     }, [currentMsg, session, params.id]);
 
-    
+    const sendSteamMessage = useCallback(async () => {
+        if (!session?.user?.username || !myTeam) {
+            console.warn('myTeam bilgisi eksik:', myTeam);
+            return;
+        }
+
+        const msgData = {
+            roomId: params.id,
+            userId: session.user.id,
+            userName: session.user.username,
+            createdAt: new Date().toISOString(),
+            avatar: session.user.image,
+            teamId: myTeam._id,
+            messageType: 'steam',
+            teamName: myTeam.teamName,
+            teamAvatar: myTeam.teamImage
+        };
+
+        try {
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, msgData);
+        } catch (error) {
+            console.error('Steam mesaj gönderme hatası:', error);
+        }
+    }, [session, params.id, myTeam]);
+
+
+    function showErrorToast(message: string): void {
+        toast({
+            variant: "destructive",
+            title: message,
+            description: "",
+        })
+    }
+
+    function showToast(message: string): void {
+        toast({
+            variant: "default",
+            title: message,
+            description: "",
+        })
+    }
+
+    const sendInvite = async (teamId: string | undefined, userId: string, leadId: string) => {
+        try {
+            console.log(teamId, userId, leadId)
+            const response = await axios.post('/api/tournament/invite/sendInvite', { teamId, userId, leadId });
+            showToast("A request to join the team has been sent.")
+        } catch (error) {
+            showErrorToast("Failed to send invite.")
+            console.error("Send invite error", error)
+        }
+    }
+
+    const MessageItem = React.memo(({ message, isCurrentUser }: { message: { userId: string; userName: string; text?: string; createdAt: string; avatar: string, messageType: string, teamId?: string, teamName?: string, teamAvatar?: string }, isCurrentUser: boolean }) => (
+        <div className={`chat ${isCurrentUser ? "chat-end" : "chat-start"}`}>
+            <div className="chat-image avatar">
+                <div className="w-10 rounded-full">
+                    <img src={message.avatar} alt={message.userName} />
+                </div>
+            </div>
+            <div className="chat-header font-bold">{message.userName}</div>
+            <div className={`chat-bubble ${isCurrentUser ? "bg-gray-800 text-white" : "bg-gray-200 text-black"}`}>
+                {message.messageType === 'text' && message.text}
+                {message.messageType === 'steam' && (
+                    <div className="p-4  rounded-lg shadow-md">
+                        <div className="flex items-center mb-3">
+                            <img src={message.teamAvatar} alt={message.teamName} className="w-12 h-12 rounded-full mr-4" />
+                            <div>
+                                <div className="font-bold text-lg ">Takım Arkadaşı Aranıyor!</div>
+                                <div className="text-sm ">Takım: <span className="font-semibold">{message.teamName}</span></div>
+                            </div>
+                        </div>
+                        <p className=" text-sm mb-3">
+                            Takımımız, yeni bir takım arkadaşı arıyor. Ekibimize katılmak ister misiniz? Aşağıdaki butona tıklayarak başvurunuzu gönderin.
+                        </p>
+                        <Button
+                            onClick={() => sendInvite(message.teamId, session?.user.id, message.userId)}
+                            disabled={checkUser}
+                        >
+                            Takıma Katıl
+                        </Button>
+                    </div>
+                )}
+
+            </div>
+            <div className="chat-footer">
+                <time className="text-xs opacity-60">{new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}</time>
+            </div>
+        </div>
+    ));
 
     const renderedMessages = useMemo(() => {
-        return messages.map((message: { userId: string; userName: string; text: string; createdAt: string; avatar: string }, index: number) => (
-            <MessageItem 
-                key={index} 
-                message={message} 
-                isCurrentUser={message.userId === session?.user?.id} 
+        return messages.map((message: { userId: string; userName: string; text: string; createdAt: string; avatar: string, messageType: string, teamId: string, teamName?: string, teamAvatar?: string }, index: number) => (
+            <MessageItem
+                key={index}
+                message={message}
+                isCurrentUser={message.userId === session?.user?.id}
             />
         ));
-    }, [messages, session?.user?.id]);
+    }, [messages, session?.user?.id, myTeam]);
 
     return (
         <div className="flex items-center justify-center mt-2 px-4 sm:px-6 lg:px-4 overflow-y-hidden">
@@ -108,9 +203,30 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                         </div>
                     </div>
                     <div>
+
                         <div className="relative w-full p-2 px-6 flex items-center justify-center">
+
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button size={"icon"} variant={"ghost"} className="mr-3 border border-gray-500">
+                                        <Menu />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent align="start" className="w-80 bg-transparent border-none">
+                                    <div className=" flex flex-row justify-center items-center gap-8">
+                                        <Button size={"sm"} className=" rounded-full"
+                                        //  disabled={checkUser}
+                                         >
+                                            Search Team
+                                        </Button>
+                                        <Button size={"sm"} className=" rounded-full " onClick={sendSteamMessage} disabled={!myTeam}>
+                                            Search Member
+                                        </Button>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                             <input
-                                className="w-full p-2 pl-4 pr-12 border rounded-full border-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
+                                className="w-full p-2 pl-4 pr-12 border rounded-lg rounded-r-3xl border-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
                                 type="text"
                                 value={currentMsg}
                                 placeholder="Type your message..."
