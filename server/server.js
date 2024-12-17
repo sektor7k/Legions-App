@@ -34,9 +34,13 @@ const messageSchema = new mongoose.Schema({
     roomId: { type: String, required: true, index: true },
     userId: { type: String, required: true, },
     userName: { type: String, required: true },
-    text: { type: String, required: true },
+    text: { type: String, required: function() { return this.messageType === 'text'; } },
     createdAt: { type: Date, default: Date.now, index: true },
     avatar: { type: String, required: true },
+    messageType: {type:String, required: true, enum:['text','steam','smember']},
+    teamId: { type: String, required: function() { return this.messageType === 'steam'; } },
+    teamName: { type: String, required: function() { return this.messageType === 'steam'; } }, 
+    teamAvatar: { type: String, required: function() { return this.messageType === 'steam'; } }, 
 }, { timestamps: true });
 
 const Message = mongoose.model('Message', messageSchema);
@@ -64,28 +68,33 @@ app.get('/api/rooms', async (req, res) => {
 
 app.post('/api/rooms/:roomId/messages', async (req, res) => {
     try {
-        const { text, userId, userName, avatar } = req.body;
+        const { text, userId, userName, avatar, messageType, teamId, teamName, teamAvatar } = req.body;
         const { roomId } = req.params;
-        const newMessage = new Message({ roomId, userId, userName, text, avatar });
+        const newMessage = new Message({ roomId, userId, userName, text, avatar, messageType, teamId, teamName, teamAvatar });
         await newMessage.save();
         io.to(roomId).emit('receive_msg', {
             userId: newMessage.userId,
             userName: newMessage.userName,
             text: newMessage.text,
             createdAt: newMessage.createdAt,
-            avatar: newMessage.avatar
-        }); // Mesaj gönderimi
+            avatar: newMessage.avatar,
+            messageType: newMessage.messageType,
+            teamId: newMessage.teamId,
+            teamName: newMessage.teamName,
+            teamAvatar: newMessage.teamAvatar
+        });
         res.status(201).json(newMessage);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
+
 app.get('/api/rooms/:roomId/messages', async (req, res) => {
     try {
         const { roomId } = req.params;
         const messages = await Message.find({ roomId })
-        .select('userId userName text createdAt avatar')
+        .select('userId userName text createdAt avatar messageType teamId teamName teamAvatar') // Gerekli tüm alanları ekledik
         .sort({ createdAt: 1 });
         res.status(200).json(messages);
     } catch (error) {
