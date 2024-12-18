@@ -4,25 +4,39 @@ import Team from '@/models/Team';
 
 export async function POST(request: NextRequest) {
     const reqBody = await request.json();
-    const { tournamentId, leadId } = reqBody; // Gelen istekteki tournamentId'yi alıyoruz
+    const { tournamentId, leadId } = reqBody; // İstekten tournamentId ve leadId alınıyor
+
+    if (!tournamentId || !leadId) {
+        return NextResponse.json({ message: 'tournamentId and leadId are required' }, { status: 400 });
+    }
 
     await connectDB();
 
     try {
-        // tournamentId'ye göre tüm takımları bul
-        const team = await Team.findOne({ 
+     
+    
+        // Kullanıcı bir takımda ancak lider mi?
+        const leaderTeam = await Team.findOne({ 
             tournamentId, 
-            'members.memberId': leadId, 
-            'members.isLead': true ,
-            isDeleted: false
-          });
+            members: { 
+                $elemMatch: { 
+                    memberId: leadId, 
+                    isLead: true 
+                } 
+            }, 
+            isDeleted: false 
+        });
 
-        if (!team || team.length === 0) {
-            return NextResponse.json({ message: 'Teams not found' }, { status: 404 });
+        // Eğer kullanıcı bir lider değilse hata döndür
+        if (!leaderTeam) {
+            return NextResponse.json({ message: 'User is not the leader of any team in this tournament' }, { status: 403 });
         }
 
-        return NextResponse.json(team, { status: 200 });
+        // Eğer kullanıcı takım lideriyse, takım bilgilerini gönder
+        return NextResponse.json(leaderTeam, { status: 200 });
+
     } catch (error) {
-        return NextResponse.json({ message: 'Server error', error }, { status: 500 });
+        console.error('Server error:', error);
+        return NextResponse.json({ message: 'Server error', error: error }, { status: 500 });
     }
 }
