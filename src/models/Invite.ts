@@ -7,6 +7,7 @@ export interface InviteDocument extends Document {
   status: 'pending' | 'accepted' | 'rejected';
   invitedAt: Date;
   respondedAt?: Date;
+  inviteType:'memeber' | 'leader';
 }
 
 const inviteSchema = new Schema<InviteDocument>({
@@ -37,6 +38,11 @@ const inviteSchema = new Schema<InviteDocument>({
   respondedAt: {
     type: Date,
   },
+  inviteType: {
+    type: String,
+    enum: ['member', 'leader'], // Sadece 'member' ve 'leader' değerlerini alabilir
+    required: true,
+  }
 }, {
   timestamps: true, 
 });

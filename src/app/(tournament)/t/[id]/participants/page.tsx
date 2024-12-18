@@ -41,7 +41,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
 
     const { data: session } = useSession()
-    const closeRef = useRef<ElementRef<"button">>(null);
+    const closeRef = useRef<ElementRef<"button">>(null); 
     const [teamName, setTeamName] = useState("");
     const [teamImage, setTeamImage] = useState("");
     const [status, setStatus] = useState("")
@@ -88,6 +88,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 teamId,
                 userId,
                 leadId,
+                inviteType:'leader'
             });
             showToast("Invite team successfully")
             registrationMutate();
