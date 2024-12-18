@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Invite from '@/models/Invite';
+import Team from '@/models/Team';
 
 export async function POST(request: NextRequest) {
     const reqBody = await request.json();
@@ -13,6 +14,15 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     try {
+        const team = await Team.findOne({ _id: teamId });
+
+        if (!team) {
+            return NextResponse.json({ message: 'Team not found' }, { status: 404 });
+        }
+
+        if (team.isDeleted) {
+            return NextResponse.json({ message: 'Cannot send invite to a deleted team' }, { status: 403 });
+        }
         // Yeni bir davet oluştur
         const newInvite = new Invite({
             teamId,

@@ -16,10 +16,7 @@ import { toast } from "@/components/ui/use-toast";
 import LoadingAnimation from "@/components/loadingAnimation";
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
-const fetcher2 = (url: string, params: any) => axios.post(url, params).then(res => {
-    console.log(res.data)
-    return res.data;
-});
+const fetcher2 = (url: string, params: any) => axios.post(url, params).then(res => res.data);
 
 
 
@@ -159,12 +156,11 @@ export default function ChatPage({ params }: { params: { id: string } }) {
 
     const sendInvite = async (teamId: string | undefined, userId: string, leadId: string, inviteType: string) => {
         try {
-            console.log(teamId, userId, leadId, inviteType)
             const response = await axios.post('/api/tournament/invite/sendInvite', { teamId, userId, leadId, inviteType });
             await checkUserMutate();
             showToast("A request to join the team has been sent.")
         } catch (error) {
-            showErrorToast("Failed to send invite.")
+            showErrorToast("Team not found.")
             console.error("Send invite error", error)
         }
     }

@@ -14,7 +14,7 @@ export interface TeamDocument extends Document {
   members: Member[];
   createdAt: Date;
   updatedAt: Date;
-}
+} 
 
 const memberSchema = new Schema<Member>({
   memberId: {
