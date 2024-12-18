@@ -4,9 +4,9 @@ import Invite from '@/models/Invite';
 
 export async function POST(request: NextRequest) {
     const reqBody = await request.json();
-    const { teamId, userId, leadId } = reqBody;
+    const { teamId, userId, leadId, inviteType } = reqBody;
 
-    if (!teamId || !userId || !leadId) {
+    if (!teamId || !userId || !leadId || !inviteType) {
         return NextResponse.json({ message: 'Team ID, User ID, and Lead ID are required' }, { status: 400 });
     }
 
@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
             teamId,
             userId,
             leadId,
-            status: 'pending', // Varsayılan olarak pending
+            status: 'pending',
+            inviteType,
         });
 
         // Daveti kaydet
