@@ -60,8 +60,8 @@ interface Team {
     teamImage: string;
 }
 
-const fetcher = (url: string) =>
-    axios.post(url, { status: 'open' })
+const fetcher = (url: string, params: any) =>
+    axios.post(url, params)
         .then(res =>
             res.data.data.sort((a: Bet, b: Bet) =>
                 new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -70,7 +70,7 @@ const fetcher = (url: string) =>
 
 export default function OpenBets() {
 
-    const { data: bets = [], mutate } = useSWR<Bet[]>('/api/bet/getOpenBet', fetcher);
+    const { data: bets = [], error, mutate } = useSWR<Bet[]>(['/api/bet/getOpenBet', { status: 'open' }], ([url, params]) => fetcher(url, params));
 
     const router = useRouter();
 

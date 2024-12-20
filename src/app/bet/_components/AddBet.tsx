@@ -186,8 +186,10 @@ export default function AddBet() {
       const fetchMatches = async () => {
         try {
           const response = await axios.post('/api/tournament/match/getMatch', { tournamentId: tournament });
-          if (response.data && response.data.data) {
-            setMatches(response.data.data); // Maçları state'e kaydedin
+          console.log("sas", tournament)
+          console.log(response.data)
+          if (response.data ) {
+            setMatches(response.data); // Maçları state'e kaydedin
           }
         } catch (error) {
           console.error('Error fetching matches:', error);
@@ -249,14 +251,14 @@ export default function AddBet() {
       });
 
       showToast("Bet successfully created", paymentSuccessful);
-      mutate('/api/bet/getOpenBet');
+      mutate(['/api/bet/getOpenBet', { status: 'open' }]);
 
       try {
         await axios.post('/api/bet/stream', {
           status: 'open',
           amount: stake,
-          username: session?.user.username, 
-          userAvatar: session?.user.image 
+          username: session?.user.username,
+          userAvatar: session?.user.image
         });
       } catch (activityError) {
         console.error("Error adding to activity feed:", activityError);
@@ -267,7 +269,7 @@ export default function AddBet() {
       showErrorToast("Error placing bet");
       console.error("Error placing bet:", error);
     }
-  }; 
+  };
 
 
 
