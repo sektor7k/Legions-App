@@ -245,7 +245,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                     </div>
                     <div>
 
-                        <div className="relative w-full pt-8 px-6 flex items-center justify-center">
+                        <div className="relative w-full pt-3 px-6 flex items-center justify-center">
 
                             <Popover>
                                 <PopoverTrigger asChild>

@@ -20,12 +20,13 @@ const fetcher = (url: string, params: any) =>
 
 export default function OutboxPage() {
     const { data: session } = useSession();
-    const { data: invites , error, mutate } = useSWR(
+    const { data: invites, error, mutate } = useSWR(
         session?.user.id
             ? ['/api/tournament/invite/getOutbox', { userId: session.user.id }]
             : null,
         ([url, params]) => fetcher(url, params)
     );
+
 
     function showErrorToast(message: string): void {
         toast({
@@ -47,16 +48,15 @@ export default function OutboxPage() {
         try {
             await axios.post(`/api/tournament/invite/deleteInvite`, { inviteId });
             mutate();
-            showToast("Delete invite successfully");
+            showToast("Invite deleted successfully");
         } catch (error) {
-            showErrorToast("Delete invite Error");
+            showErrorToast("Failed to delete invite");
             console.error('Error deleting invite:', error);
         }
     };
-    
-    if (error) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
-    if (!invites) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;
 
+    if (error) return <ErrorAnimation />;
+    if (!invites) return <LoadingAnimation />;
 
     return (
         <div className="max-w-4xl mx-auto p-8 space-y-8">
@@ -76,6 +76,9 @@ export default function OutboxPage() {
                                 <div className="flex-1 text-white">
                                     <h2 className="text-lg font-semibold">{invite.teamId.teamName}</h2>
                                     <p className="text-xs text-gray-400">
+                                        Sent to: {invite.userId.username}
+                                    </p>
+                                    <p className="text-xs text-gray-400">
                                         Sent at: {new Date(invite.invitedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                                     </p>
                                 </div>
@@ -91,9 +94,9 @@ export default function OutboxPage() {
                                     )}
                                     <Badge
                                         variant="default"
-                                        className={`${invite.status === 'accepted' ? 'bg-green-500 text-white' :
-                                            invite.status === 'rejected' ? 'bg-red-500 text-white' :
-                                                'bg-yellow-500 text-white'} px-4 py-2 rounded-full`}
+                                        className={`${invite.status === 'accepted' ? 'bg-green-500 text-white' : 
+                                                    invite.status === 'rejected' ? 'bg-red-500 text-white' : 
+                                                    'bg-yellow-500 text-white'} px-4 py-2 rounded-full`}
                                     >
                                         {invite.status.charAt(0).toUpperCase() + invite.status.slice(1)}
                                     </Badge>

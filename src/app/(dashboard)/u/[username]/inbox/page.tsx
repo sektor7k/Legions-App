@@ -77,7 +77,7 @@ export default function InboxPage() {
             {invites.length === 0 ? (
                 <p className="text-center text-gray-500">No inbox available.</p>
             ) : (
-                <div className="space-y-4 overflow-y-auto max-h-[80vh]">
+                <div className="space-y-4 overflow-y-auto max-h-[80vh] scrollbar-hide"> 
                     {invites.map((invite: any, index: any) => (
                         <div key={index}>
                             {invite.inviteType === 'leader' && (
@@ -137,46 +137,54 @@ export default function InboxPage() {
                             )}
 
                             {invite.inviteType === 'member' && (
-                                <div className="p-6 rounded-lg bg-blue-50 border border-blue-200 mb-4">
-                                    <h2 className="text-lg font-semibold text-blue-800">
-                                        You have a new invite as a **Member** to the team:
-                                        <span className="font-semibold text-blue-900"> {invite.teamId.teamName}</span>
-                                    </h2>
-                                    <p className="text-sm text-gray-500 mt-2">
-                                        Sent by: <span className="font-semibold">{invite.leadId.username}</span>
-                                    </p>
-                                    <p className="text-xs text-gray-400 mt-1">
-                                        Sent at: {new Date(invite.invitedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                    </p>
-
-                                    <div className="flex justify-end space-x-2 mt-4">
-                                        {invite.status === 'pending' ? (
-                                            <>
-                                                <Button
-                                                    variant="outline"
-                                                    className="text-green-500 border-green-500"
-                                                    onClick={() => handleAcceptInvite(invite._id)}
-                                                >
-                                                    Accept
-                                                </Button>
-                                                <Button
-                                                    variant="outline"
-                                                    className="text-red-500 border-red-500"
-                                                    onClick={() => handleRejectInvite(invite._id)}
-                                                >
-                                                    Reject
-                                                </Button>
-                                            </>
-                                        ) : (
-                                            <Badge
-                                                variant="default"
-                                                className={`${invite.status === 'accepted' ? 'bg-green-500' : 'bg-red-500'}`}
+                                <div className="p-6 rounded-lg bg-gradient-to-br from-blue-900 to-gray-900 shadow-lg mb-6 border border-gray-700">
+                                <h2 className="text-xl font-bold text-white mb-2">
+                                    🌟 New Team Invitation!
+                                </h2>
+                                <p className="text-sm text-gray-200 mb-4">
+                                    You have been invited to join the team 
+                                    <span className="font-bold text-yellow-400"> {invite.teamId.teamName}</span>
+                                    as a <span className="font-bold text-green-400">Member</span>.
+                                </p>
+                                <p className="text-sm text-gray-300">
+                                    <span className="font-semibold">Sent by:</span> {invite.leadId.username}
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                    <span className="font-semibold">Sent at:</span> {new Date(invite.invitedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                </p>
+                    
+                                <div className="flex justify-end mt-6 space-x-4">
+                                    {invite.status === 'pending' ? (
+                                        <>
+                                            <Button
+                                                variant="outline"
+                                                className="text-white border-green-500 hover:bg-green-500 hover:text-white transition-colors duration-200"
+                                                onClick={() => handleAcceptInvite(invite._id)}
                                             >
-                                                {invite.status.charAt(0).toUpperCase() + invite.status.slice(1)}
-                                            </Badge>
-                                        )}
-                                    </div>
+                                                👍 Accept
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                className="text-white border-red-500 hover:bg-red-500 hover:text-white transition-colors duration-200"
+                                                onClick={() => handleRejectInvite(invite._id)}
+                                            >
+                                                👎 Reject
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <Badge
+                                            variant="default"
+                                            className={`
+                                                ${invite.status === 'accepted' ? 'bg-green-500 text-white' : ''} 
+                                                ${invite.status === 'rejected' ? 'bg-red-500 text-white' : ''} 
+                                                px-3 py-1 rounded-lg uppercase font-semibold text-sm tracking-wide
+                                            `}
+                                        >
+                                            {invite.status.charAt(0).toUpperCase() + invite.status.slice(1)}
+                                        </Badge>
+                                    )}
                                 </div>
+                            </div>
                             )}
                         </div>
                     ))}
