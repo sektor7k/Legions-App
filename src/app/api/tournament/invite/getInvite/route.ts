@@ -12,16 +12,13 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: 'Lead ID or User ID is required' }, { status: 400 });
     }
 
-    // Veritabanına bağlantı kur
     await connectDB();
 
-    // Model kaydını kontrol edin
     if (!Team || !Invite || !User) {
         return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
     }
 
     try {
-        // inviteType 'leader' olan ve leadId ile eşleşen davetleri al
         const leaderInvites = leadId ? await Invite.find({ 
             inviteType: 'leader', 
             leadId 
@@ -39,7 +36,6 @@ export async function POST(request: NextRequest) {
             select: 'teamName teamImage'
         }) : [];
 
-        // inviteType 'member' olan ve userId ile eşleşen davetleri al
         const memberInvites = userId ? await Invite.find({ 
             inviteType: 'member', 
             userId 
@@ -57,15 +53,13 @@ export async function POST(request: NextRequest) {
             select: 'teamName teamImage'
         }) : [];
 
-        // İki sorgunun sonucunu birleştir
         const allInvites = [...leaderInvites, ...memberInvites];
 
-        // Eğer davet bulunmazsa hata döndür
         if (allInvites.length === 0) {
             return NextResponse.json({ message: 'No invites found' }, { status: 404 });
         }
 
-        // Tüm davetleri döndür
+
         return NextResponse.json(allInvites, { status: 200 });
 
     } catch (error) {
