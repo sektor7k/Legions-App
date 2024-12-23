@@ -159,9 +159,18 @@ export default function ChatPage({ params }: { params: { id: string } }) {
             const response = await axios.post('/api/tournament/invite/sendInvite', { teamId, userId, leadId, inviteType });
             await checkUserMutate();
             showToast("A request to join the team has been sent.")
-        } catch (error) {
-            showErrorToast("Team not found.")
-            console.error("Send invite error", error)
+        } catch (error:any) {
+            if (error.response) {
+                // Sunucudan dönen hata
+                console.error("Response error:", error.response.data);
+            } else if (error.request) {
+                // İstek gönderildi ama cevap alınamadı
+                console.error("Request error:", error.request);
+            } else {
+                // Hata isteğin oluşturulması sırasında meydana geldi
+                console.error("Error message:", error.message);
+            }
+            showErrorToast(error.response?.data?.message || "An error occurred.");
         }
     }
 
