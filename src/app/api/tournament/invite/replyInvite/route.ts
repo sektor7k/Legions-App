@@ -14,25 +14,43 @@ export async function POST(request: NextRequest) {
         if (!Team || !User) {
             return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
         }
-        // Invite'ı bul ve durumunu güncelle
         const invite = await Invite.findById(id).populate('userId', 'username image').populate('teamId', 'teamName teamImage');
 
         if (!invite) {
             return NextResponse.json({ message: 'Invite not found' }, { status: 404 });
         }
 
+        
+
         if (reply === 'accept') {
+            if (invite.inviteType === 'leader') {
+                const userInTeam = await Team.findOne({ 'members.memberId': invite.leadId, isDeleted: false });
+    
+                if (userInTeam) {
+                    return NextResponse.json({
+                        message: 'The user is already registered to a team',
+                    }, { status: 400 });
+                }
+            }
+            if (invite.inviteType === 'member') {
+                const userInTeam = await Team.findOne({ 'members.memberId': invite.userId, isDeleted: false });
+    
+                if (userInTeam) {
+                    return NextResponse.json({
+                        message: 'You have already joined a team',
+                    }, { status: 400 });
+                }
+            }
+            
             invite.status = 'accepted';
             await invite.save();
 
-            // Kullanıcıyı takıma ekle
             const team = await Team.findById(invite.teamId) as TeamDocument;
 
             if (!team) {
                 return NextResponse.json({ message: 'Team not found' }, { status: 404 });
             }
 
-            // Kullanıcıyı takıma ekle (zaten ekli değilse)
             const userAlreadyInTeam = team.members.some((member: Member) =>
                 member.memberId.equals(invite.userId)
             );
@@ -48,7 +66,6 @@ export async function POST(request: NextRequest) {
                 await team.save();
             }
 
-            // Populate edilmiş invite'ı geri döndür
             return NextResponse.json({ message: 'Invite accepted and user added to team', invite }, { status: 200 });
         } else if (reply === 'reject') {
             invite.status = 'rejected';
