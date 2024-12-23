@@ -38,7 +38,7 @@ export default function InboxPage() {
             title: "Invite Accept",
             description: message,
         })
-    }
+    } 
 
     const handleAcceptInvite = async (inviteId: string) => {
         try {
@@ -47,9 +47,18 @@ export default function InboxPage() {
             showToast("Invite accepted");
             mutate()
 
-        } catch (error) {
-            showErrorToast("Error Invite reply");
-            console.error('Error fetching invites:', error);
+        } catch (error:any) {
+            if (error.response) {
+                // Sunucudan dönen hata
+                console.error("Response error:", error.response.data);
+            } else if (error.request) {
+                // İstek gönderildi ama cevap alınamadı
+                console.error("Request error:", error.request);
+            } else {
+                // Hata isteğin oluşturulması sırasında meydana geldi
+                console.error("Error message:", error.message);
+            }
+            showErrorToast(error.response?.data?.message || "An error occurred.");
         }
     };
 
