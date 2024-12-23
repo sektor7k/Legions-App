@@ -13,17 +13,28 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
+    console.log(teamId, userId, leadId, inviteType)
+
     try {
-        const team = await Team.findOne({ _id: teamId });
+        const team = await Team.findById(teamId);
 
         if (!team) {
             return NextResponse.json({ message: 'Team not found' }, { status: 404 });
+        }
+        if (inviteType === 'member') {
+            const existingTeam = await Team.findOne({ 'members.memberId': userId, isDeleted: false });
+
+            if (existingTeam) {
+                return NextResponse.json({
+                    message: 'User is already a member of another team'
+                }, { status: 400 });
+            }
+
         }
 
         if (team.isDeleted) {
             return NextResponse.json({ message: 'Cannot send invite to a deleted team' }, { status: 403 });
         }
-        // Yeni bir davet oluştur
         const newInvite = new Invite({
             teamId,
             userId,
@@ -32,7 +43,6 @@ export async function POST(request: NextRequest) {
             inviteType,
         });
 
-        // Daveti kaydet
         await newInvite.save();
 
         return NextResponse.json({ message: 'Invite sent successfully', invite: newInvite }, { status: 201 });
