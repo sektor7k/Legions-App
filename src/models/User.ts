@@ -9,7 +9,6 @@ export interface UserDocument {
   createdAt: Date;
   updatedAt: Date;
   isVerifed: boolean;
-  isAdmin: boolean;
   forgotPasswordToken?: string;
   forgotPasswordExpire?: Date;
   verifyToken?: string;
@@ -27,6 +26,8 @@ export interface UserDocument {
     nonce: string;
     expires: Date;
   };
+  role: 'admin' | 'moderator' | 'user';
+  status: 'active'| 'blocked'
 
 }
 
@@ -62,10 +63,6 @@ const UserSchema = new Schema<UserDocument>({
     type: Boolean,
     default: false,
   },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
   forgotPasswordToken: String,
   forgotPasswordExpire: Date,
   verifyToken: String,
@@ -77,15 +74,21 @@ const UserSchema = new Schema<UserDocument>({
   },
   wallets: {
     evm: { type: String, unique: true, sparse: true },
-    btc: { type: String, default: "" },
     solana: { type: String, default: "" },
-    sei: { type: String, default: "" },
-    aptos: { type: String, default: "" },
-    sui: { type: String, default: "" },
   },
   cryptoLoginNonce: {
     nonce: { type: String },
     expires: { type: Date },
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'moderator', 'user'],
+    default: 'user',
+  },
+  status: {
+    type: String,
+    enum: ['active', 'blocked'],
+    default: 'active',
   },
 }, {
   timestamps: true,
