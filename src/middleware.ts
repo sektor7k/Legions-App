@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
   // Admin kontrolü yapılması gereken yollar
   if (adminPaths.some(path => pathname.startsWith(path))) {
     // Eğer token yoksa veya token'daki kullanıcı admin değilse yönlendir
-    if (!token || !token.isAdmin) {
+    if (!token || token.role !== 'admin') {
       return NextResponse.redirect(new URL('/not-authorized', req.url));
     }
   }
