@@ -39,7 +39,6 @@ export default function AdminUserList() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedUser, setSelectedUser] = useState<UserProps>()
   const [editingRole, setEditingRole] = useState("")
-  const [isBlocked, setIsBlocked] = useState(false)
 
   const { data: users = [], error, mutate } = useSWR<UserProps[]>('/api/admin/user/getUser', fetcher);
 
@@ -50,19 +49,19 @@ export default function AdminUserList() {
 
   function showErrorToast(message: string): void {
     toast({
-        variant: "destructive",
-        title: "Forgot password failed",
-        description: message,
+      variant: "destructive",
+      title: message,
+      description: "",
     })
-}
+  }
 
-function showToast(message: string): void {
+  function showToast(message: string): void {
     toast({
-        variant: "default",
-        title: "Please Check email",
-        description: message,
+      variant: "default",
+      title: message,
+      description: "",
     })
-}
+  }
 
   const handleRoleChange = async (userId: string, newRole: string) => {
 
@@ -70,16 +69,22 @@ function showToast(message: string): void {
       const response = await axios.post('/api/admin/user/editUserRole', { id: userId, role: newRole });
       await mutate();
       showToast("User role successfully changed")
-    } catch (error:any) {
+    } catch (error: any) {
       showErrorToast(error.response.message)
       console.error("User edit role error", error);
     }
   }
 
-  const handleBlockUser = () => {
-    // API çağrısı yaparak kullanıcının bloklanma durumunu değiştirin
-    setIsBlocked(!isBlocked)
-    console.log(`Kullanıcı ${isBlocked ? 'bloklandı' : 'bloklanması kaldırıldı'}`)
+  const handleBlockUser = async (userId: string, newStatus: string) => {
+    try {
+      
+      const response = await axios.post('/api/admin/user/editUserStatus', { id: userId, status: newStatus })
+      await mutate();
+      showToast("User status successfully changed")
+    } catch (error: any) {
+      showErrorToast(error.response.message)
+      console.error("User status role error", error);
+    }
   }
 
   return (
@@ -171,11 +176,11 @@ function showToast(message: string): void {
                                 <div className="flex items-center space-x-2">
                                   <span className="font-semibold">Status:</span>
                                   <Button
-                                    variant={isBlocked ? "destructive" : "outline"}
+                                    variant={user.status === "active" ? "outline" : "destructive"}
                                     size="sm"
-                                    onClick={handleBlockUser}
+                                    onClick={() => handleBlockUser(user._id, user.status)}
                                   >
-                                    {isBlocked ? 'User Blocked' : 'User Actived'}
+                                    {user.status === "active" ? 'User Actived ' : 'User Blocked'}
                                   </Button>
                                 </div>
                               </div>
