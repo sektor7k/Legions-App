@@ -22,46 +22,47 @@ interface ExtendedUser extends NextAuthUser {
     evm?: string;
     solana?: string;
   };
+  role:string
 }
 
-async function authorizeCrypto(credentials: Record<"publicAddress" | "signedNonce", string> | undefined) {
-  if (!credentials) return null;
+// async function authorizeCrypto(credentials: Record<"publicAddress" | "signedNonce", string> | undefined) {
+//   if (!credentials) return null;
 
-  const { publicAddress, signedNonce } = credentials;
+//   const { publicAddress, signedNonce } = credentials;
 
-  // Veritabanına bağlan
-  await connectDB();
+//   // Veritabanına bağlan
+//   await connectDB();
 
-  // Public address ile kullanıcıyı bul
-  const userFound = await User.findOne({ "wallets.evm": publicAddress });
+//   // Public address ile kullanıcıyı bul
+//   const userFound = await User.findOne({ "wallets.evm": publicAddress });
 
-  if (!userFound || !userFound.cryptoLoginNonce) return null;
+//   if (!userFound || !userFound.cryptoLoginNonce) return null;
 
-  const { nonce, expires } = userFound.cryptoLoginNonce;
+//   const { nonce, expires } = userFound.cryptoLoginNonce;
 
-  // Nonce imzasını doğrula
-  const signerAddress = ethers.verifyMessage(nonce, signedNonce);
+//   // Nonce imzasını doğrula
+//   const signerAddress = ethers.verifyMessage(nonce, signedNonce);
 
-  if (signerAddress !== publicAddress) return null;
+//   if (signerAddress !== publicAddress) return null;
 
-  // Nonce'un süresi dolmuş mu kontrol et
-  if (expires < new Date()) return null;
+//   // Nonce'un süresi dolmuş mu kontrol et
+//   if (expires < new Date()) return null;
 
-  // Nonce'u temizle ve kullanıcıyı güncelle
-  userFound.cryptoLoginNonce = undefined;
-  await userFound.save();
+//   // Nonce'u temizle ve kullanıcıyı güncelle
+//   userFound.cryptoLoginNonce = undefined;
+//   await userFound.save();
 
-  return {
-    id: userFound._id,
-    email: userFound.email,
-    username: userFound.username,
-    isVerified: userFound.isVerified,
-    isAdmin: userFound.isAdmin,
-    image: userFound.image,
-    socialMedia: userFound.socialMedia,
-    wallets: userFound.wallets,
-  };
-}
+//   return {
+//     id: userFound._id,
+//     email: userFound.email,
+//     username: userFound.username,
+//     isVerified: userFound.isVerified,
+//     isAdmin: userFound.isAdmin,
+//     image: userFound.image,
+//     socialMedia: userFound.socialMedia,
+//     wallets: userFound.wallets,
+//   };
+// }
 
 
 export const authOptions: NextAuthOptions = {
@@ -104,22 +105,22 @@ export const authOptions: NextAuthOptions = {
           email: userFound.email,
           username: userFound.username,
           isVerified: userFound.isVerified,
-          isAdmin: userFound.isAdmin,
+          role: userFound.role,
           image: userFound.image,
           socialMedia: userFound.socialMedia,
           wallets: userFound.wallets,
         };
       },
     }),
-    CredentialsProvider({
-      id: "crypto",
-      name: "Crypto Wallet Auth",
-      credentials: {
-        publicAddress: { label: "Public Address", type: "text" },
-        signedNonce: { label: "Signed Nonce", type: "text" },
-      },
-      authorize: authorizeCrypto,
-    }),
+    // CredentialsProvider({
+    //   id: "crypto",
+    //   name: "Crypto Wallet Auth",
+    //   credentials: {
+    //     publicAddress: { label: "Public Address", type: "text" },
+    //     signedNonce: { label: "Signed Nonce", type: "text" },
+    //   },
+    //   authorize: authorizeCrypto,
+    // }),
   ],
   pages: {
     signIn: "/login",
@@ -137,7 +138,7 @@ export const authOptions: NextAuthOptions = {
         token.image= u.image;
         token.socialMedia = u.socialMedia;
         token.wallets = u.wallets;
-        token.isAdmin = u.isAdmin
+        token.role = u.role;
       }
 
       if (trigger === "update" && session) {
