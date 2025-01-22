@@ -55,8 +55,8 @@ export default function OutboxPage() {
         }
     };
 
-    if (error) return <ErrorAnimation />;
-    if (!invites) return <LoadingAnimation />;
+    if (error) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
+    if (!invites) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;
 
     return (
         <div className="max-w-4xl mx-auto p-8 space-y-8">

@@ -80,22 +80,17 @@ export function UserNav() {
           <DropdownMenuGroup>
             <DropdownMenuItem onClick={() => { router.push(`/u/${session.user.username}/profile`) }}>
               Profile
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              Billing
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            <DropdownMenuItem onClick={() => { router.push(`/u/${session.user.username}/inbox`) }}>
+              Inbox
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              Settings
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+            <DropdownMenuItem onClick={() => { router.push(`/u/${session.user.username}/outbox`) }}>
+              Outbox
             </DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={logout}>
             Log out
-            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
