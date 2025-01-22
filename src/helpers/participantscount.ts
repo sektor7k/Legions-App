@@ -10,7 +10,7 @@ export const updateParticipantsCount = async ({
   countType: 'increase' | 'decrease';
   countSize: number;
   tournamentId: Types.ObjectId;
-}) => {
+}) => { 
   try {
     // Turnuva verisini buluyoruz
     const tournament = await Tournament.findById(tournamentId);

@@ -24,8 +24,8 @@ export async function POST(request: NextRequest) {
 
         if (reply === 'accept') {
             if (invite.inviteType === 'leader') {
-                const userInTeam = await Team.findOne({ 'members.memberId': invite.leadId, isDeleted: false });
-    
+                const userInTeam = await Team.findOne({ 'members.memberId': invite.userId, isDeleted: false });
+                console.log("User, ", userInTeam)
                 if (userInTeam) {
                     return NextResponse.json({
                         message: 'The user is already registered to a team',
