@@ -160,92 +160,92 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
                 </div>
 
-                <div className=" flex flex-col w-full space-y-4 md:w-2/4">
-                    <div className="flex items-center justify-start  bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-6 w-full">
-                        <div className="flex items-center space-x-4 w-40">
-                            <Play className="text-red-700 w-9 h-9" />
-                            <p className="text-red-700 font-semibold uppercase">Starts in</p>
+                <div className="flex flex-col w-full space-y-4 sm:w-full md:w-2/4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-4 sm:p-6 w-full">
+                        <div className="flex items-center space-x-4 w-full sm:w-40 mb-4 sm:mb-0">
+                            <Play className="text-red-700 w-6 h-6 sm:w-9 sm:h-9" />
+                            <p className="text-red-700 font-semibold uppercase text-sm sm:text-base">Starts in</p>
                         </div>
-                        <div className="w-px h-full bg-gray-600 mx-6" />
-                        <div className="flex flex-col justify-center items-center space-y-4">
+                        <div className="hidden sm:block w-px h-16 sm:h-full bg-gray-600 mx-4 sm:mx-6" />
+                        <div className="flex flex-col justify-center items-center space-y-4 w-full sm:w-auto">
                             {startDateTime ? (
                                 <Countdown targetDate={startDateTime} />
                             ) : (
-                                <div className="text-white">Loading countdown...</div>
+                                <div className="text-white text-sm sm:text-base">Loading countdown...</div>
                             )}
                             <RegisterTournament id={params.id} />
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-start bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-6 w-full">
-                        <div className="flex items-center space-x-4 w-40">
-                            <Trophy className="text-red-700 w-9 h-9" />
-                            <p className="text-red-700 font-semibold uppercase">Prize Pool</p>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-4 sm:p-6 w-full">
+                        <div className="flex items-center space-x-4 w-full sm:w-40 mb-4 sm:mb-0">
+                            <Trophy className="text-red-700 w-6 h-6 sm:w-9 sm:h-9" />
+                            <p className="text-red-700 font-semibold uppercase text-sm sm:text-base">Prize Pool</p>
                         </div>
-                        <div className="w-px h-full self-stretch bg-gray-600 mx-6" />
-                        <div className="flex flex-col items-start space-y-3 ">
+                        <div className="hidden sm:block w-px h-16 sm:h-full self-stretch bg-gray-600 mx-4 sm:mx-6" />
+                        <div className="flex flex-col items-start space-y-3 w-full sm:w-auto">
                             {tournament.prizePool.map((item: any) => (
                                 <div key={item._id} className="flex justify-between w-full">
-                                    <span className="text-red-700">{item.key} PLACE</span>
-                                    <span className="text-white font-bold">${item.value}</span>
+                                    <span className="text-red-700 text-sm sm:text-base">{item.key} PLACE</span>
+                                    <span className="text-white font-bold text-sm sm:text-base">${item.value}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    <div className="flex items-center justify-start bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-6 w-full">
-                        <div className="flex items-center space-x-4 w-40">
-                            <Calendar className="text-red-700 w-9 h-9" />
-                            <p className="text-red-700 font-semibold uppercase">Dates</p>
+
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-4 sm:p-6 w-full">
+                        <div className="flex items-center space-x-4 w-full sm:w-40 mb-4 sm:mb-0">
+                            <Calendar className="text-red-700 w-6 h-6 sm:w-9 sm:h-9" />
+                            <p className="text-red-700 font-semibold uppercase text-sm sm:text-base">Dates</p>
                         </div>
-                        <div className="w-px h-full self-stretch bg-gray-600 mx-6" />
-                        <div className="flex flex-col items-start space-y-3">
-                            <div className="flex justify-center items-center  w-full gap-1">
-                                <span className="text-red-700">CHECK IN:</span>
-                                <span className="text-white text-sm font-medium">
+                        <div className="hidden sm:block w-px h-16 sm:h-full self-stretch bg-gray-600 mx-4 sm:mx-6" />
+                        <div className="flex flex-col items-start space-y-3 w-full sm:w-auto">
+                            <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center w-full gap-1">
+                                <span className="text-red-700 text-sm sm:text-base">CHECK IN:</span>
+                                <span className="text-white text-xs sm:text-sm font-medium">
                                     {tournament.checkin} ({formatTime(tournament.checkinTime)} GMT+3)
                                 </span>
                             </div>
-                            <div className="flex justify-center items-center w-full gap-1">
-                                <span className="text-red-700">STARTS:</span>
-                                <span className="text-white text-sm font-medium">
+                            <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center w-full gap-1">
+                                <span className="text-red-700 text-sm sm:text-base">STARTS:</span>
+                                <span className="text-white text-xs sm:text-sm font-medium">
                                     {tournament.starts} ({formatTime(tournament.startsTime)} GMT+3)
                                 </span>
                             </div>
-                            <div className="flex justify-center items-center  w-full gap-1">
-                                <span className="text-red-700">ENDS:</span>
-                                <span className="text-white text-sm font-medium">
+                            <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center w-full gap-1">
+                                <span className="text-red-700 text-sm sm:text-base">ENDS:</span>
+                                <span className="text-white text-xs sm:text-sm font-medium">
                                     {tournament.ends} ({formatTime(tournament.endsTime)} GMT+3)
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-start bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-6 w-full">
-                        <div className="flex items-center space-x-4 w-40">
-                            <Info className="text-red-700 w-9 h-9" />
-                            <p className="text-red-700 font-semibold uppercase">Info</p>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start bg-black bg-opacity-60 backdrop-blur-sm rounded-lg p-4 sm:p-6 w-full">
+                        <div className="flex items-center space-x-4 w-full sm:w-40 mb-4 sm:mb-0">
+                            <Info className="text-red-700 w-6 h-6 sm:w-9 sm:h-9" />
+                            <p className="text-red-700 font-semibold uppercase text-sm sm:text-base">Info</p>
                         </div>
-                        <div className="w-px h-full self-stretch bg-gray-600 mx-6" />
-                        <div className="flex flex-col items-start space-y-3">
+                        <div className="hidden sm:block w-px h-16 sm:h-full self-stretch bg-gray-600 mx-4 sm:mx-6" />
+                        <div className="flex flex-col items-start space-y-3 w-full sm:w-auto">
                             <div className="flex justify-start w-full gap-2">
-                                <span className="text-red-700 font-semibold">TEAM SIZE:</span>
-                                <span className="text-white font-bold">{tournament.teamsize}</span>
+                                <span className="text-red-700 font-semibold text-sm sm:text-base">TEAM SIZE:</span>
+                                <span className="text-white font-bold text-sm sm:text-base">{tournament.teamsize}</span>
                             </div>
                             <div className="flex justify-start gap-2 w-full">
-                                <span className="text-red-700 font-semibold">TEAM COUNT:</span>
-                                <span className="text-white font-bold">{tournament.teamcount}s</span>
+                                <span className="text-red-700 font-semibold text-sm sm:text-base">TEAM COUNT:</span>
+                                <span className="text-white font-bold text-sm sm:text-base">{tournament.teamcount}s</span>
                             </div>
                             <div className="flex justify-start gap-2 w-full">
-                                <span className="text-red-700 font-semibold">REGION:</span>
-                                <span className="text-white font-bold">{tournament.region}</span>
+                                <span className="text-red-700 font-semibold text-sm sm:text-base">REGION:</span>
+                                <span className="text-white font-bold text-sm sm:text-base">{tournament.region}</span>
                             </div>
                             <div className="flex justify-start gap-2 w-full">
-                                <span className="text-red-700 font-semibold">BRACKET:</span>
-                                <span className="text-white font-bold">{tournament.bracket}</span>
+                                <span className="text-red-700 font-semibold text-sm sm:text-base">BRACKET:</span>
+                                <span className="text-white font-bold text-sm sm:text-base">{tournament.bracket}</span>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-items-center bg-black mt-6 w-5/6 bg-opacity-60 backdrop-blur-sm py-16 px-8 rounded-lg md:flex-row md:space-x-32">

@@ -30,7 +30,7 @@ export default function TournamentHeader({ id }: TournamentHeaderProps) {
                             alt="Logo"
                             width={130}
                             height={100}
-                        />
+                        /> 
 
                     </Link>
                 </div>
