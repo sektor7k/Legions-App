@@ -35,7 +35,12 @@ import {
     MessageSquareReply,
     House,
     CircleDollarSign,
-    HardHat
+    HardHat,
+    Info,
+    Network,
+    Users,
+    MessageSquareMore,
+    Gamepad2,
     } from 'lucide-react';
   
   export type Icon = LucideIcon;
@@ -74,6 +79,11 @@ import {
     house: House,
     circleDollarSign: CircleDollarSign,
     hardHat: HardHat,
+    info: Info,
+    network: Network,
+    users: Users,
+    messageMore: MessageSquareMore,
+    gamepad: Gamepad2,
     
     gitHub: ({ ...props }: LucideProps) => (
       <svg

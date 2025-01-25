@@ -56,7 +56,7 @@ export function getNavItemsBrowse(session: Session | null): NavItem[] {
     },
     
   ];
-}
+} 
 
 export function getNavItemsTournament(params?: { id: string }): NavItem[] {
   // params'ın tanımlı olup olmadığını ve id'nin mevcut olup olmadığını kontrol et
@@ -71,31 +71,31 @@ export function getNavItemsTournament(params?: { id: string }): NavItem[] {
     {
       title: 'Overview',
       href: `/t/${id}`,
-      icon: 'lineChart',
+      icon: 'info',
       label: 'Overview'
     },
     {
       title: 'Brackets',
       href: `/t/${id}/brackets`,
-      icon: 'swords',
+      icon: 'network',
       label: 'Brackets'
     },
     {
       title: 'Participants',
       href: `/t/${id}/participants`,
-      icon: 'lineChart',
+      icon: 'users',
       label: 'Participants'
     },
     {
       title: 'Chat',
       href: `/t/${id}/chat`,
-      icon: 'swords',
+      icon: 'messageMore',
       label: 'Chat'
     },
     {
       title: 'Compcal',
       href: `/t/${id}/compcal`,
-      icon: 'swords',
+      icon: 'gamepad',
       label: 'Compcal'
     },
     

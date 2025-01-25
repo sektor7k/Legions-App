@@ -26,6 +26,7 @@ import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
+import { SquarePen } from "lucide-react";
 
 
 interface RegisterTournamentProps {
@@ -51,14 +52,14 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
 
 
     const { data, error, mutate } = useSWR(
-        session?.user?.id && id 
-            ? ['/api/tournament/checkRegistration', { userId: session.user.id, tournamentId: id }] 
+        session?.user?.id && id
+            ? ['/api/tournament/checkRegistration', { userId: session.user.id, tournamentId: id }]
             : null,
         ([url, params]) => fetcher(url, params)
     );
     const isRegistered = data?.isRegistered ?? false;
     const hasPendingInvite = data?.hasPendingInvite ?? false;
-    
+
 
     const openSecondDialog = () => {
         setIsFirstDialogOpen(false);
@@ -151,14 +152,18 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
             {/* First Dialog */}
             <Dialog open={isFirstDialogOpen} onOpenChange={setIsFirstDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button
-                        variant="destructive"
-                        className="font-semibold text-lg"
-                        onClick={() => setIsFirstDialogOpen(true)}
-                        disabled={isRegistered || hasPendingInvite}
-                    >
-                        {isRegistered || hasPendingInvite ? "Registered" : "Register"}
-                    </Button>
+                <button
+        onClick={() => setIsFirstDialogOpen(true)}
+        disabled={isRegistered || hasPendingInvite}
+        className={`flex items-center gap-2 rounded-sm p-2 px-3 border-2 bg-red-900 border-red-800 bg-opacity-40 backdrop-blur-xl text-accent-foreground w-full transition-opacity duration-200 ${
+          isRegistered || hasPendingInvite ? "opacity-50 cursor-not-allowed" : "hover:bg-opacity-60"
+        }`}
+      >
+        <SquarePen className={isRegistered || hasPendingInvite ? "opacity-50" : ""} />
+        <p className="uppercase text-base font-semibold">
+          {isRegistered || hasPendingInvite ? "Registered" : "Register"}
+        </p>
+      </button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -198,7 +203,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
                     </DialogHeader>
                     <div className="flex flex-col justify-center items-center space-y-4">
                         <div className="border rounded-md outline-dashed p-5">
-                            <UploadButton     
+                            <UploadButton
                                 onClientUploadComplete={(res) => {
                                     console.log(res);
                                     const uploadedUrl = res?.[0]?.url;

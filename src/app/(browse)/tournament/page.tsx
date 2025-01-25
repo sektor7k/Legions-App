@@ -30,7 +30,6 @@ const fetcher = (url: string) =>
   axios.get(url).then((res) => {
     const tournaments: TournamentsProps[] = res.data.tournaments;
 
-    // Sort the tournaments
     tournaments.sort((a, b) => {
       // Sort by status
       if (a.status !== b.status) {
@@ -40,7 +39,7 @@ const fetcher = (url: string) =>
       // Sort by date
       const dateA = new Date(a.starts).getTime();
       const dateB = new Date(b.starts).getTime();
-      return dateA - dateB; // Yakın tarih başta
+      return dateA - dateB; 
     });
 
     return tournaments;
