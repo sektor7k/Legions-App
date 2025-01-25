@@ -38,6 +38,7 @@ import { UploadDropzone } from "@/utils/uploadthing"
 import { useState } from "react"
 import axios from "axios"
 import { toast } from "@/components/ui/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
 
@@ -538,9 +539,17 @@ export default function CreateTournament() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Region</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="shadcn" {...field} />
-                                </FormControl>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a region" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="Asia">Asia</SelectItem>
+                                        <SelectItem value="Europe">Europe</SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -551,9 +560,17 @@ export default function CreateTournament() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Bracket</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="shadcn" {...field} />
-                                </FormControl>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a bracket type" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="Single">Single</SelectItem>
+                                        <SelectItem value="Team">Team</SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}

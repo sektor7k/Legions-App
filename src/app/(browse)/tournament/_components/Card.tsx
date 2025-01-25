@@ -10,6 +10,7 @@ interface TournamentsCardProps {
     participants: number;
     capacity: number;
     date: string;
+    status:string
 }
 
 export function CardDemo({
@@ -21,9 +22,11 @@ export function CardDemo({
     participants,
     capacity,
     date,
+    status
+
 }: TournamentsCardProps) {
     return (
-        <div className="max-w-xs md:max-w-sm w-full group/card mx-auto">
+        <div className="max-w-xs w-full group/card mx-auto">
             <div className="relative cursor-pointer overflow-hidden h-96 rounded-md shadow-xl max-w-sm mx-auto flex flex-col justify-between">
                 {/* Static Thumbnail */}
                 <Image
@@ -41,7 +44,10 @@ export function CardDemo({
                     objectFit="cover"
                     className="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover/card:opacity-100"
                 />
+                {/* Overlay */}
                 <div className="absolute inset-0 bg-black opacity-0 group-hover/card:opacity-50 transition-opacity duration-300"></div>
+
+                {/* Organizer Info */}
                 <div className="relative flex flex-row items-center space-x-4 z-10 p-4">
                     <Image
                         src={organizerAvatar}
@@ -54,6 +60,8 @@ export function CardDemo({
                         <p className="font-normal text-base text-gray-50">{organizer}</p>
                     </div>
                 </div>
+
+                {/* Content */}
                 <div className="relative text content w-full flex flex-col space-y-2 mt-4 p-4 bg-black bg-opacity-50 backdrop-blur-sm">
                     <h1 className="font-bold text-lg md:text-xl text-gray-50">{name}</h1>
                     <div className="flex flex-row justify-end items-center space-x-2">
@@ -64,6 +72,30 @@ export function CardDemo({
                         {date}
                     </p>
                 </div>
+                { status === "open" ?(
+
+
+                <div className="absolute top-2 right-2">
+                    <Image
+                        src="/greendot.gif"
+                        alt="Green Dot"
+                        height={40} 
+                        width={40} 
+                        className="rounded-full"
+                    />
+                </div>
+                ):(
+
+                <div className="absolute top-2 right-2">
+                    <Image
+                        src="/closedgif.gif" 
+                        alt="Green Dot"
+                        height={40} 
+                        width={40} 
+                        className="rounded-full"
+                    />
+                </div>
+                )}
             </div>
         </div>
     );

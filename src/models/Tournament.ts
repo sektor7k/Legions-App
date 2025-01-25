@@ -24,7 +24,9 @@ export interface TournamentDocument {
     value: string;
   }>;
   sponsors?: string[];
-  currentphase: string
+  currentphase: string;
+  status:string;
+  game: string
 }
 
 const TournamentSchema = new Schema<TournamentDocument>({
@@ -112,6 +114,14 @@ const TournamentSchema = new Schema<TournamentDocument>({
     },
   ],
   currentphase: {
+    type: String,
+    default: 'none'
+  },
+  status: {
+    type: String,
+    default: 'open'
+  },
+  game: {
     type: String,
     default: 'none'
   }

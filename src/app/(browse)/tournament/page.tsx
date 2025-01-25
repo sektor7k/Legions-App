@@ -1,75 +1,179 @@
 "use client"
-import LoadingAnimation from "@/components/loadingAnimation";
-import { CardDemo } from "./_components/Card";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import useSWR from "swr";
-import ErrorAnimation from "@/components/errorAnimation";
+import LoadingAnimation from "@/components/loadingAnimation"
+import { CardDemo } from "./_components/Card"
+import axios from "axios"
+import { useRouter } from "next/navigation"
+import useSWR from "swr"
+import ErrorAnimation from "@/components/errorAnimation"
+import { useState } from "react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+import { Search } from "lucide-react"
 
 interface TournamentsProps {
-    _id: string
-    name: string;
-    thumbnail: string;
-    thumbnailGif: string;
-    organizer: string;
-    organizerAvatar: string;
-    participants: number;
-    capacity: number;
-    date: string;
+  _id: string
+  tname: string
+  thumbnail: string
+  thumbnailGif: string
+  organizer: string
+  organizerAvatar: string
+  participants: number
+  capacity: number
+  starts: string
+  game: string
+  status: string
+  bracket: string
+  region: string
 }
-const fetcher = (url: string) => axios.get(url).then(res => res.data.tournaments);
+
+const fetcher = (url: string) =>
+  axios.get(url).then((res) => {
+    const tournaments: TournamentsProps[] = res.data.tournaments;
+
+    // Sort the tournaments
+    tournaments.sort((a, b) => {
+      // Sort by status
+      if (a.status !== b.status) {
+        return a.status === "open" ? -1 : 1;
+      }
+
+      // Sort by date
+      const dateA = new Date(a.starts).getTime();
+      const dateB = new Date(b.starts).getTime();
+      return dateA - dateB; // Yakın tarih başta
+    });
+
+    return tournaments;
+  });
 
 export default function Tournaments() {
+  const { data: tournaments, error } = useSWR<TournamentsProps[]>("/api/tournament/getAllTournament", fetcher)
 
-    const { data: tournaments, error } = useSWR<TournamentsProps[]>('/api/tournament/getAllTournament', fetcher);
+  const router = useRouter()
 
-    const router = useRouter();
+  const [filters, setFilters] = useState({
+    game: "",
+    status: "",
+    bracket: "",
+    region: "",
+  })
+  const [search, setSearch] = useState("")
 
-    if (!tournaments && !error) {
-        return (
-            <div className="flex flex-col items-center justify-center h-screen">
-                <LoadingAnimation />
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="flex flex-col items-center justify-center h-screen">
-                <ErrorAnimation />
-                <p className="text-red-500 mt-4">Failed to load tournaments. Please try again later.</p>
-            </div>
-        );
-    }
-
-
+  if (!tournaments && !error) {
     return (
-        <div className="flex flex-col items-center justify-center mt-8 px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col justify-center items-center">
-                <p className="text-4xl font-extrabold border-gradient-bottom px-8 p-1">TOURNAMENTS</p>
-                <p className="text-gray-400 text-sm font-semibold">View tournaments powered by Castrum Legions!</p>
-            </div>
-            <div className="w-full max-w-7xl mt-6 mx-4 lg:mx-8">
-                <div className="bg-black p-4 bg-opacity-50 backdrop-blur-md border-gradient rounded-lg min-h-[calc(80vh-2rem)]">
-                    <div className="overflow-y-auto max-h-[calc(80vh-5rem)] p-2">
-                        {tournaments?.length === 0 ? (
-                            <div className="flex justify-center items-center min-h-[calc(80vh-2rem)]">
-                                No Active Tournament
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                {tournaments?.map((tournament: any) => (
-                                    <button onClick={() => router.push(`/t/${tournament._id}`)} key={tournament._id}>
-                                        <CardDemo name={tournament.tname} thumbnail={tournament.thumbnail} thumbnailGif={tournament.thumbnailGif} organizer={tournament.organizer} organizerAvatar={tournament.organizerAvatar} participants={tournament.participants} capacity={tournament.capacity} date={tournament.starts} />
+      <div className="flex flex-col items-center justify-center h-screen">
+        <LoadingAnimation />
+      </div>
+    )
+  }
 
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <ErrorAnimation />
+        <p className="text-red-500 mt-4">Failed to load tournaments. Please try again later.</p>
+      </div>
+    )
+  }
+
+  const filteredTournaments = tournaments?.filter(
+    (tournament) =>
+      (filters.game ? tournament.game === filters.game : true) &&
+      (filters.status ? tournament.status === filters.status : true) &&
+      (filters.bracket ? tournament.bracket === filters.bracket : true) &&
+      (filters.region ? tournament.region === filters.region : true) &&
+      (search ? tournament.tname.toLowerCase().includes(search.toLowerCase()) : true),
+  )
+
+  return (
+    <div className=" px-6 space-y-10">
+      <div className="sticky top-0  backdrop-blur-sm bg-black/35 z-20 p-4 pt-6 space-y-4">
+        <div className="flex flex-wrap gap-4 items-center justify-between">
+          <div className="flex flex-wrap gap-4">
+            <Select
+              onValueChange={(value) => setFilters((prev) => ({ ...prev, game: value === "_clear" ? "" : value }))}
+            >
+              <SelectTrigger className="w-[120px] bg-white/10 border-none rounded-none ">
+                <SelectValue placeholder=" Game" />
+              </SelectTrigger>
+              <SelectContent className=" rounded-none bg-black">
+                <SelectItem value="_clear">All Game</SelectItem>
+                <SelectItem value="game1">Game 1</SelectItem>
+                <SelectItem value="game2">Game 2</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              onValueChange={(value) => setFilters((prev) => ({ ...prev, status: value === "_clear" ? "" : value }))}
+            >
+              <SelectTrigger className="w-[120px] bg-white/10 border-none rounded-none">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent className=" rounded-none bg-black">
+                <SelectItem value="_clear">All Status</SelectItem>
+                <SelectItem value="open">Open</SelectItem>
+                <SelectItem value="closed">Closed</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              onValueChange={(value) => setFilters((prev) => ({ ...prev, bracket: value === "_clear" ? "" : value }))}
+            >
+              <SelectTrigger className="w-[120px] bg-white/10 border-none rounded-none">
+                <SelectValue placeholder="Bracket" />
+              </SelectTrigger>
+              <SelectContent className=" rounded-none bg-black">
+                <SelectItem value="_clear">All Bracket</SelectItem>
+                <SelectItem value="Single">Single</SelectItem>
+                <SelectItem value="Team">Team</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              onValueChange={(value) => setFilters((prev) => ({ ...prev, region: value === "_clear" ? "" : value }))}
+            >
+              <SelectTrigger className="w-[120px] bg-white/10 border-none rounded-none">
+                <SelectValue placeholder="Region" />
+              </SelectTrigger>
+              <SelectContent className=" rounded-none bg-black">
+                <SelectItem value="_clear">All Region</SelectItem>
+                <SelectItem value="Asia">Asia</SelectItem>
+                <SelectItem value="Europe">Europe</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="relative max-w-sm">
+            <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-300" />
+            <Input
+              type="search"
+              placeholder="Search tournaments..."
+              className="pl-8 pr-4 "
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
-    );
+      </div>
+
+      {filteredTournaments?.length === 0 ? (
+        <div className="flex justify-center items-center">No Active Tournament</div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3  ">
+          {filteredTournaments?.map((tournament) => (
+            <button onClick={() => router.push(`/t/${tournament._id}`)} key={tournament._id}>
+              <CardDemo
+                name={tournament.tname}
+                thumbnail={tournament.thumbnail}
+                thumbnailGif={tournament.thumbnailGif}
+                organizer={tournament.organizer}
+                organizerAvatar={tournament.organizerAvatar}
+                participants={tournament.participants}
+                capacity={tournament.capacity}
+                date={tournament.starts}
+                status={tournament.status}
+              />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 

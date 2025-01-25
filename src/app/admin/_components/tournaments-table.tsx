@@ -15,7 +15,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Tournamnets } from './tournaments';
+import { Tournaments } from './tournaments';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -66,7 +66,7 @@ export function TournamnetsTable({
           </TableHeader>
           <TableBody>
             {tournaments.map((tournament: any) => (
-              <Tournamnets  key={tournament._id} id={tournament._id} name={tournament.tname} thumbnail={tournament.thumbnail} thumbnailGif={tournament.thumbnailGif} organizer={tournament.organizer} organizerAvatar={tournament.organizerAvatar} participants={tournament.participants} capacity={tournament.capacity} date={tournament.starts}/>
+              <Tournaments  key={tournament._id} id={tournament._id} name={tournament.tname} thumbnail={tournament.thumbnail} thumbnailGif={tournament.thumbnailGif} organizer={tournament.organizer} organizerAvatar={tournament.organizerAvatar} participants={tournament.participants} capacity={tournament.capacity} date={tournament.starts} status={tournament.status}/>
             ))}
             
           </TableBody>

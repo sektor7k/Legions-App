@@ -31,16 +31,28 @@ export function getNavItemsBrowse(session: Session | null): NavItem[] {
 
   return [
     {
-      title: 'TopGainLose',
+      title: 'Home',
       href: `/`,
-      icon: 'lineChart',
-      label: 'TopGainLose'
+      icon: 'house',
+      label: 'Home'
     },
     {
       title: 'Tournaments',
       href: `/tournament`,
       icon: 'swords',
       label: 'Tournaments'
+    },
+    {
+      title: 'Emporium',
+      href: `/emporium`,
+      icon: 'hardHat',
+      label: 'Tournaments'
+    },
+    {
+      title: 'PVP Arena',
+      href: `/bet`,
+      icon: 'circleDollarSign',
+      label: 'bet'
     },
     
   ];

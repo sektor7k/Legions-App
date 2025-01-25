@@ -146,7 +146,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
 
 
         try {
-            const response = await axios.post('/api/admin/tournament/editCard', { editCard, id:params.id });
+            const response = await axios.post('/api/admin/tournament/editCard', { editCard, id: params.id });
             showToast("Card successfully updated")
             mutate();
             closeRef?.current?.click();
@@ -577,20 +577,20 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                     <p className="font-normal text-base text-gray-50">{tournament.organizer}</p>
                                 </div>
                             </div>
-                            
-                                <div className="relative text content w-full flex flex-col space-y-2 mt-4 p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-                                    <h1 className="font-bold text-lg md:text-xl text-gray-50">{tournament.tname}</h1>
-                                    <div className="flex flex-row justify-end items-center space-x-2">
-                                        <HiMiniUserGroup className="w-5 h-5 text-gray-200" />
-                                        <p className="text-slate-200 font-medium">
-                                            {tournament.participants}/{tournament.capacity}
-                                        </p>
-                                    </div>
-                                    <p className="inline-flex h-8 items-center justify-center rounded-md border border-slate-500 px-4 text-sm font-semibold text-slate-200">
-                                    {tournament.starts} ({tournament.startsTime} GMT+3)
+
+                            <div className="relative text content w-full flex flex-col space-y-2 mt-4 p-4 bg-black bg-opacity-50 backdrop-blur-sm">
+                                <h1 className="font-bold text-lg md:text-xl text-gray-50">{tournament.tname}</h1>
+                                <div className="flex flex-row justify-end items-center space-x-2">
+                                    <HiMiniUserGroup className="w-5 h-5 text-gray-200" />
+                                    <p className="text-slate-200 font-medium">
+                                        {tournament.participants}/{tournament.capacity}
                                     </p>
                                 </div>
-                            
+                                <p className="inline-flex h-8 items-center justify-center rounded-md border border-slate-500 px-4 text-sm font-semibold text-slate-200">
+                                    {tournament.starts} ({tournament.startsTime} GMT+3)
+                                </p>
+                            </div>
+
                         </div>
                     </div>
 
@@ -692,13 +692,13 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="" align="start"> */}
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={checkin}
-                                                    onSelect={setCheckin}
-                                                    initialFocus
-                                                />
-                                            {/* </PopoverContent>
+                                        <Calendar
+                                            mode="single"
+                                            selected={checkin}
+                                            onSelect={setCheckin}
+                                            initialFocus
+                                        />
+                                        {/* </PopoverContent>
                                         </Popover> */}
                                     </div>
                                     <div className="flex flex-col">
@@ -739,13 +739,13 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-auto p-0" align="start"> */}
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={starts}
-                                                    onSelect={setStarts}
-                                                    initialFocus
-                                                />
-                                            {/* </PopoverContent>
+                                        <Calendar
+                                            mode="single"
+                                            selected={starts}
+                                            onSelect={setStarts}
+                                            initialFocus
+                                        />
+                                        {/* </PopoverContent>
                                         </Popover> */}
                                     </div>
                                     <div className="flex flex-col">
@@ -786,13 +786,13 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-auto p-0" align="start"> */}
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={ends}
-                                                    onSelect={setEnds}
-                                                    initialFocus
-                                                />
-                                            {/* </PopoverContent>
+                                        <Calendar
+                                            mode="single"
+                                            selected={ends}
+                                            onSelect={setEnds}
+                                            initialFocus
+                                        />
+                                        {/* </PopoverContent>
                                         </Popover> */}
                                     </div>
                                     <div className="flex flex-col">
@@ -866,26 +866,32 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                         />
                                     </div>
                                     <div className="">
-                                        <Label htmlFor="username" className="text-right">
+                                        <Label htmlFor="region" className="text-right">
                                             Region
                                         </Label>
-                                        <Input
-                                            id="username"
-                                            className="col-span-3"
-                                            onChange={(e) => setRegion(e.target.value)}
-
-                                        />
+                                        <Select onValueChange={setRegion}>
+                                            <SelectTrigger id="region" className="col-span-3">
+                                                <SelectValue placeholder="Select region" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Asia">Asia</SelectItem>
+                                                <SelectItem value="Europe">Europe</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                     <div className="">
-                                        <Label htmlFor="username" className="text-right">
+                                        <Label htmlFor="bracket" className="text-right">
                                             Bracket
                                         </Label>
-                                        <Input
-                                            id="username"
-                                            className="col-span-3"
-                                            onChange={(e) => setBracket(e.target.value)}
-
-                                        />
+                                        <Select onValueChange={setBracket}>
+                                            <SelectTrigger id="bracket" className="col-span-3">
+                                                <SelectValue placeholder="Select bracket type" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Single">Single</SelectItem>
+                                                <SelectItem value="Team">Team</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
                                 <DialogFooter>

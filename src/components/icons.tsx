@@ -32,7 +32,10 @@ import {
     Swords,
     LineChart,
     MessageSquareShare,
-    MessageSquareReply
+    MessageSquareReply,
+    House,
+    CircleDollarSign,
+    HardHat
     } from 'lucide-react';
   
   export type Icon = LucideIcon;
@@ -68,6 +71,9 @@ import {
     lineChart: LineChart,
     inbox: MessageSquareReply,
     outbox:MessageSquareShare,
+    house: House,
+    circleDollarSign: CircleDollarSign,
+    hardHat: HardHat,
     
     gitHub: ({ ...props }: LucideProps) => (
       <svg
