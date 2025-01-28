@@ -73,7 +73,7 @@ function DesktopNav() {
           <CalendarPlus2 className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="/" label="Products">
+        <NavItem href="#" label="Products">
           <Package className="h-5 w-5" />
         </NavItem>
 
@@ -81,7 +81,7 @@ function DesktopNav() {
           <Users2 className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="#" label="Analytics">
+        <NavItem href="/admin/trending" label="Trending">
           <LineChart className="h-5 w-5" />
         </NavItem>
       </nav>
