@@ -27,7 +27,7 @@ export function CardDemo({
 
 }: TournamentsCardProps) {
     return (
-        <div className="max-w-xs w-full group/card mx-auto">
+        <div className="min-w-80 group/card mx-auto">
             <div className="relative cursor-pointer overflow-hidden h-96 rounded-md shadow-xl max-w-sm mx-auto flex flex-col justify-between">
                 {/* Static Thumbnail */}
                 <Image

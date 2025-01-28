@@ -29,7 +29,7 @@ export function getNavItems(session: Session | null): NavItem[] {
 export function getNavItemsBrowse(session: Session | null): NavItem[] {
   const username = session?.user?.username || 'defaultUsername';
 
-  return [
+  return [ 
     {
       title: 'Home',
       href: `/`,
@@ -44,8 +44,8 @@ export function getNavItemsBrowse(session: Session | null): NavItem[] {
     },
     {
       title: 'Emporium',
-      href: `/emporium`,
-      icon: 'hardHat',
+      href: `/#`,
+      icon: 'shoppingBag',
       label: 'Tournaments'
     },
     {

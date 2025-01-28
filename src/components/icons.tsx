@@ -41,6 +41,7 @@ import {
     Users,
     MessageSquareMore,
     Gamepad2,
+    ShoppingBag
     } from 'lucide-react';
   
   export type Icon = LucideIcon;
@@ -84,6 +85,7 @@ import {
     users: Users,
     messageMore: MessageSquareMore,
     gamepad: Gamepad2,
+    shoppingBag: ShoppingBag,
     
     gitHub: ({ ...props }: LucideProps) => (
       <svg
