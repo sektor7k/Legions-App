@@ -20,14 +20,14 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { format } from "date-fns"
-import { CalendarIcon, Pencil } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Pencil } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs"
 import {
     InputOTP,
     InputOTPGroup,
@@ -37,9 +37,8 @@ import {
 import axios from "axios"
 import { ElementRef, useEffect, useRef, useState } from "react"
 import { toast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
-import { MdDelete } from "react-icons/md";
 import useSWR from "swr";
+import { Input } from "@/components/ui/input";
 
 interface Team {
     teamName: string;
@@ -81,6 +80,12 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
 
     const [date, setDate] = useState<Date | undefined>(new Date())
     const [time, setTime] = useState("")
+
+    const [winnerTeam, setwinnerTeam] = useState("");
+
+    const [team1Score, setTeam1Score] = useState("");
+    const [team2Score, setTeam2Score] = useState("");
+
 
     const closeRef = useRef<ElementRef<"button">>(null);
 
@@ -136,7 +141,7 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
             showToast("Delete Match successfully")
             await mutate();
             closeRef?.current?.click();
-            
+
         } catch (error) {
             showErrorToast("Error delete Match")
             console.error("Error delete Match:", error);
@@ -145,17 +150,17 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
 
     const editMatch = async (id: string) => {
         const dateStr: string | undefined = date ? format(date, "PPP") : undefined;
-    
+
         try {
             const payload: any = {
-                matchId: id, 
+                matchId: id,
             };
-    
+
             if (team1) payload.team1Id = team1;
             if (team2) payload.team2Id = team2;
             if (dateStr) payload.matchDate = dateStr;
             if (time) payload.matchTime = time;
-    
+
             const response = await axios.post('/api/admin/tournament/editMatch', payload);
             showToast("Match updated successfully");
             await mutate();
@@ -165,7 +170,30 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
             console.error("Error updating match:", error);
         }
     };
-    
+
+    const setWinnerMatch = async (id: string) => {
+        try {
+            const response = await axios.post('/api/admin/tournament/setWinnerMatch', { id, winnerTeam,team1Score, team2Score });
+            showToast("Match set winner successfully");
+            await mutate();
+            closeRef?.current?.click();
+        } catch (error) {
+            showErrorToast("Error setWinner match");
+            console.error("Error setWinner match:", error);
+        }
+    }
+
+    const setStatusMatch = async(id:string, status:string)=>{
+        try {
+            const response = await axios.post('/api/admin/tournament/setStatusMatch', { id, status });
+            showToast("Match set status successfully");
+            await mutate();
+        } catch (error) {
+            showErrorToast("Error set status match");
+            console.error("Error set status match:", error);
+        }
+    }
+
 
     return (
         <div className=" max-w-6xl mx-auto p-8 space-y-8 w-screen">
@@ -228,15 +256,15 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
                                 </div>
                             </div>
 
-                            <div  className=" flex items-center">
-                               
-                                        <Calendar
-                                            mode="single"
-                                            selected={date}
-                                            onSelect={setDate}
-                                            className="rounded-md border "
-                                        />
-                                   
+                            <div className=" flex items-center">
+
+                                <Calendar
+                                    mode="single"
+                                    selected={date}
+                                    onSelect={setDate}
+                                    className="rounded-md border "
+                                />
+
                             </div>
                             <div>
                                 <InputOTP maxLength={4} value={time}
@@ -286,89 +314,174 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
                                 <DialogHeader>
                                     <DialogTitle>Edit Compcal</DialogTitle>
                                 </DialogHeader>
+                                <Tabs defaultValue="info" className="w-[400px]">
+                                    <TabsList className="grid w-full grid-cols-2">
+                                        <TabsTrigger value="info">Compcal Info</TabsTrigger>
+                                        <TabsTrigger value="status">Status</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="info" className="w-full space-y-5">
+                                        <div className="flex flex-col space-y-4">
+                                            <div className="flex flex-row justify-center items-center space-x-4">
+                                                <div className="w-full">
+                                                    <Select onValueChange={(value) => { setTeam1(value) }}>
+                                                        <SelectTrigger className="w-full bg-bg-auth">
+                                                            <SelectValue placeholder="Select Team" />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-bg-auth">
+                                                            <SelectGroup>
+                                                                <SelectLabel>Teams</SelectLabel>
+                                                                {teams?.map((team: any, index: any) => (
+                                                                    <SelectItem key={index} value={team._id}>
+                                                                        <div className="flex items-center space-x-2">
+                                                                            <img src={team.teamImage} alt={team.teamName} className="w-5 h-5 rounded-full" />
+                                                                            <span>{team.teamName}</span>
+                                                                        </div>
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
 
-                                <div className="flex flex-col space-y-4">
-                                    <div className="flex flex-row justify-center items-center space-x-4">
-                                        <div className="w-full">
-                                            <Select onValueChange={(value) => { setTeam1(value) }}>
+                                                <div className="w-full">
+                                                    <Select onValueChange={(value) => { setTeam2(value) }}>
+                                                        <SelectTrigger className="w-full bg-bg-auth">
+                                                            <SelectValue placeholder="Select Team" />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-bg-auth">
+                                                            <SelectGroup>
+                                                                <SelectLabel>Teams</SelectLabel>
+                                                                {teams?.map((team: any, index: any) => (
+                                                                    <SelectItem key={index} value={team._id}>
+                                                                        <div className="flex items-center space-x-2">
+                                                                            <img src={team.teamImage} alt={team.teamName} className="w-5 h-5 rounded-full" />
+                                                                            <span>{team.teamName}</span>
+                                                                        </div>
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center">
+
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={date}
+                                                    onSelect={setDate}
+                                                    className="rounded-md border"
+                                                />
+                                            </div>
+                                            <div>
+                                                <InputOTP maxLength={4} value={time}
+                                                    onChange={(value) => setTime(value)}>
+                                                    <InputOTPGroup>
+                                                        <InputOTPSlot index={0} />
+                                                        <InputOTPSlot index={1} />
+                                                    </InputOTPGroup>
+                                                    <InputOTPSeparator />
+                                                    <InputOTPGroup>
+                                                        <InputOTPSlot index={2} />
+                                                        <InputOTPSlot index={3} />
+                                                    </InputOTPGroup>
+                                                </InputOTP>
+                                            </div>
+
+                                        </div>
+                                        <DialogFooter>
+                                            <div className="flex justify-between w-full ">
+                                                <DialogClose ref={closeRef} asChild>
+                                                    <Button type="button" variant={"ghost"}>
+                                                        Cancel
+                                                    </Button>
+                                                </DialogClose>
+                                                <Button onClick={() => deleteMatch(match._id)} variant={"destructive"}>Delete</Button>
+                                                <Button onClick={() => editMatch(match._id)} type="submit">Save changes</Button>
+
+                                            </div>
+                                        </DialogFooter>
+                                    </TabsContent>
+                                    <TabsContent value="status" className="w-full space-y-5">
+                                        <div className="flex items-center space-x-2">
+                                            <img src={match.team1Id.teamImage} alt={match.team1Id.teamName} className="w-5 h-5 rounded-full" />
+                                            <span>{match.team1Id.teamName} :</span>
+                                            <Input onChange={(e)=>setTeam1Score(e.target.value)}/>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <img src={match.team2Id.teamImage} alt={match.team2Id.teamName} className="w-5 h-5 rounded-full" />
+                                            <span>{match.team2Id.teamName} :</span>
+                                            <Input onChange={(e)=>setTeam2Score(e.target.value)}/>
+                                        </div>
+                                        <div className="flex flex-row justify-center items-center  space-x-4">
+                                            <div className="text-nowrap">
+                                                Select Winner:
+                                            </div>
+                                            <Select onValueChange={(value) => { setwinnerTeam(value) }}>
                                                 <SelectTrigger className="w-full bg-bg-auth">
                                                     <SelectValue placeholder="Select Team" />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-bg-auth">
                                                     <SelectGroup>
                                                         <SelectLabel>Teams</SelectLabel>
-                                                        {teams?.map((team: any, index: any) => (
-                                                            <SelectItem key={index} value={team._id}>
-                                                                <div className="flex items-center space-x-2">
-                                                                    <img src={team.teamImage} alt={team.teamName} className="w-5 h-5 rounded-full" />
-                                                                    <span>{team.teamName}</span>
-                                                                </div>
-                                                            </SelectItem>
-                                                        ))}
+                                                        <SelectItem value={match.team1Id._id}>
+                                                            <div className="flex items-center space-x-2">
+                                                                <img src={match.team1Id.teamImage} alt={match.team1Id.teamName} className="w-5 h-5 rounded-full" />
+                                                                <span>{match.team1Id.teamName}</span>
+                                                            </div>
+                                                        </SelectItem>
+                                                        <SelectItem value={match.team2Id._id}>
+                                                            <div className="flex items-center space-x-2">
+                                                                <img src={match.team2Id.teamImage} alt={match.team2Id.teamName} className="w-5 h-5 rounded-full" />
+                                                                <span>{match.team2Id.teamName}</span>
+                                                            </div>
+                                                        </SelectItem>
                                                     </SelectGroup>
                                                 </SelectContent>
                                             </Select>
-                                        </div>
 
-                                        <div className="w-full">
-                                            <Select onValueChange={(value) => { setTeam2(value) }}>
+                                        </div>
+                                        <div className="flex flex-row justify-center items-center  space-x-4">
+                                            <div className="text-nowrap">
+                                                Match Status:
+                                            </div>
+                                            <Select onValueChange={(value) => setStatusMatch(match._id,value)}>
                                                 <SelectTrigger className="w-full bg-bg-auth">
-                                                    <SelectValue placeholder="Select Team" />
+                                                    <SelectValue placeholder="Select Status" />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-bg-auth">
                                                     <SelectGroup>
-                                                        <SelectLabel>Teams</SelectLabel>
-                                                        {teams?.map((team: any, index: any) => (
-                                                            <SelectItem key={index} value={team._id}>
-                                                                <div className="flex items-center space-x-2">
-                                                                    <img src={team.teamImage} alt={team.teamName} className="w-5 h-5 rounded-full" />
-                                                                    <span>{team.teamName}</span>
-                                                                </div>
-                                                            </SelectItem>
-                                                        ))}
+                                                        <SelectLabel>Status</SelectLabel>
+                                                        <SelectItem value={"incoming"}>
+                                                            <p>Incoming</p>
+                                                        </SelectItem>
+                                                        <SelectItem value={"ongoing"}>
+                                                            <p>Ongoing</p>
+                                                        </SelectItem>
+                                                        <SelectItem value={"played"}>
+                                                            <p>Played</p>
+                                                        </SelectItem>
+                                                        
                                                     </SelectGroup>
                                                 </SelectContent>
                                             </Select>
+
                                         </div>
-                                    </div>
-                                    <div className="flex items-center">
+                                        <DialogFooter>
+                                            <div className="flex justify-between w-full ">
+                                                <DialogClose ref={closeRef} asChild>
+                                                    <Button type="button" variant={"ghost"}>
+                                                        Cancel
+                                                    </Button>
+                                                </DialogClose>
+                                                <Button onClick={() => setWinnerMatch(match._id)} className="bg-green-600">Save Winner</Button>
 
-                                        <Calendar
-                                            mode="single"
-                                            selected={date}
-                                            onSelect={setDate}
-                                            className="rounded-md border"
-                                        />
-                                    </div>
-                                    <div>
-                                        <InputOTP maxLength={4} value={time}
-                                            onChange={(value) => setTime(value)}>
-                                            <InputOTPGroup>
-                                                <InputOTPSlot index={0} />
-                                                <InputOTPSlot index={1} />
-                                            </InputOTPGroup>
-                                            <InputOTPSeparator />
-                                            <InputOTPGroup>
-                                                <InputOTPSlot index={2} />
-                                                <InputOTPSlot index={3} />
-                                            </InputOTPGroup>
-                                        </InputOTP>
-                                    </div>
+                                            </div>
+                                        </DialogFooter>
+                                    </TabsContent>
+                                </Tabs>
 
-                                </div>
 
-                                <DialogFooter>
-                                    <div className="flex justify-between w-full ">
-                                        <DialogClose ref={closeRef} asChild>
-                                            <Button type="button" variant={"ghost"}>
-                                                Cancel
-                                            </Button>
-                                        </DialogClose>
-                                        <Button onClick={()=>deleteMatch(match._id)} variant={"destructive"}>Delete</Button>
-                                        <Button onClick={()=>editMatch(match._id)} type="submit">Save changes</Button>
-                                        
-                                    </div>
-                                </DialogFooter>
                             </DialogContent>
                         </Dialog>
 

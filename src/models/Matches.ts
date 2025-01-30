@@ -4,9 +4,13 @@ export interface MatchDocument extends Document {
   tournamentId: Types.ObjectId;
   team1Id: Types.ObjectId;
   team2Id: Types.ObjectId;
+  team1Score: String;
+  team2Score: String;
   matchDate: string;
   matchTime: string;
   isDeleted: boolean;
+  status: "incoming" | "ongoing" | "played";
+  winnerTeam: Types.ObjectId;
 }
 
 const matchSchema = new Schema<MatchDocument>({
@@ -23,11 +27,19 @@ const matchSchema = new Schema<MatchDocument>({
   team2Id: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'Team', // Team modelinden referans
+    ref: 'Team', // Team modelinden referans 
   },
   matchDate: {
     type: String,
     required: true,
+  },
+  team1Score: {
+    type: String,
+    default: "0"
+  },
+  team2Score: {
+    type: String,
+    default: "0"
   },
   matchTime: {
     type: String,
@@ -36,7 +48,17 @@ const matchSchema = new Schema<MatchDocument>({
   isDeleted: {
     type: Boolean,
     default: false,
-  }
+  },
+  status: {
+    type: String,
+    enum: ["incoming", "ongoing", "played"],
+    default: "incoming",
+  },
+  winnerTeam: {
+    type: Schema.Types.ObjectId,
+    ref: 'Team',
+  },
+
 }, {
   timestamps: true, // createdAt ve updatedAt alanlarını otomatik olarak ekler
 });
