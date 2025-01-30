@@ -54,8 +54,8 @@ const CoinTable: React.FC<{ title: string; coins: Coin[] }> = ({ title, coins })
               height={24}
               className="rounded-full bg-white"
             />
-            <span className="font-bold">{coin.name}</span>
-            <span className="text-muted-foreground">({coin.ticker})</span>
+            <span className="font-bold">{coin.name}<span className="text-muted-foreground font-normal"> {coin.ticker}</span></span>
+            
           </TableCell>
           <TableCell className="font-semibold">
             ${coin.price.toLocaleString()}
