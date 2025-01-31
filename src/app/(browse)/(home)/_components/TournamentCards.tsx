@@ -22,7 +22,7 @@ interface TournamentsProps {
   capacity: number
   starts: string
   game: string
-  status: string
+  tournamentStatus: string
   bracket: string
   region: string
 }
@@ -32,9 +32,9 @@ const fetcher = (url: string) =>
     const tournaments: TournamentsProps[] = res.data.tournaments
 
     tournaments.sort((a, b) => {
-      // Sort by status
-      if (a.status !== b.status) {
-        return a.status === "open" ? -1 : 1
+      // Sort by tournamentStatus
+      if (a.tournamentStatus !== b.tournamentStatus) {
+        return a.tournamentStatus === "open" ? -1 : 1
       }
 
       // Sort by date
@@ -84,7 +84,7 @@ export function TournamentCards() {
                     participants={tournament.participants || 0}
                     capacity={tournament.capacity || 0}
                     date={tournament.starts || "TBA"}
-                    status={tournament.status || "Unknown"}
+                    tournamentStatus={tournament.tournamentStatus || "Unknown"}
                   />
                 </button>
               </CarouselItem>

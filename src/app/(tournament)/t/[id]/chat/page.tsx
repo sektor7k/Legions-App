@@ -15,8 +15,15 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import LoadingAnimation from "@/components/loadingAnimation";
 
+interface Tournament {
+    registerStatus: string;
+    chatStatus: string;
+}
+
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 const fetcher2 = (url: string, params: any) => axios.post(url, params).then(res => res.data);
+const fetcher3 = (url: string, id: any) => axios.post(url, { id }).then(res => res.data);
+
 
 
 
@@ -25,6 +32,10 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     const { data: session } = useSession();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const socketRef = useRef<Socket | null>(null);
+
+    const { data: tournament, error: errorTourrnament } = useSWR<Tournament>(['/api/tournament/getTournamentDetail', params.id] as const,
+        ([url, id]) => fetcher3(url, id)
+    );
 
     const { data: messages = [], error } = useSWR(
         `${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`,
@@ -39,6 +50,9 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         session?.user.id ? ['/api/tournament/team/getTeamLead', { tournamentId: params.id, leadId: session.user.id }] : null,
         ([url, params]) => fetcher2(url, params)
     );
+
+    const rStatus = tournament?.registerStatus === "open" ? false : true;
+    const cStatus = tournament?.chatStatus === "open" ? false : true;
 
 
 
@@ -87,14 +101,19 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         };
 
         try {
+            if (cStatus) {
+                return console.error("Chat Error")
+            }
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, msgData);
             setCurrentMsg("");
+
         } catch (error) {
             console.error('Mesaj gönderme hatası:', error);
         }
     }, [currentMsg, session, params.id]);
 
     const sendSteamMessage = useCallback(async () => {
+        
         if (!session?.user?.username || !myTeam) {
             console.warn('myTeam bilgisi eksik:', myTeam);
             return;
@@ -113,6 +132,9 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         };
 
         try {
+            if (cStatus || rStatus) {
+                return console.error("Chat Error")
+            }
             await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, msgData);
         } catch (error) {
             console.error('Steam mesaj gönderme hatası:', error);
@@ -156,10 +178,13 @@ export default function ChatPage({ params }: { params: { id: string } }) {
 
     const sendInvite = async (teamId: string | undefined, userId: string, leadId: string, inviteType: string) => {
         try {
+            if (cStatus || rStatus) {
+                return console.error("Chat Error")
+            }
             const response = await axios.post('/api/tournament/invite/sendInvite', { teamId, userId, leadId, inviteType });
             await checkUserMutate();
             showToast("A request to join the team has been sent.")
-        } catch (error:any) {
+        } catch (error: any) {
             if (error.response) {
                 // Sunucudan dönen hata
                 console.error("Response error:", error.response.data);
@@ -198,7 +223,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                         </p>
                         <Button
                             onClick={() => sendInvite(message.teamId, session?.user.id, message.userId, 'leader')}
-                            disabled={checkUser?.isRegistered || checkUser?.hasPendingInvite}
+                            disabled={checkUser?.isRegistered || checkUser?.hasPendingInvite || rStatus || cStatus}
                         >
                             Takıma Katıl
                         </Button>
@@ -218,7 +243,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                         </p>
                         <Button
                             onClick={() => sendInvite(myTeam._id, message.userId, session?.user.id, 'member')}
-                            disabled={!myTeam}
+                            disabled={!myTeam || rStatus || cStatus}
                         >
                             Takıma Davet Et
                         </Button>
@@ -258,7 +283,11 @@ export default function ChatPage({ params }: { params: { id: string } }) {
 
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <Button size={"icon"} variant={"ghost"} className="mr-3 border border-gray-500">
+                                    <Button
+                                        disabled={cStatus || rStatus}
+                                        size={"icon"}
+                                        variant={"ghost"}
+                                        className={`mr-3 border border-gray-500 ${cStatus || rStatus ? "opacity-40" : "opacity-100"}`}>
                                         <Menu />
                                     </Button>
                                 </PopoverTrigger>
@@ -278,7 +307,8 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                                 </PopoverContent>
                             </Popover>
                             <input
-                                className="w-full p-2 pl-4 pr-12 border rounded-lg rounded-r-3xl border-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
+                                disabled={cStatus}
+                                className={`w-full p-2 pl-4 pr-12 border rounded-lg rounded-r-3xl border-gray-500 ${cStatus ? "opacity-40" : "opacity-100"} focus:outline-none focus:ring-2 focus:ring-white`}
                                 type="text"
                                 value={currentMsg}
                                 placeholder="Type your message..."
@@ -291,8 +321,9 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                                 }}
                             />
                             <button
+                                disabled={cStatus}
                                 onClick={sendData}
-                                className="absolute right-10  text-white rounded-full flex items-center justify-center"
+                                className={`absolute right-10  text-white rounded-full flex items-center justify-center ${cStatus ? "opacity-40" : "opacity-100"}`}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />

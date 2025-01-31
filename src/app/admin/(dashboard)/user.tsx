@@ -24,7 +24,7 @@ export  function User() {
           className="overflow-hidden rounded-full"
         >
           <Image
-            src={session?.user?.image ?? '/placeholder-user.jpg'}
+            src={session?.user?.image ?? '/defaultteam.png'}
             width={36}
             height={36}
             alt="Avatar"

@@ -14,10 +14,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ElementRef, useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { mutate } from "swr";
+import Image from "next/image";
 interface TCardProps {
     tournamentId: string;
     team?: {
@@ -38,6 +38,9 @@ export default function TCard({ tournamentId, team, allteams }: TCardProps) {
     const [selectTeam, setSelectTeam] = useState("");
     const [teamscore, setTeamScore] = useState(0);
     const router = useRouter();
+
+    const isTeamNull = !team?.teamId;
+
 
     function showErrorToast(message: string): void {
         toast({
@@ -63,7 +66,7 @@ export default function TCard({ tournamentId, team, allteams }: TCardProps) {
                 score: teamscore
             });
             showToast("Update bracket successfully")
-            await  mutate(['/api/tournament/bracket/getBracket',{ tournamentId }])
+            await mutate(['/api/tournament/bracket/getBracket', { tournamentId }])
             closeRef?.current?.click();
 
         } catch (error) {
@@ -73,8 +76,7 @@ export default function TCard({ tournamentId, team, allteams }: TCardProps) {
     }
 
     return (
-        <div className="h-16 w-32 bg-gray-800 bg-opacity-50 border-2 border-gray-800 backdrop-blur-sm rounded-sm relative with-connector grid grid-cols-3">
-
+        <div className="h-16 w-32 bg-red-800 bg-opacity-50 border-2 border-red-800 backdrop-blur-sm rounded-sm relative with-connector grid grid-cols-3">
             <Dialog >
                 <DialogTrigger asChild>
                     <button className="absolute top-0 left-0 z-50 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white p-1 rounded-full rounded-t-none rounded-l-none transition duration-300">
@@ -140,16 +142,32 @@ export default function TCard({ tournamentId, team, allteams }: TCardProps) {
                 </DialogContent>
             </Dialog>
             <div className="col-span-2 flex flex-col items-center justify-center">
-                <img
+                <Image
                     src={team?.teamId?.teamImage || "/defaultteam.png"}
                     alt={team?.teamId?.teamImage || "No Team"}
-                    width={42}
+                    width={100}
+                    height={100}
+                    className={`h-10 w-10 rounded-full ${isTeamNull ? "opacity-50" : "opacity-100"
+                        }`}
                 />
-                <p className="text-xs font-bold">{team?.teamId?.teamName || "No Team"}</p>
+                <p
+                    className={`text-xs font-extrabold w-full truncate text-center ${isTeamNull ? "opacity-50" : ""
+                        }`}
+                >
+                    {team?.teamId?.teamName || "No Team"}
+                </p>
             </div>
             <div className="col-span-1 border-l-2 border-gray-800 flex items-center justify-center">
-                <p className="text-3xl font-bold">{team?.score !== undefined ? team.score : "-"}</p>
+                <p
+                    className={`text-3xl font-bold ${isTeamNull ? "opacity-50" : ""}`}
+                >
+                    {isTeamNull ? "-" : team.score}
+                </p>
             </div>
         </div>
     )
+
+
+
+
 }

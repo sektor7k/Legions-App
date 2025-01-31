@@ -31,11 +31,12 @@ import { SquarePen } from "lucide-react";
 
 interface RegisterTournamentProps {
     id: string
+    registerStatus: string;
 }
 
 const fetcher = (url: string, params: any) => axios.post(url, params).then(res => res.data);
 
-export default function RegisterTournament({ id }: RegisterTournamentProps) {
+export default function RegisterTournament({ id, registerStatus }: RegisterTournamentProps) {
 
     const [isFirstDialogOpen, setIsFirstDialogOpen] = useState(false);
     const [isSecondDialogOpen, setIsSecondDialogOpen] = useState(false);
@@ -59,6 +60,7 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
     );
     const isRegistered = data?.isRegistered ?? false;
     const hasPendingInvite = data?.hasPendingInvite ?? false;
+    const rStatus = registerStatus === "open" ? false : true;
 
 
     const openSecondDialog = () => {
@@ -152,18 +154,17 @@ export default function RegisterTournament({ id }: RegisterTournamentProps) {
             {/* First Dialog */}
             <Dialog open={isFirstDialogOpen} onOpenChange={setIsFirstDialogOpen}>
                 <DialogTrigger asChild>
-                <button
-        onClick={() => setIsFirstDialogOpen(true)}
-        disabled={isRegistered || hasPendingInvite}
-        className={`flex items-center gap-2 rounded-sm p-2 px-3 border-2 bg-red-900 border-red-800 bg-opacity-40 backdrop-blur-xl text-accent-foreground w-full transition-opacity duration-200 ${
-          isRegistered || hasPendingInvite ? "opacity-50 cursor-not-allowed" : "hover:bg-opacity-60"
-        }`}
-      >
-        <SquarePen className={isRegistered || hasPendingInvite ? "opacity-50" : ""} />
-        <p className="uppercase text-base font-semibold">
-          {isRegistered || hasPendingInvite ? "Registered" : "Register"}
-        </p>
-      </button>
+                    <button
+                        onClick={() => setIsFirstDialogOpen(true)}
+                        disabled={isRegistered || hasPendingInvite || rStatus}
+                        className={`flex items-center gap-2 rounded-sm p-2 px-3 border-2 bg-red-900 border-red-800 bg-opacity-40 backdrop-blur-xl text-accent-foreground w-full transition-opacity duration-200 ${isRegistered || hasPendingInvite || rStatus ? "opacity-50 cursor-not-allowed" : "hover:bg-opacity-60"
+                            }`}
+                    >
+                        <SquarePen className={isRegistered || hasPendingInvite|| rStatus  ? "opacity-50" : ""} />
+                        <p className="uppercase text-base font-semibold">
+                        {rStatus ? "Register Closed" : (isRegistered || hasPendingInvite ? "Registered" : "Register")}
+                        </p>
+                    </button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

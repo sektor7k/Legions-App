@@ -2,14 +2,15 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, X } from "lucide-react"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { useRouter } from "next/navigation"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import axios from "axios"
+import useSWR from "swr"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface TournamentsCardProps {
   id: string
@@ -21,8 +22,17 @@ interface TournamentsCardProps {
   participants: number
   capacity: number
   date: string
-  status: "open" | "closed"
+  tournamentStatus: string
+  moderators: []
 }
+
+interface UserProps {
+  _id: string
+  username: string
+  image: string
+}
+
+const fetcher = (url: string) => axios.get(url).then((res) => res.data)
 
 export function Tournaments({
   id,
@@ -34,22 +44,37 @@ export function Tournaments({
   participants,
   capacity,
   date,
-  status,
+  tournamentStatus,
+  moderators,
 }: TournamentsCardProps) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
-  const [currentStatus, setCurrentStatus] = useState(status)
+  const [moderator, setModerators] = useState<UserProps[]>(moderators)
+  const [searchTerm, setSearchTerm] = useState("")
 
-  const handleStatusChange = async (newStatus: "open" | "closed") => {
+  const { data: users = [], error } = useSWR<UserProps[]>("/api/admin/user/getUser", fetcher)
+  
+
+  const filteredUsers = users.filter((user) => user.username?.toLowerCase().includes(searchTerm.toLowerCase()))
+
+  const handleAddModerator = (user: UserProps) => {
+    if (!moderator.some((mod) => mod._id === user._id)) {
+      setModerators([...moderator, user])
+    }
+  }
+
+  const handleRemoveModerator = (userId: string) => {
+    setModerators(moderator.filter((mod) => mod._id !== userId))
+  }
+
+  const handleSaveModerators = async () => {
     try {
-      await axios.post("/api/admin/tournament/editstatus", {
-        id,
-        status: newStatus,
-      })
-      setCurrentStatus(newStatus)
-      setIsOpen(false)
+      const moderatorIds = moderator.map((mod) => mod._id)
+      console.log(moderatorIds, id)
+       await axios.post("/api/admin/tournament/addModerator", { id, moderatorIds })
+       setIsOpen(false)
     } catch (error) {
-      console.error("Failed to update tournament status:", error)
+      console.error("Error saving moderators:", error)
     }
   }
 
@@ -66,27 +91,9 @@ export function Tournaments({
       </TableCell>
       <TableCell className="font-medium">{name}</TableCell>
       <TableCell>
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" className="capitalize">
-              {currentStatus}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Tournament Status</DialogTitle>
-            </DialogHeader>
-            <Select onValueChange={(value: "open" | "closed") => handleStatusChange(value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="open">Open</SelectItem>
-                <SelectItem value="closed">Closed</SelectItem>
-              </SelectContent>
-            </Select>
-          </DialogContent>
-        </Dialog>
+        <Button variant="outline" className="capitalize" disabled>
+          {tournamentStatus}
+        </Button>
       </TableCell>
       <TableCell className="hidden md:table-cell">
         {participants}/{capacity}
@@ -102,6 +109,55 @@ export function Tournaments({
           <ArrowUpRight className="h-4 w-4" />
         </Button>
       </TableCell>
+      <TableCell>
+        <Button onClick={() => setIsOpen(true)}>Moderators</Button>
+      </TableCell>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="bg-inherit">
+          <DialogHeader>
+            <DialogTitle>Manage Moderators</DialogTitle>
+          </DialogHeader>
+          <Input placeholder="Search users..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <div className="max-h-60 overflow-y-auto">
+            {filteredUsers.map((user) => (
+              <div
+                key={user._id}
+                className="flex items-center justify-between p-2 hover:bg-gray-800 cursor-pointer"
+                onClick={() => handleAddModerator(user)}
+              >
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={user.image} alt={user.username} />
+                    <AvatarFallback>{user.username?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                  <span>{user.username}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4">
+            <h3 className="font-semibold">Selected Moderators:</h3>
+            {moderator.map((mod) => (
+              <div key={mod._id} className="flex items-center justify-between p-2">
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={mod.image} alt={mod.username} />
+                    <AvatarFallback>{mod.username?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                  <span>{mod.username}</span>
+                </div>
+                <Button size="icon" variant="ghost" onClick={() => handleRemoveModerator(mod._id)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button onClick={handleSaveModerators}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </TableRow>
   )
 }

@@ -11,7 +11,7 @@ interface TournamentsCardProps {
     participants: number;
     capacity: number;
     date: string;
-    status: string
+    tournamentStatus: string
 }
 
 export function CardDemo({
@@ -23,7 +23,7 @@ export function CardDemo({
     participants,
     capacity,
     date,
-    status
+    tournamentStatus
 
 }: TournamentsCardProps) {
     return (
@@ -73,7 +73,7 @@ export function CardDemo({
                         {date}
                     </p>
                 </div>
-                {status === "open" ? (
+                {tournamentStatus === "open" ? (
 
 
                     <div className="absolute top-2 right-2">

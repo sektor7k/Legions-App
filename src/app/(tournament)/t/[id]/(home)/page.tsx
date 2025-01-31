@@ -28,6 +28,9 @@ interface Tournament {
     bracket: string;
     sponsors: string[];
     prizePool: { _id: string; key: string; value: number }[];
+    tournamentStatus: string;
+    registerStatus:string;
+    chatStatus: string;
 }
 
 const fetcher = (url: string, id: any) => axios.post(url, { id }).then(res => res.data);
@@ -171,7 +174,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                             ) : (
                                 <div className="text-white text-sm sm:text-base">Loading countdown...</div>
                             )}
-                            <RegisterTournament id={params.id} />
+                            <RegisterTournament id={params.id} registerStatus={tournament.registerStatus} />
                         </div>
                     </div>
 

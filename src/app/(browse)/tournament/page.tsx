@@ -21,7 +21,7 @@ interface TournamentsProps {
   capacity: number
   starts: string
   game: string
-  status: string
+  tournamentStatus: string
   bracket: string
   region: string
 }
@@ -32,8 +32,8 @@ const fetcher = (url: string) =>
 
     tournaments.sort((a, b) => {
       // Sort by status
-      if (a.status !== b.status) {
-        return a.status === "open" ? -1 : 1;
+      if (a.tournamentStatus !== b.tournamentStatus) {
+        return a.tournamentStatus === "open" ? -1 : 1;
       }
 
       // Sort by date
@@ -52,7 +52,7 @@ export default function Tournaments() {
 
   const [filters, setFilters] = useState({
     game: "",
-    status: "",
+    tournamentStatus: "",
     bracket: "",
     region: "",
   })
@@ -78,7 +78,7 @@ export default function Tournaments() {
   const filteredTournaments = tournaments?.filter(
     (tournament) =>
       (filters.game ? tournament.game === filters.game : true) &&
-      (filters.status ? tournament.status === filters.status : true) &&
+      (filters.tournamentStatus ? tournament.tournamentStatus === filters.tournamentStatus : true) &&
       (filters.bracket ? tournament.bracket === filters.bracket : true) &&
       (filters.region ? tournament.region === filters.region : true) &&
       (search ? tournament.tname.toLowerCase().includes(search.toLowerCase()) : true),
@@ -102,7 +102,7 @@ export default function Tournaments() {
               </SelectContent>
             </Select>
             <Select
-              onValueChange={(value) => setFilters((prev) => ({ ...prev, status: value === "_clear" ? "" : value }))}
+              onValueChange={(value) => setFilters((prev) => ({ ...prev, tournamentStatus: value === "_clear" ? "" : value }))}
             >
               <SelectTrigger className="w-[120px] bg-white/10 border-none rounded-none">
                 <SelectValue placeholder="Status" />
@@ -166,7 +166,7 @@ export default function Tournaments() {
                 participants={tournament.participants}
                 capacity={tournament.capacity}
                 date={tournament.starts}
-                status={tournament.status}
+                tournamentStatus={tournament.tournamentStatus}
               />
             </button>
           ))}

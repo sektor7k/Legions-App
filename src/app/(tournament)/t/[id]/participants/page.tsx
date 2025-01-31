@@ -26,7 +26,6 @@ import { Badge } from "@/components/ui/badge"
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { toast } from '@/components/ui/use-toast';
-import { useRouter } from 'next/navigation';
 import { DialogClose } from '@radix-ui/react-dialog';
 import useSWR from 'swr';
 import ErrorAnimation from '@/components/errorAnimation';
@@ -35,7 +34,13 @@ import { Input } from '@/components/ui/input';
 import { UploadButton, UploadDropzone } from '@/utils/uploadthing';
 import { Switch } from '@/components/ui/switch';
 
+interface Tournament {
+    registerStatus: string;
+}
+
 const fetcher = (url: string, params: any) => axios.post(url, params).then((res) => res.data);
+const fetcher2 = (url: string, id: any) => axios.post(url, { id }).then(res => res.data);
+
 
 export default function ParticipantsPage({ params }: { params: { id: string } }) {
 
@@ -45,6 +50,9 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
     const [teamName, setTeamName] = useState("");
     const [teamImage, setTeamImage] = useState("");
     const [status, setStatus] = useState("")
+    const { data: tournament, error } = useSWR<Tournament>(['/api/tournament/getTournamentDetail', params.id] as const,
+        ([url, id]) => fetcher2(url, id)
+    );
 
     const { data: teams, error: teamsError, mutate: teamsMutate } = useSWR(
         params?.id ? ['/api/tournament/team/getTeam', { tournamentId: params.id }] : null,
@@ -60,6 +68,8 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
     const isRegistered = registrationData?.isRegistered ?? false;
     const hasPendingInvite = registrationData?.hasPendingInvite ?? false;
+    const rStatus = tournament?.registerStatus === "open" ? false : true;
+
 
 
 
@@ -217,6 +227,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
                                                                                     <DialogClose ref={closeRef} asChild>
                                                                                         <Button
+                                                                                        disabled={rStatus}
                                                                                             variant="default"
                                                                                             size="sm"
                                                                                             onClick={() => handleRemoveMember(team._id, member.memberId._id)}
@@ -234,12 +245,13 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                                 <div className='flex flex-col gap-3 py-5'>
                                                                     <div className='flex flex-row items-center gap-2'>
                                                                         <p className='text-gray-300 font-medium'>Team Name:</p>
-                                                                        <Input onChange={(e) => setTeamName(e.target.value)} defaultValue={team.teamName} className='h-7' />
+                                                                        <Input disabled={rStatus} onChange={(e) => setTeamName(e.target.value)} defaultValue={team.teamName} className='h-7' />
                                                                     </div>
                                                                     <div className='flex flex-row items-center gap-4'>
                                                                         <p className='text-gray-300 font-medium'>Team Logo:</p>
                                                                         <div className="rounded-md b">
                                                                             <UploadButton
+                                                                            disabled={rStatus}
                                                                                 onClientUploadComplete={(res) => {
                                                                                     console.log(res);
                                                                                     const uploadedUrl = res?.[0]?.url;
@@ -251,6 +263,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                                         <div className="flex flex-row items-center justify-between rounded-lg  p-4 space-x-6 w-60">
                                                                             <div className="text-lg">{status === "public" ? "Public" : "Private"}</div>
                                                                             <Switch
+                                                                            disabled={rStatus}
                                                                                 defaultChecked={team.status === "private"}
                                                                                 onCheckedChange={handleSwitchChange}
                                                                             />
@@ -267,13 +280,14 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                             <div className='flex w-full justify-between'>
                                                                 <DialogClose ref={closeRef} asChild>
                                                                     <Button
+                                                                    disabled={rStatus}
                                                                         variant={"destructive"}
                                                                         onClick={() => handleDeleteTeam(team._id)}
                                                                     >
                                                                         Delete Team
                                                                     </Button>
                                                                 </DialogClose>
-                                                                <Button onClick={() => handleEditTeam(team._id)}>
+                                                                <Button onClick={() => handleEditTeam(team._id)} disabled={rStatus}>
                                                                     Save
                                                                 </Button>
                                                             </div>
@@ -296,7 +310,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                     <Button
                                                         variant="ghost"
                                                         className='rounded-full w-10 h-10 p-0'
-                                                        disabled={isRegistered || hasPendingInvite}
+                                                        disabled={isRegistered || hasPendingInvite || rStatus}
                                                         onClick={() => {
                                                             const leadMember = team.members.find((member: any) => member.isLead);
                                                             handleJoinTeam(team._id, leadMember ? leadMember.memberId : '');
@@ -353,6 +367,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <Button
+                                                            disabled={rStatus}
                                                                 variant="destructive"
                                                                 size="sm"
                                                                 onClick={() => handleRemoveMember(team._id, member.memberId._id)}

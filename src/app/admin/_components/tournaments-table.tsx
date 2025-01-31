@@ -66,7 +66,7 @@ export function TournamnetsTable({
           </TableHeader>
           <TableBody>
             {tournaments.map((tournament: any) => (
-              <Tournaments  key={tournament._id} id={tournament._id} name={tournament.tname} thumbnail={tournament.thumbnail} thumbnailGif={tournament.thumbnailGif} organizer={tournament.organizer} organizerAvatar={tournament.organizerAvatar} participants={tournament.participants} capacity={tournament.capacity} date={tournament.starts} status={tournament.status}/>
+              <Tournaments  key={tournament._id} id={tournament._id} name={tournament.tname} thumbnail={tournament.thumbnail} thumbnailGif={tournament.thumbnailGif} organizer={tournament.organizer} organizerAvatar={tournament.organizerAvatar} participants={tournament.participants} capacity={tournament.capacity} date={tournament.starts} tournamentStatus={tournament.tournamentStatus} moderators={tournament.moderators}/>
             ))}
             
           </TableBody>
