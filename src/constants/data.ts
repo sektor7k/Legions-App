@@ -115,32 +115,38 @@ export function getNavItemsTournamentAdmin(params?: { id: string }): NavItem[] {
     {
       title: 'Overview',
       href: `/admin/edittournament/${id}`,
-      icon: 'lineChart',
+      icon: 'info',
       label: 'Overview'
     },
     {
       title: 'Brackets',
       href: `/admin/edittournament/${id}/brackets`,
-      icon: 'swords',
+      icon: 'network',
       label: 'Brackets'
     },
     {
       title: 'Participants',
       href: `/admin/edittournament/${id}/participants`,
-      icon: 'lineChart',
+      icon: 'users',
       label: 'Participants'
     },
     {
       title: 'Chat',
       href: `/admin/edittournament/${id}/chat`,
-      icon: 'swords',
+      icon: 'messageMore',
       label: 'Chat'
     },
     {
       title: 'Compcal',
       href: `/admin/edittournament/${id}/compcal`,
-      icon: 'swords',
+      icon: 'gamepad',
       label: 'Compcal'
+    },
+    {
+      title: 'Settings',
+      href: `/admin/edittournament/${id}/settings`,
+      icon: 'settings',
+      label: 'Settings'
     },
   ];
 }
