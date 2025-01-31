@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, Types, model, models } from "mongoose";
 
 export interface TournamentDocument {
   thumbnail: string;
@@ -25,8 +25,11 @@ export interface TournamentDocument {
   }>;
   sponsors?: string[];
   currentphase: string;
-  status:string;
-  game: string
+  tournamentStatus:string;
+  chatStatus:string;
+  registerStatus:string;
+  game: string;
+  moderators: Types.ObjectId[];
 }
 
 const TournamentSchema = new Schema<TournamentDocument>({
@@ -117,14 +120,28 @@ const TournamentSchema = new Schema<TournamentDocument>({
     type: String,
     default: 'none'
   },
-  status: {
+  tournamentStatus: {
     type: String,
-    default: 'open'
+    default: 'close'
+  },
+  chatStatus: {
+    type: String,
+    default: 'close'
+  },
+  registerStatus: {
+    type: String,
+    default: 'close'
   },
   game: {
     type: String,
     default: 'none'
-  }
+  },
+  moderators: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User' // Kullanıcı modelinin adı
+    }
+  ]
 }, {
   timestamps: true,
 });
