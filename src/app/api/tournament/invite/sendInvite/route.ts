@@ -13,8 +13,6 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
-    console.log(teamId, userId, leadId, inviteType)
-
     try {
         const team = await Team.findById(teamId);
 
