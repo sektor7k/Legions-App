@@ -10,7 +10,7 @@ interface Tournament {
     tournamentStatus: string;
     chatStatus: string;
     registerStatus: string;
-    matchResultStatus: string;
+    resultStatus: string;
 }
 
 const fetcher = (url: string, id: any) => axios.post(url, { id }).then(res => res.data);
@@ -24,7 +24,7 @@ export default function SettingsPage({ params }: { params: { id: string } }) {
     const [tournamentStatus, setTournamentStatus] = useState(false);
     const [chatStatus, setChatStatus] = useState(false);
     const [userRegisterStatus, setUserRegisterStatus] = useState(false);
-    const [matchResultStatus, setMatchResultStatus] = useState(false);
+    const [resultStatus, setResultStatus] = useState(false);
 
     // SWR'den gelen verileri başlangıç state olarak ayarla
     useEffect(() => {
@@ -32,7 +32,7 @@ export default function SettingsPage({ params }: { params: { id: string } }) {
             setTournamentStatus(tournament.tournamentStatus === "open");
             setChatStatus(tournament.chatStatus === "open");
             setUserRegisterStatus(tournament.registerStatus === "open");
-            setMatchResultStatus(tournament.matchResultStatus === "open");
+            setResultStatus(tournament.resultStatus === "open");
         }
     }, [tournament]);
 
@@ -45,7 +45,7 @@ export default function SettingsPage({ params }: { params: { id: string } }) {
                 [field]: newValue,
             });
 
-            
+
         } catch (error) {
             console.error(`Failed to update ${field}:`, error);
         }
@@ -102,14 +102,13 @@ export default function SettingsPage({ params }: { params: { id: string } }) {
                     </Label>
                     <Switch
                         id="match-result-status"
-                        checked={matchResultStatus}
+                        checked={resultStatus}
                         onCheckedChange={
-                        //     (value) => {
-                        //     setMatchResultStatus(value);
-                        //     handleStatusChange("matchResultStatus", value);
-                        // }
-                        setMatchResultStatus
-                    }
+                            (value) => {
+                                setResultStatus(value);
+                                handleStatusChange("resultStatus", value);
+                            }
+                        }
                     />
                 </div>
             </div>

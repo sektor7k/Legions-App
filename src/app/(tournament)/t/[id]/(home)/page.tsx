@@ -3,12 +3,13 @@ import axios from "axios";
 import { AlarmClock, AlarmClockCheck, Calendar, Check, Info, Play, Trophy } from "lucide-react"
 import Image from "next/image"
 import Countdown from "./_components/Countdown";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import RegisterTournament from "./_components/RegisterTournament";
 import { parse } from "date-fns";
 import useSWR from 'swr';
 import LoadingAnimation from "@/components/loadingAnimation";
 import ErrorAnimation from "@/components/errorAnimation";
+import TournamentDialog from "./_components/TournamentResult";
 
 interface Tournament {
     id: string;
@@ -29,8 +30,9 @@ interface Tournament {
     sponsors: string[];
     prizePool: { _id: string; key: string; value: number }[];
     tournamentStatus: string;
-    registerStatus:string;
+    registerStatus: string;
     chatStatus: string;
+    resultStatus: string;
 }
 
 const fetcher = (url: string, id: any) => axios.post(url, { id }).then(res => res.data);
@@ -41,6 +43,14 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     const { data: tournament, error } = useSWR<Tournament>(['/api/tournament/getTournamentDetail', params.id] as const,
         ([url, id]) => fetcher(url, id)
     );
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    useEffect(() => {
+        if (tournament?.resultStatus === "open") {
+            setIsDialogOpen(true);
+        }
+    }, [tournament?.resultStatus]);
 
     function formatTime(timeString: string): string {
         if (timeString.length === 4) {
@@ -103,7 +113,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     const getPhaseIcon = (phase: string) => {
         const phaseIndex = phases.indexOf(phase);
         const currentPhaseIndex = phases.indexOf(currentPhase);
-        return phaseIndex <= currentPhaseIndex ? <AlarmClockCheck className="text-green-600"/> : <AlarmClock className="text-red-600"/>;
+        return phaseIndex <= currentPhaseIndex ? <AlarmClockCheck className="text-green-600" /> : <AlarmClock className="text-red-600" />;
     };
 
     const getLineBgClass = (index: number) => {
@@ -129,7 +139,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                         phase
                                     )} px-5 p-2 rounded-full bg-opacity-80`}
                                 >
-                                    { getPhaseIcon( phase )} {" "}
+                                    {getPhaseIcon(phase)} {" "}
                                     <div className="font-medium text-nowrap">{phase === "checkin" ? "Check In" : phase === "live" ? "Live" : phase}</div>
                                 </div>
                                 {index < phases.length - 1 && (
@@ -175,6 +185,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                 <div className="text-white text-sm sm:text-base">Loading countdown...</div>
                             )}
                             <RegisterTournament id={params.id} registerStatus={tournament.registerStatus} />
+
                         </div>
                     </div>
 
@@ -262,6 +273,11 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                     />
                 ))}
             </div>
+            {tournament?.resultStatus === "open" && (
+                <div className="fixed bottom-4 right-4 z-50">
+                    <TournamentDialog id={params.id} isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} />
+                </div>
+            )}
         </div>
     )
 }
