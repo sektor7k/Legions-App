@@ -143,6 +143,12 @@ export function getNavItemsTournamentAdmin(params?: { id: string }): NavItem[] {
       label: 'Compcal'
     },
     {
+      title: 'Result',
+      href: `/admin/edittournament/${id}/result`,
+      icon: 'post',
+      label: 'Result'
+    },
+    {
       title: 'Settings',
       href: `/admin/edittournament/${id}/settings`,
       icon: 'settings',
