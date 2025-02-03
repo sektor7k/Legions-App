@@ -1,4 +1,5 @@
 
+import EmporiumCards from "./_components/EmporiumCards";
 import FeatureCards from "./_components/OurProduct";
 import CryptoGainLoseTables from "./_components/TopGainLose";
 import { TournamentCards } from "./_components/TournamentCards";
@@ -12,6 +13,7 @@ export default function HomePage() {
       <Trending direction="left" speed="normal" pauseOnHover={true} />
       <CryptoGainLoseTables />
       <TournamentCards />
+      <EmporiumCards/>
       <FeatureCards />
 
     </div>
