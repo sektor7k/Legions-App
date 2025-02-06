@@ -185,9 +185,6 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
                 matchDate: dateStr,
                 matchTime: time,
             });
-            const newMatch = response.data.match;
-
-            console.log(newMatch)
             showToast("Create Match successfully")
             await mutate();
             closeRef?.current?.click();
@@ -483,12 +480,12 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
                                         <div className="flex items-center space-x-2">
                                             <img src={match.team1Id.teamImage} alt={match.team1Id.teamName} className="w-5 h-5 rounded-full" />
                                             <span>{match.team1Id.teamName} :</span>
-                                            <Input onChange={(e) => setTeam1Score(e.target.value)} />
+                                            <Input onChange={(e) => setTeam1Score(e.target.value)} defaultValue={match.team1Score}/>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <img src={match.team2Id.teamImage} alt={match.team2Id.teamName} className="w-5 h-5 rounded-full" />
                                             <span>{match.team2Id.teamName} :</span>
-                                            <Input onChange={(e) => setTeam2Score(e.target.value)} />
+                                            <Input onChange={(e) => setTeam2Score(e.target.value)} defaultValue={match.team2Score} />
                                         </div>
                                         <div className="flex flex-row justify-center items-center  space-x-4">
                                             <div className="text-nowrap">
@@ -694,12 +691,12 @@ export default function CompcalPage({ params }: { params: { id: string } }) {
                                         <div className="flex items-center space-x-2">
                                             <img src={match.team1Id.teamImage} alt={match.team1Id.teamName} className="w-5 h-5 rounded-full" />
                                             <span>{match.team1Id.teamName} :</span>
-                                            <Input onChange={(e) => setTeam1Score(e.target.value)} />
+                                            <Input onChange={(e) => setTeam1Score(e.target.value)} defaultValue={match.team1Score}/>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <img src={match.team2Id.teamImage} alt={match.team2Id.teamName} className="w-5 h-5 rounded-full" />
                                             <span>{match.team2Id.teamName} :</span>
-                                            <Input onChange={(e) => setTeam2Score(e.target.value)} />
+                                            <Input onChange={(e) => setTeam2Score(e.target.value)} defaultValue={match.team2Score}/>
                                         </div>
                                         <div className="flex flex-row justify-center items-center  space-x-4">
                                             <div className="text-nowrap">

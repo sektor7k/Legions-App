@@ -27,6 +27,21 @@ export default function OutboxPage() {
         ([url, params]) => fetcher(url, params)
     );
 
+    function formatTime(date: Date): string {
+        const now = new Date()
+        const diff = now.getTime() - date.getTime()
+        const minutes = Math.floor(diff / 60000)
+        const hours = Math.floor(minutes / 60)
+        const days = Math.floor(hours / 24)
+        const weeks = Math.floor(days / 7)
+
+        if (weeks > 0) return `${weeks}w ago`
+        if (days > 0) return `${days}d ago`
+        if (hours > 0) return `${hours}h ago`
+        if (minutes > 0) return `${minutes}m ago`
+        return "Just now"
+    }
+
 
     function showErrorToast(message: string): void {
         toast({
@@ -79,8 +94,7 @@ export default function OutboxPage() {
                                         Sent to: {invite.userId.username}
                                     </p>
                                     <p className="text-xs text-gray-400">
-                                        Sent at: {new Date(invite.invitedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                    </p>
+                                    {formatTime(new Date(invite.invitedAt))}                                    </p>
                                 </div>
                                 <div className="flex justify-end items-center space-x-2">
                                     {invite.status === 'pending' && (

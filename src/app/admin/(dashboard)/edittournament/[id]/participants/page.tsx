@@ -33,10 +33,19 @@ import LoadingAnimation from '@/components/loadingAnimation';
 import { Input } from '@/components/ui/input';
 import { UploadButton } from '@/utils/uploadthing';
 import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MessageCircle, Wallet, XIcon, DiscIcon as Discord } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 
 
 
-const fetcher = (url: string, params: any) => axios.post(url, params).then((res) => res.data);
+const fetcher = (url: string, params: any) => axios.post(url, params).then((res) => 
+{
+    console.log(res.data)
+return res.data
+}
+);
 
 
 export default function ParticipantsPage({ params }: { params: { id: string } }) {
@@ -50,7 +59,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
 
     const { data: teams, error: teamsError, mutate: teamsMutate } = useSWR(
-        params?.id ? ['/api/tournament/team/getTeam', { tournamentId: params.id }] : null,
+        params?.id ? ['/api/tournament/team/getTeamUsers', { tournamentId: params.id }] : null,
         ([url, params]) => fetcher(url, params)
     );
 
@@ -96,7 +105,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
             showToast("Team deleted successfully");
 
             teamsMutate();
-  
+
         } catch (error) {
             showErrorToast("Error deleting team");
             console.error('Error deleting team:', error);
@@ -263,7 +272,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                 .sort((a: any, b: any) => (b.isLead ? 1 : 0) - (a.isLead ? 1 : 0)) // Lead olanı başa getir
                                 .map((member: any, idx: any) => (
                                     <div key={idx} className="flex flex-row items-center justify-between space-x-3">
-                                        <div className='flex flex-row items-center justify-center space-x-3'>
+                                        <div className="flex flex-row items-center justify-center space-x-3">
                                             <div className="w-auto">
                                                 <img
                                                     src={member.memberId.image}
@@ -272,23 +281,91 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                 />
                                             </div>
                                             <div className="w-auto">
-                                                <span
-                                                    className={"text-base font-medium text-coolGray-900"}
-                                                >
+                                                <span className="text-base font-medium text-coolGray-900">
                                                     {member.memberId.username}
                                                 </span>
                                             </div>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <div className={`text-sm font-medium ${member.isLead ? 'flex' : 'hidden'}`}>
+                                            {member.isLead && (
                                                 <Badge variant="destructive">Lead</Badge>
-                                            </div>
-                                           
+                                            )}
+
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button variant="outline" size="sm">
+                                                        Detail
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="max-w-3xl bg-inherit">
+                                                    <DialogHeader>
+                                                        <DialogTitle>User Detail</DialogTitle>
+                                                    </DialogHeader>
+                                                   
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                            <Card>
+                                                                <CardHeader>
+                                                                    <CardTitle>Profile Detail</CardTitle>
+                                                                </CardHeader>
+                                                                <CardContent className="flex flex-col items-center space-y-4">
+                                                                    <Avatar className="w-32 h-32">
+                                                                        <AvatarImage src={member.memberId.image} alt={member.memberId.username} />
+                                                                        <AvatarFallback>{member.memberId.username?.split(' ').map((n:any) => n[0]).join('')}</AvatarFallback>
+                                                                    </Avatar>
+                                                                    <div className="text-center">
+                                                                        <h3 className="text-2xl font-bold">{member.memberId.username}</h3>
+                                                                        <p className="text-muted-foreground">{member.memberId.email}</p>
+                                                                    </div>
+                                                                   
+                                                                </CardContent>
+                                                            </Card>
+                                                            <Card>
+                                                                <CardHeader>
+                                                                    <CardTitle>Contact Information</CardTitle>
+                                                                </CardHeader>
+                                                                <CardContent className="space-y-4">
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <XIcon className="h-5 w-5 text-blue-400" />
+                                                                        <Label>Twitter:</Label>
+                                                                        <span>{member.memberId.socialMedia.twitter}</span>
+                                                                    </div>
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <Discord className="h-5 w-5 text-indigo-500" />
+                                                                        <Label>Discord:</Label>
+                                                                        <span>{member.memberId.socialMedia.discord}</span>
+                                                                    </div>
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <MessageCircle className="h-5 w-5 text-blue-500" />
+                                                                        <Label>Telegram:</Label>
+                                                                        <span>{member.memberId.socialMedia.telegram}</span>
+                                                                    </div>
+                                                                </CardContent>
+                                                            </Card>
+                                                            <Card className="md:col-span-2">
+                                                                <CardHeader>
+                                                                    <CardTitle>Blockchain Addresses</CardTitle>
+                                                                </CardHeader>
+                                                                <CardContent className="space-y-4">
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <Wallet className="h-5 w-5 text-purple-500" />
+                                                                        <Label>EVM Address:</Label>
+                                                                        <span className="font-mono">{member.memberId.wallets.evm}</span>
+                                                                    </div>
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <Wallet className="h-5 w-5 text-blue-500" />
+                                                                        <Label>Solana Address:</Label>
+                                                                        <span className="font-mono">{member.memberId.wallets.solana}</span>
+                                                                    </div>
+                                                                </CardContent>
+                                                            </Card>
+                                                        </div>
+                                                </DialogContent>
+                                            </Dialog>
+
                                         </div>
                                     </div>
                                 ))}
                         </div>
-
                     </div>
                 ))}
             </div>

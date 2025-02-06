@@ -113,7 +113,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     }, [currentMsg, session, params.id]);
 
     const sendSteamMessage = useCallback(async () => {
-        
+
         if (!session?.user?.username || !myTeam) {
             console.warn('myTeam bilgisi eksik:', myTeam);
             return;
@@ -210,42 +210,41 @@ export default function ChatPage({ params }: { params: { id: string } }) {
             <div className={`chat-bubble ${isCurrentUser ? "bg-gray-800 text-white" : "bg-gray-200 text-black"}`}>
                 {message.messageType === 'text' && message.text}
                 {message.messageType === 'steam' && (
-                    <div className="p-4  rounded-lg shadow-md">
+                    <div className="p-4  max-w-lg">
                         <div className="flex items-center mb-3">
                             <img src={message.teamAvatar} alt={message.teamName} className="w-12 h-12 rounded-full mr-4" />
                             <div>
-                                <div className="font-bold text-lg ">Takım Arkadaşı Aranıyor!</div>
-                                <div className="text-sm ">Takım: <span className="font-semibold">{message.teamName}</span></div>
+                                <div className="font-bold text-lg ">Teammate Wanted!</div>
+                                <div className="text-sm ">Team Name: <span className="font-semibold">{message.teamName}</span></div>
                             </div>
                         </div>
                         <p className=" text-sm mb-3">
-                            Takımımız, yeni bir takım arkadaşı arıyor. Ekibimize katılmak ister misiniz? Aşağıdaki butona tıklayarak başvurunuzu gönderin.
-                        </p>
+                            Our team is looking for a new teammate. Would you like to join our team? Send your application by clicking the button below.                        </p>
                         <Button
                             onClick={() => sendInvite(message.teamId, session?.user.id, message.userId, 'leader')}
                             disabled={checkUser?.isRegistered || checkUser?.hasPendingInvite || rStatus || cStatus}
                         >
-                            Takıma Katıl
+                            Join Team
                         </Button>
                     </div>
                 )}
                 {message.messageType === 'smember' && (
-                    <div className="p-4  rounded-lg shadow-md">
+                    <div className="p-4  max-w-lg">
                         <div className="flex items-center mb-3">
                             <img src={message.avatar} alt={message.userName} className="w-12 h-12 rounded-full mr-4" />
                             <div>
-                                <div className="font-bold text-lg ">Takım Aranıyor!</div>
-                                <div className="text-sm ">User: <span className="font-semibold">{message.userName}</span></div>
+                                <div className="font-bold text-lg ">Team Wanted!</div>
+                                <div className="text-sm font-semibold">{message.userName}</div>
                             </div>
                         </div>
                         <p className=" text-sm mb-3">
-                            Turnuvaya katılmak için takım ariyorum. Aşağıdaki butona tıklayarak beni ekibine davet et.
+                            I'm looking for a team to join the tournament. Invite me to join your team by clicking the button below.
                         </p>
                         <Button
                             onClick={() => sendInvite(myTeam._id, message.userId, session?.user.id, 'member')}
                             disabled={!myTeam || rStatus || cStatus}
                         >
-                            Takıma Davet Et
+                            Invite Team
                         </Button>
                     </div>
                 )}
@@ -268,9 +267,9 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     }, [messages, session?.user?.id, myTeam, checkUser]);
 
     return (
-        <div className="flex items-center justify-center mt-2 px-4 sm:px-6 lg:px-4 overflow-y-hidden">
-            <div className="w-full max-w-7xl mt-4 mx-4 lg:mx-8">
-                <div className="bg-black p-4 bg-opacity-50 backdrop-blur-md border-gradient rounded-lg min-h-[calc(90vh-2rem)]">
+        <div className="flex items-center justify-center md:mt-2 md:px-4 px-0 sm:px-6 lg:px-4 overflow-y-hidden">
+            <div className="w-full md:max-w-7xl md:mt-4  lg:mx-8">
+                <div className="bg-black p-4 bg-opacity-50 backdrop-blur-md md:border-gradient rounded-lg md:min-h-[calc(90vh-2rem)] min-h-full">
                     <div className="overflow-y-auto h-[calc(87vh-5rem)] p-2 px-6">
                         <div className="space-y-4">
                             {renderedMessages}

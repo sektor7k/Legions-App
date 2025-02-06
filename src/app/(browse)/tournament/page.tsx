@@ -89,7 +89,7 @@ export default function Tournaments() {
       <div className="sticky top-0  backdrop-blur-sm bg-black/35 z-20 p-4 pt-6 space-y-4">
         <div className="flex flex-wrap gap-4 items-center justify-between">
           <div className="flex flex-wrap gap-4">
-            <Select
+            {/* <Select
               onValueChange={(value) => setFilters((prev) => ({ ...prev, game: value === "_clear" ? "" : value }))}
             >
               <SelectTrigger className="w-[120px] bg-white/10 border-none rounded-none ">
@@ -100,7 +100,7 @@ export default function Tournaments() {
                 <SelectItem value="game1">Game 1</SelectItem>
                 <SelectItem value="game2">Game 2</SelectItem>
               </SelectContent>
-            </Select>
+            </Select> */}
             <Select
               onValueChange={(value) => setFilters((prev) => ({ ...prev, tournamentStatus: value === "_clear" ? "" : value }))}
             >
