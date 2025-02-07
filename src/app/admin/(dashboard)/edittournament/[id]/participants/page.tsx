@@ -17,6 +17,17 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
     Tabs,
     TabsContent,
     TabsList,
@@ -92,7 +103,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 memberId,
             });
             showToast("Member removed successfully");
-            teamsMutate();
+            await teamsMutate();
         } catch (error) {
             showErrorToast("Error removing member");
             console.error('Error removing member:', error);
@@ -104,7 +115,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
             const response = await axios.post('/api/tournament/team/deleteTeam', { teamId });
             showToast("Team deleted successfully");
 
-            teamsMutate();
+            await teamsMutate();
 
         } catch (error) {
             showErrorToast("Error deleting team");
@@ -116,7 +127,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
         try {
             const response = await axios.post('/api/tournament/team/editTeam', { teamId, teamName, teamImage, status })
             showToast("Edit team successfully");
-            teamsMutate();
+            await teamsMutate();
         } catch (error) {
             showErrorToast("Error edit team");
             console.error('Error edit team:', error);
@@ -247,23 +258,41 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                         <DialogFooter >
                                             <div className='flex w-full justify-between'>
                                                 <DialogClose ref={closeRef} asChild>
-                                                    <Button
-                                                        variant={"destructive"}
-                                                        onClick={() => handleDeleteTeam(team._id)}
-                                                    >
-                                                        Delete Team
-                                                    </Button>
+                                                    <AlertDialog>
+                                                        <AlertDialogTrigger>
+                                                            <Button
+
+                                                                variant={"destructive"}
+                                                            >
+                                                                Delete Team
+                                                            </Button>
+                                                        </AlertDialogTrigger>
+                                                        <AlertDialogContent className='bg-bg-auth border-none'>
+                                                            <AlertDialogHeader>
+                                                                <AlertDialogTitle>Should the team be deleted?</AlertDialogTitle>
+                                                                <AlertDialogDescription>
+                                                                    The team will be removed from the teams in this tournament. Click the delete button if you want to continue the process.
+                                                                </AlertDialogDescription>
+                                                            </AlertDialogHeader>
+                                                            <AlertDialogFooter>
+                                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                                <Button variant={"destructive"}
+                                                                    onClick={() => handleDeleteTeam(team._id)}
+                                                                >Delete
+                                                                </Button>
+                                                            </AlertDialogFooter>
+                                                        </AlertDialogContent>
+                                                    </AlertDialog>
                                                 </DialogClose>
-                                                <Button onClick={() => handleEditTeam(team._id)} >
+
+                                                <Button onClick={() => handleEditTeam(team._id)}
+                                                >
                                                     Save
                                                 </Button>
                                             </div>
                                         </DialogFooter>
                                     </DialogContent>
                                 </Dialog>
-
-
-
                             </div>
                         </div>
 

@@ -22,7 +22,17 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
-
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -47,7 +57,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
 
     const { data: session } = useSession()
-    const closeRef = useRef<ElementRef<"button">>(null); 
+    const closeRef = useRef<ElementRef<"button">>(null);
     const [teamName, setTeamName] = useState("");
     const [teamImage, setTeamImage] = useState("");
     const [status, setStatus] = useState("")
@@ -99,7 +109,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                 teamId,
                 userId,
                 leadId,
-                inviteType:'leader'
+                inviteType: 'leader'
             });
             showToast("Invite team successfully")
             registrationMutate();
@@ -130,7 +140,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
             const response = await axios.post('/api/tournament/team/deleteTeam', { teamId });
             showToast("Team deleted successfully");
 
-            teamsMutate();
+            await teamsMutate();
             registrationMutate();
         } catch (error) {
             showErrorToast("Error deleting team");
@@ -228,7 +238,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
                                                                                     <DialogClose ref={closeRef} asChild>
                                                                                         <Button
-                                                                                        disabled={rStatus}
+                                                                                            disabled={rStatus}
                                                                                             variant="default"
                                                                                             size="sm"
                                                                                             onClick={() => handleRemoveMember(team._id, member.memberId._id)}
@@ -252,7 +262,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                                         <p className='text-gray-300 font-medium'>Team Logo:</p>
                                                                         <div className="rounded-md b">
                                                                             <UploadButton
-                                                                            disabled={rStatus}
+                                                                                disabled={rStatus}
                                                                                 onClientUploadComplete={(res) => {
                                                                                     console.log(res);
                                                                                     const uploadedUrl = res?.[0]?.url;
@@ -264,7 +274,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                                         <div className="flex flex-row items-center justify-between rounded-lg  p-4 space-x-6 w-60">
                                                                             <div className="text-lg">{status === "public" ? "Public" : "Private"}</div>
                                                                             <Switch
-                                                                            disabled={rStatus}
+                                                                                disabled={rStatus}
                                                                                 defaultChecked={team.status === "private"}
                                                                                 onCheckedChange={handleSwitchChange}
                                                                             />
@@ -276,18 +286,36 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                             </TabsContent>
                                                         </Tabs>
 
-
                                                         <DialogFooter >
                                                             <div className='flex w-full justify-between'>
                                                                 <DialogClose ref={closeRef} asChild>
-                                                                    <Button
-                                                                    disabled={rStatus}
+                                                                <AlertDialog>
+                                                                    <AlertDialogTrigger>
+                                                                        <Button
+                                                                        disabled={rStatus}
                                                                         variant={"destructive"}
-                                                                        onClick={() => handleDeleteTeam(team._id)}
                                                                     >
                                                                         Delete Team
                                                                     </Button>
+                                                                    </AlertDialogTrigger>
+                                                                    <AlertDialogContent className='bg-bg-auth border-none'>
+                                                                        <AlertDialogHeader>
+                                                                            <AlertDialogTitle>Should the team be deleted?</AlertDialogTitle>
+                                                                            <AlertDialogDescription>
+                                                                            The team will be removed from the teams in this tournament. Click the delete button if you want to continue the process.
+                                                                            </AlertDialogDescription>
+                                                                        </AlertDialogHeader>
+                                                                        <AlertDialogFooter>
+                                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                                            <Button variant={"destructive"}
+                                                                        onClick={() => handleDeleteTeam(team._id)}
+                                                                        >Delete
+                                                                        </Button>
+                                                                        </AlertDialogFooter>
+                                                                    </AlertDialogContent>
+                                                                </AlertDialog>
                                                                 </DialogClose>
+                                                                
                                                                 <Button onClick={() => handleEditTeam(team._id)} disabled={rStatus}>
                                                                     Save
                                                                 </Button>
@@ -331,8 +359,6 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                 )}
 
 
-
-
                             </div>
                         </div>
 
@@ -368,7 +394,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
                                                             <Button
-                                                            disabled={rStatus}
+                                                                disabled={rStatus}
                                                                 variant="destructive"
                                                                 size="sm"
                                                                 onClick={() => handleRemoveMember(team._id, member.memberId._id)}

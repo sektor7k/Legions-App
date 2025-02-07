@@ -200,7 +200,7 @@ const UpcomingMatchCard = ({ match }: { match: Match }) => {
           </div>
         ) : (
           <>
-            <p className=" flex flex-row items-center justify-center gap-3 text-xl  font-extrabold font-mono bg-blue-800/40 border-2 border-blue-800 px-3 py-2 rounded-md">
+            <p className=" flex flex-row items-center justify-center gap-3 text-xl  font-extrabold font-mono bg-white/10 border-2 border-gray-200 px-3 py-2 rounded-md">
               <AlarmClock/>{countdown}
             </p>
           </>
