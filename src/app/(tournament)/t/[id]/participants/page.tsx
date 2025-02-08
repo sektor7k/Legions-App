@@ -164,7 +164,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
     }
 
     if (teamsError?.response?.status === 404) return <div className=" flex h-screen z-20 justify-center items-center bg-black/40 backdrop-blur-xl ">
-        <p className="text-4xl text-gray-400">Team not yet created </p>
+        <p className="text-4xl text-gray-400">Teams not yet created </p>
     </div>;
     if (teamsError) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
     if (!teams) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;

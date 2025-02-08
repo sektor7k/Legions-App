@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
-
+ 
     if (!Team || !Bracket) {
         return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
     }
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (!bracket) {
-            return NextResponse.json(null, { status: 200 });
+            return NextResponse.json(null, { status: 404 });
         }
 
         return NextResponse.json(bracket, { status: 200 });
