@@ -96,7 +96,7 @@ export default function TournamentResults({ id, isOpen, setIsOpen }: { id: strin
         : team.position === 2
           ? "bg-gradient-to-r from-gray-800/30 to-gray-700/30 border border-gray-600"
           : "bg-gradient-to-r from-amber-900/30 to-amber-800/30 border border-amber-700/50"
-      : "bg-gray-900/50"
+      : "bg-black/40 "
 
     return (
       <div className={`rounded-lg p-4 ${bgClass}`}>
@@ -166,7 +166,7 @@ export default function TournamentResults({ id, isOpen, setIsOpen }: { id: strin
               className="mt-4 space-y-2"
             >
               {team.members.map((member, index) => (
-                <div key={index} className="flex items-center space-x-2 bg-gray-800/50 p-2 rounded">
+                <div key={index} className="flex items-center space-x-2 bg-gray-900/40 p-2 rounded">
                   <div className="h-8 w-8 relative">
                     <Image src={member.image || "/placeholder.svg"} alt={member.username} fill className="rounded-full" />
                   </div>
@@ -196,7 +196,7 @@ export default function TournamentResults({ id, isOpen, setIsOpen }: { id: strin
       <DialogTitle>
         
       </DialogTitle>
-      <DialogContent className="max-w-full sm:max-w-[75vw] h-screen max-h-screen p-0 bg-black/95">
+      <DialogContent className="max-w-full sm:max-w-[75vw] h-screen max-h-screen p-0 bg-bg-castrum bg-cover">
         <div className="h-full overflow-y-auto scrollbar-hide">
           <div className="p-6">
             <h1 className="text-4xl font-bold text-center text-white mb-8">Tournament Results</h1>
