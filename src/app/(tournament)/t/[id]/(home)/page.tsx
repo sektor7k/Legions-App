@@ -165,9 +165,12 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                     <p className=" text-3xl font-bold">
                         {tournament.tname}
                     </p>
-                    <p className="font-medium">
-                        {tournament.tdescription}
-                    </p>
+
+                    <div className="prose" style={{ whiteSpace: "pre-line" }}>
+                        {/* HTML içeriğini render etmek için */}
+                        <div dangerouslySetInnerHTML={{ __html: tournament.tdescription }} />
+                    </div>
+
 
                 </div>
 

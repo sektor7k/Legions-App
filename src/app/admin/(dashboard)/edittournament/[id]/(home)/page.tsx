@@ -45,6 +45,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import useSWR from "swr";
+import TiptapEditor from "@/components/TiptapEditor";
 
 const frameworks = [
     {
@@ -403,15 +404,14 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                     <HiPencil className="w-5 h-5" />
                                 </button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px] bg-gray-950">
+                            <DialogContent className="min-w-[800px] bg-gray-950">
                                 <DialogHeader>
                                     <DialogTitle>Edit Tournament Description</DialogTitle>
                                 </DialogHeader>
                                 <div className="flex flex-col py-4 ">
-                                    <Textarea
-                                        placeholder="Tell us a little bit about yourself"
-                                        className="resize-none h-48"
-                                        onChange={(e) => setDescription(e.target.value)}
+                                    <TiptapEditor
+                                        initialContent={tournament.tdescription} // mevcut içeriği yüklersiniz
+                                        onUpdateContent={(html) => setDescription(html)} // güncellemeleri yakalarsınız
                                     />
                                 </div>
                                 <DialogFooter>
@@ -421,12 +421,19 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                                                 Cancel
                                             </Button>
                                         </DialogClose>
-                                        <Button onClick={editDescription} type="submit">Save changes</Button>
+                                        <Button onClick={editDescription} type="submit">
+                                            Save changes
+                                        </Button>
                                     </div>
                                 </DialogFooter>
                             </DialogContent>
+
                         </Dialog>
-                        {tournament.tdescription}
+                        
+                    <div className="prose" style={{ whiteSpace: "pre-line" }}>
+                        {/* HTML içeriğini render etmek için */}
+                        <div dangerouslySetInnerHTML={{ __html: tournament.tdescription }} />
+                    </div>
                     </p>
 
                 </div>

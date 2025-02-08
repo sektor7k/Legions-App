@@ -3,11 +3,14 @@
     "version": "1.0.0",
     "description": "A simple app for messaging and streaming",
     "main": "server.js",
-    "type": "module", 
+    "type": "module",
     "scripts": {
         "start": "nodemon server.js"
     },
     "dependencies": {
+        "@tiptap/pm": "^2.11.5",
+        "@tiptap/react": "^2.11.5",
+        "@tiptap/starter-kit": "^2.11.5",
         "bcryptjs": "^2.4.3",
         "cookie-parser": "^1.4.6",
         "dotenv": "^16.4.5",
