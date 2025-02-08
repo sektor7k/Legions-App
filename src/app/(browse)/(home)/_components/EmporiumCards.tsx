@@ -50,7 +50,7 @@ const cards: GameCard[] = [
 export default function EmporiumCards() {
     return (
         <div className="p-8 pt-20">
-            <h1 className="text-2xl font-bold text-white mb-8 uppercase">Emporium Cards</h1>
+            <h1 className="text-2xl font-bold text-white mb-8 ">Emporium Cards</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cards.map((card, index) => (

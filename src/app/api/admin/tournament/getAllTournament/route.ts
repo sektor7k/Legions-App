@@ -8,15 +8,15 @@ export async function GET() {
 
     await connectDB();
 
-    if (!User) {
+    if (!User){
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    const tournaments = await Tournament.find({ visibleStatus: "open" })
-      .populate("moderators", "username image");
+    const tournaments = await Tournament.find({})
+    .populate("moderators", "username image"); 
 
 
-
+    
     return NextResponse.json({ tournaments }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: "Error fetching tournaments", error }, { status: 500 });

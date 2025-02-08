@@ -7,6 +7,7 @@ import axios from "axios";
 import useSWR from "swr";
 
 interface Tournament {
+    visibleStatus: string;
     tournamentStatus: string;
     chatStatus: string;
     registerStatus: string;
@@ -21,6 +22,7 @@ export default function SettingsPage({ params }: { params: { id: string } }) {
         ([url, id]) => fetcher(url, id)
     );
 
+    const [visibleStatus, setVisibleStatus] = useState(false);
     const [tournamentStatus, setTournamentStatus] = useState(false);
     const [chatStatus, setChatStatus] = useState(false);
     const [userRegisterStatus, setUserRegisterStatus] = useState(false);
@@ -29,6 +31,7 @@ export default function SettingsPage({ params }: { params: { id: string } }) {
     // SWR'den gelen verileri başlangıç state olarak ayarla
     useEffect(() => {
         if (tournament) {
+            setVisibleStatus(tournament.visibleStatus === "open");
             setTournamentStatus(tournament.tournamentStatus === "open");
             setChatStatus(tournament.chatStatus === "open");
             setUserRegisterStatus(tournament.registerStatus === "open");
@@ -57,6 +60,19 @@ export default function SettingsPage({ params }: { params: { id: string } }) {
         <div className="container mx-auto p-6">
             <h1 className="text-3xl font-bold mb-6">Settings</h1>
             <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="visible-status" className="text-lg">
+                        Visible Status
+                    </Label>
+                    <Switch
+                        id="visible-status"
+                        checked={visibleStatus}
+                        onCheckedChange={(value) => {
+                            setVisibleStatus(value);
+                            handleStatusChange("visibleStatus", value);
+                        }}
+                    />
+                </div>
                 <div className="flex items-center justify-between">
                     <Label htmlFor="tournament-status" className="text-lg">
                         Tournament Status

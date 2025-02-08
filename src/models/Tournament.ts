@@ -29,6 +29,7 @@ export interface TournamentDocument {
   chatStatus:string;
   registerStatus:string;
   resultStatus:string;
+  visibleStatus:string;
   game: string;
   moderators: Types.ObjectId[];
 }
@@ -122,6 +123,10 @@ const TournamentSchema = new Schema<TournamentDocument>({
     default: 'none'
   },
   tournamentStatus: {
+    type: String,
+    default: 'close'
+  },
+  visibleStatus: {
     type: String,
     default: 'close'
   },

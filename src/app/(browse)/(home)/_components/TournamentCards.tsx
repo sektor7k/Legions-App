@@ -31,19 +31,20 @@ const fetcher = (url: string) =>
   axios.get(url).then((res) => {
     const tournaments: TournamentsProps[] = res.data.tournaments
 
-    tournaments.sort((a, b) => {
-      // Sort by tournamentStatus
-      if (a.tournamentStatus !== b.tournamentStatus) {
-        return a.tournamentStatus === "open" ? -1 : 1
-      }
+    // Sadece "open" durumdaki turnuvaları filtrele
+    const openTournaments = tournaments.filter(
+      (tournament) => tournament.tournamentStatus === "open"
+    )
 
-      // Sort by date
+    // Tarihe göre sırala
+    openTournaments.sort((a, b) => {
       const dateA = new Date(a.starts).getTime()
       const dateB = new Date(b.starts).getTime()
       return dateA - dateB
     })
 
-    return tournaments.slice(0, 5)
+    // İlk 5 turnuvayı döndür
+    return openTournaments.slice(0, 5)
   })
 
 export function TournamentCards() {
@@ -61,7 +62,7 @@ export function TournamentCards() {
 
   return (
     <div className="relative w-full space-y-4 pt-10">
-      <p className="uppercase font-bold text-2xl pl-10">Future Tournaments</p>
+      <p className=" font-bold text-2xl pl-10">Upcoming Tournaments</p>
 
       <div className="w-full flex justify-center items-center pt-5">
         <Carousel
@@ -98,7 +99,7 @@ export function TournamentCards() {
 
           {/* Sonraki buton */}
           <CarouselNext className="absolute right-8 top-1/2 -translate-y-1/2 z-20 bg-gray-800 hover:bg-gray-700 text-white rounded-full h-10 w-10 shadow-md transition-transform transform hover:scale-110">
-            <ChevronRight  />
+            <ChevronRight />
           </CarouselNext>
         </Carousel>
       </div>

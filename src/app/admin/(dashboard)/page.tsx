@@ -14,7 +14,7 @@ export default function ProductsPage() {
 
   const router = useRouter(); 
 
-  const { data: tournaments, error, mutate } = useSWR('api/tournament/getAllTournament', (url) => fetcher(url));
+  const { data: tournaments, error, mutate } = useSWR('api/admin/tournament/getAllTournament', (url) => fetcher(url));
 
   if (!tournaments) return <div>Loading...</div>;
 

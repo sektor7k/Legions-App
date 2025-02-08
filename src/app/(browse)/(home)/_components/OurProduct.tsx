@@ -104,7 +104,7 @@ export default function FeatureCards() {
 
     return (
         <>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white  mt-12 pl-10 uppercase">Our Products</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white  mt-12 pl-10 ">Our Products</h2>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-10">

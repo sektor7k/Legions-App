@@ -2,13 +2,12 @@
 
 import { useMemo, useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { DialogTitle,Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Trophy, ChevronDown, ChevronUp } from "lucide-react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import useSWR from "swr"
 import axios from "axios"
-import { DialogTitle } from "@radix-ui/react-dialog"
 
 interface TeamMember {
   memberId: string
@@ -27,10 +26,13 @@ interface TeamResult {
   teamImage: string
 }
 
-const fetcher = (url: string, params: any) => axios.post(url, params).then((res) => {
-  console.log(res.data)
-  return res.data;
-})
+const fetcher = (url: string, params: any) =>
+  axios.post(url, params).then((res) => {
+    const data = res.data
+    const sortedData = data.sort((a: any, b: any) => a.position - b.position)
+
+    return sortedData
+  })
 
 export default function TournamentResults({ id, isOpen, setIsOpen }: { id: string, isOpen: boolean, setIsOpen: (val: boolean) => void }) {
 
