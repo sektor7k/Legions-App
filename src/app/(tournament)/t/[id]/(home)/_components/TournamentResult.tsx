@@ -180,12 +180,19 @@ export default function TournamentResults({ id, isOpen, setIsOpen }: { id: strin
     )
   }
 
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Tournament Results</Button>
-      </DialogTrigger>
+      <Button
+      variant="outline"
+      className=" border-2 border-red-800 bg-red-800/30 hover:bg-red-800/50 w-36"
+    >
+      <div className="flex items-center">
+        <Image src="/result.png" alt="Results icon" width={100} height={100} className="mr-2 z-20 w-28 -translate-x-12 -translate-y-2" />
+        <span className="font-bold text-base -translate-x-16">Results</span>
+      </div>
+    </Button>
+          </DialogTrigger>
       <DialogTitle>
         
       </DialogTitle>
