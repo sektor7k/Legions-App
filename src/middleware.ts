@@ -19,6 +19,11 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
+  // 0) Eğer kullanıcı blokluysa, /blocked sayfasına yönlendir.
+  if (token && token.status === 'blocked' && pathname !== '/blocked') {
+    return NextResponse.redirect(new URL('/blocked', req.url));
+  }
+
   // 1) Public path
   if (publicPaths.includes(pathname)) {
     return NextResponse.next();
@@ -112,5 +117,6 @@ export const config = {
     '/t/:path*',
     '/admin/:path*',
     '/enter-username',
+    '/blocked',
   ],
 };

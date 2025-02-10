@@ -10,7 +10,7 @@ import { ethers } from "ethers";
 interface ExtendedUser extends NextAuthUser {
   id: string;
   username: string;
-  isVerified: boolean;
+  isVerifed: boolean;
   isAdmin: boolean;
   image: string;
   socialMedia: {
@@ -22,47 +22,9 @@ interface ExtendedUser extends NextAuthUser {
     evm?: string;
     solana?: string;
   };
-  role:string
+  role:string;
+  status: string;
 }
-
-// async function authorizeCrypto(credentials: Record<"publicAddress" | "signedNonce", string> | undefined) {
-//   if (!credentials) return null;
-
-//   const { publicAddress, signedNonce } = credentials;
-
-//   // Veritabanına bağlan
-//   await connectDB();
-
-//   // Public address ile kullanıcıyı bul
-//   const userFound = await User.findOne({ "wallets.evm": publicAddress });
-
-//   if (!userFound || !userFound.cryptoLoginNonce) return null;
-
-//   const { nonce, expires } = userFound.cryptoLoginNonce;
-
-//   // Nonce imzasını doğrula
-//   const signerAddress = ethers.verifyMessage(nonce, signedNonce);
-
-//   if (signerAddress !== publicAddress) return null;
-
-//   // Nonce'un süresi dolmuş mu kontrol et
-//   if (expires < new Date()) return null;
-
-//   // Nonce'u temizle ve kullanıcıyı güncelle
-//   userFound.cryptoLoginNonce = undefined;
-//   await userFound.save();
-
-//   return {
-//     id: userFound._id,
-//     email: userFound.email,
-//     username: userFound.username,
-//     isVerified: userFound.isVerified,
-//     isAdmin: userFound.isAdmin,
-//     image: userFound.image,
-//     socialMedia: userFound.socialMedia,
-//     wallets: userFound.wallets,
-//   };
-// }
 
 
 export const authOptions: NextAuthOptions = {
@@ -97,30 +59,24 @@ export const authOptions: NextAuthOptions = {
 
         if (!passwordMatch) throw new Error("Invalid Password");
 
-        
+        if (!userFound.isVerifed) {
+          throw new Error("Please verify your email address.");
+        }
 
         // Burada tüm gerekli alanların olduğundan emin olun
         return {
           id: userFound._id,
           email: userFound.email,
           username: userFound.username,
-          isVerified: userFound.isVerified,
+          isVerifed: userFound.isVerifed,
           role: userFound.role,
           image: userFound.image,
           socialMedia: userFound.socialMedia,
           wallets: userFound.wallets,
+          status: userFound.status,
         };
       },
     }),
-    // CredentialsProvider({
-    //   id: "crypto",
-    //   name: "Crypto Wallet Auth",
-    //   credentials: {
-    //     publicAddress: { label: "Public Address", type: "text" },
-    //     signedNonce: { label: "Signed Nonce", type: "text" },
-    //   },
-    //   authorize: authorizeCrypto,
-    // }),
   ],
   pages: {
     signIn: "/login",
@@ -139,6 +95,18 @@ export const authOptions: NextAuthOptions = {
         token.socialMedia = u.socialMedia;
         token.wallets = u.wallets;
         token.role = u.role;
+        token.status = u.status;
+      }else if (token.id) {
+        // Diğer isteklerde DB'den güncel kullanıcı durumunu alalım.
+        try {
+          await connectDB();
+          const currentUser = await User.findById(token.id);
+          if (currentUser) {
+            token.status = currentUser.status;
+          }
+        } catch (error) {
+          console.error("Error updating token status:", error);
+        }
       }
 
       if (trigger === "update" && session) {
@@ -160,6 +128,7 @@ export const authOptions: NextAuthOptions = {
         socialMedia: token.socialMedia,
         wallets: token.wallets,
         isAdmin: token.isAdmin,
+        status: token.status,
       };
       return session;
     },
