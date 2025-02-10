@@ -3,13 +3,15 @@ import axios from "axios";
 import { AlarmClock, AlarmClockCheck, Calendar, Check, Info, Play, Trophy } from "lucide-react"
 import Image from "next/image"
 import Countdown from "./_components/Countdown";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import RegisterTournament from "./_components/RegisterTournament";
 import { parse } from "date-fns";
 import useSWR from 'swr';
 import LoadingAnimation from "@/components/loadingAnimation";
 import ErrorAnimation from "@/components/errorAnimation";
 import TournamentDialog from "./_components/TournamentResult";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button";
 
 interface Tournament {
     id: string;
@@ -45,6 +47,21 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     );
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const [isOverflowing, setIsOverflowing] = useState(false)
+  const descriptionRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (descriptionRef.current) {
+        setIsOverflowing(descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight)
+      }
+    }
+
+    checkOverflow()
+    window.addEventListener("resize", checkOverflow)
+    return () => window.removeEventListener("resize", checkOverflow)
+  }, [])
 
     useEffect(() => {
         if (tournament?.resultStatus === "open") {
@@ -152,26 +169,43 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
             </div>
             <div className=" flex flex-col justify-between w-5/6 space-y-4 md:flex-row md:space-y-0 ">
 
-                <div className="flex flex-col justify-start space-y-6 bg-black w-full bg-opacity-60 backdrop-blur-sm p-6 px-8 rounded-lg md:w-[calc((2/4*100%)-1rem)] ">
-
+                <div className="flex flex-col justify-start space-y-6 bg-black w-full bg-opacity-60 backdrop-blur-sm p-6 px-8 rounded-lg md:w-[calc((2/4*100%)-1rem)] max-h-[740px]">
                     <Image
-                        src={`${tournament.thumbnail}`}
-                        alt={""}
+                        src={tournament.thumbnail || "/placeholder.svg"}
+                        alt=""
                         width={920}
                         height={80}
                         objectFit="cover"
                         className="transition-opacity duration-800 group-hover/card:opacity-0 rounded-2xl"
                     />
-                    <p className=" text-3xl font-bold">
-                        {tournament.tname}
-                    </p>
+                    <p className="text-3xl font-bold">{tournament.tname}</p>
 
-                    <div className="prose" style={{ whiteSpace: "pre-line" }}>
-                        {/* HTML içeriğini render etmek için */}
-                        <div dangerouslySetInnerHTML={{ __html: tournament.tdescription }} />
+                    <div className="prose relative" style={{ whiteSpace: "pre-line" }}>
+                        <div
+                            ref={descriptionRef}
+                            className="max-h-[300px] overflow-hidden"
+                            dangerouslySetInnerHTML={{ __html: tournament.tdescription }}
+                        />
+                        {isOverflowing && (
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent h-16 flex items-end justify-center">
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="secondary" className="mb-2">
+                                            Read More
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-[725px]">
+                                        <DialogHeader>
+                                            <DialogTitle>{tournament.tname}</DialogTitle>
+                                        </DialogHeader>
+                                        <div className="mt-4 prose max-h-[60vh] overflow-y-auto">
+                                            <div dangerouslySetInnerHTML={{ __html: tournament.tdescription }} />
+                                        </div>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
+                        )}
                     </div>
-
-
                 </div>
 
                 <div className="flex flex-col w-full space-y-4 sm:w-full md:w-2/4">
@@ -200,8 +234,8 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                         <div className="hidden sm:block w-px h-16 sm:h-full self-stretch bg-gray-600 mx-4 sm:mx-6" />
                         <div className="flex flex-col items-start space-y-3 w-full sm:w-auto">
                             {tournament.prizePool.map((item: any) => (
-                                <div key={item._id} className="flex justify-between w-full">
-                                    <span className="text-red-700 text-sm sm:text-base">{item.key} PLACE</span>
+                                <div key={item._id} className="flex justify-between w-full gap-1">
+                                    <span className="text-red-700 text-sm sm:text-base font-semibold">{item.key} PLACE</span>
                                     <span className="text-white font-bold text-sm sm:text-base">${item.value}</span>
                                 </div>
                             ))}
@@ -216,19 +250,19 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                         <div className="hidden sm:block w-px h-16 sm:h-full self-stretch bg-gray-600 mx-4 sm:mx-6" />
                         <div className="flex flex-col items-start space-y-3 w-full sm:w-auto">
                             <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center w-full gap-1">
-                                <span className="text-red-700 text-sm sm:text-base">CHECK IN:</span>
+                                <span className="text-red-700 text-sm sm:text-base font-semibold">CHECK IN:</span>
                                 <span className="text-white text-xs sm:text-sm font-medium">
                                     {tournament.checkin} ({formatTime(tournament.checkinTime)} GMT+3)
                                 </span>
                             </div>
                             <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center w-full gap-1">
-                                <span className="text-red-700 text-sm sm:text-base">STARTS:</span>
+                                <span className="text-red-700 text-sm sm:text-base font-semibold">STARTS:</span>
                                 <span className="text-white text-xs sm:text-sm font-medium">
                                     {tournament.starts} ({formatTime(tournament.startsTime)} GMT+3)
                                 </span>
                             </div>
                             <div className="flex flex-col sm:flex-row justify-start items-start sm:items-center w-full gap-1">
-                                <span className="text-red-700 text-sm sm:text-base">ENDS:</span>
+                                <span className="text-red-700 text-sm sm:text-base font-semibold">ENDS:</span>
                                 <span className="text-white text-xs sm:text-sm font-medium">
                                     {tournament.ends} ({formatTime(tournament.endsTime)} GMT+3)
                                 </span>
