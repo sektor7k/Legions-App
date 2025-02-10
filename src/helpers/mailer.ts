@@ -20,14 +20,14 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
       });
     }
 
-    // Create a Nodemailer transporter using Gmail SMTP.
+    // Create a Nodemailer transporter using Gmail SMTP. 
     const transport = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
       secure: false,
       auth: {
-        user: 'support@castrumlegions.com',
-        pass: 'ihow snuj cdcl hyga', // Gerçek şifrenizi veya uygulama şifrenizi kullanın.
+        user: process.env.MAILER_EMAIL,
+        pass: process.env.MAILER_PASSWORD, // Gerçek şifrenizi veya uygulama şifrenizi kullanın.
       },
     });
 
