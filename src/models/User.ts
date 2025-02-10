@@ -2,7 +2,7 @@ import { Schema, model, models } from "mongoose";
 
 export interface UserDocument {
   email: string;
-  password: string;
+  password?: string;
   username: string;
   image: string;
   _id: string;
@@ -28,6 +28,7 @@ export interface UserDocument {
   };
   role: 'admin' | 'moderator' | 'user';
   status: 'active'| 'blocked'
+  provider: "credentials" | "google"
 
 }
 
@@ -45,9 +46,11 @@ const UserSchema = new Schema<UserDocument>({
   },
   password: {
     type: String,
-    required: [true, "Password is required"],
-    select: false,
+    required: function (this: UserDocument) {
+      return this.provider === "credentials";
+    },
   },
+  provider: { type: String, required: true, default: "credentials" },
   username: {
     type: String,
     //required: [true, "Fullname is required"],
@@ -73,7 +76,7 @@ const UserSchema = new Schema<UserDocument>({
     telegram: { type: String, default: "" },
   },
   wallets: {
-    evm: { type: String, unique: true, sparse: true },
+    evm: { type: String, unique: true, sparse: true, default: "" },
     solana: { type: String, default: "" },
   },
   cryptoLoginNonce: {

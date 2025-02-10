@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
   ];
   const restrictedPaths = ['/u', '/', '/t'];
   const adminPaths = ['/admin']; // /admin altı rota
-  const enterUsernamePath = '/enter-username';
+
 
   const { pathname } = req.nextUrl;
 
@@ -35,9 +35,7 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/login', req.url));
     }
 
-    if (!token.username && pathname !== enterUsernamePath) {
-      return NextResponse.redirect(new URL('/enter-username', req.url));
-    }
+    
   }
 
   // 3) /admin/edittournament/... => admin veya o turnuvanın moderatörü
@@ -95,11 +93,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // 5) /enter-username path'inde kullanıcı zaten username girdiyse ana sayfaya
-  if (pathname === enterUsernamePath && token?.username) {
-    return NextResponse.redirect(new URL('/', req.url));
-  }
-
   return NextResponse.next();
 }
 
@@ -116,7 +109,6 @@ export const config = {
     '/u/:path*',
     '/t/:path*',
     '/admin/:path*',
-    '/enter-username',
     '/blocked',
   ],
 };

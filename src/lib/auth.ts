@@ -85,23 +85,60 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
+    async signIn({ user, account }) {
+      try {
+        // Eğer provider google ise
+        if (account?.provider === "google") {
+          if (!user.email) {
+            throw new Error("Unable to receive email from Google account.");
+          }
+
+          await connectDB();
+          const userExists = await User.findOne({ email: user.email });
+          if (!userExists) {
+
+            await User.create({
+              email: user.email,
+              username: user.email.split("@")[0],
+              image: user.image,
+              isVerifed: true, 
+              role: "user", 
+              socialMedia: {},
+              wallets: {},
+              status: "active",
+              provider: "google"
+            });
+          }
+        }
+        return true; // Girişe izin ver
+      } catch (error) {
+        console.error("SignIn Callback Error:", error);
+        return false; // Giriş reddedilebilir
+      }
+    },
     async jwt({ token, user,trigger, session }) {
       if (user) {
-        const u = user as ExtendedUser;
-        token.id = u.id;
-        token.username = u.username;
-        token.email = u.email;
-        token.image= u.image;
-        token.socialMedia = u.socialMedia;
-        token.wallets = u.wallets;
-        token.role = u.role;
-        token.status = u.status;
+        await connectDB();
+        // DB'de email'e göre kullanıcıyı arıyoruz.
+        const dbUser = await User.findOne({ email: user.email });
+        if (dbUser) {
+          // DB'deki kullanıcı kaydından gelen değerleri token'a aktarıyoruz.
+          token.id = dbUser._id.toString();
+          token.username = dbUser.username;  // DB'de oluşturduğunuz username
+          token.email = dbUser.email;
+          token.image = dbUser.image;
+          token.socialMedia = dbUser.socialMedia;
+          token.wallets = dbUser.wallets;
+          token.role = dbUser.role;
+          token.status = dbUser.status;
+        }
       }else if (token.id) {
         // Diğer isteklerde DB'den güncel kullanıcı durumunu alalım.
         try {
           await connectDB();
           const currentUser = await User.findById(token.id);
           if (currentUser) {
+            token.username = currentUser.username;
             token.status = currentUser.status;
           }
         } catch (error) {

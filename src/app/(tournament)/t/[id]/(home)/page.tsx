@@ -3,7 +3,7 @@ import axios from "axios";
 import { AlarmClock, AlarmClockCheck, Calendar, Check, Info, Play, Trophy } from "lucide-react"
 import Image from "next/image"
 import Countdown from "./_components/Countdown";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import RegisterTournament from "./_components/RegisterTournament";
 import { parse } from "date-fns";
 import useSWR from 'swr';
@@ -49,19 +49,24 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const [isOverflowing, setIsOverflowing] = useState(false)
-  const descriptionRef = useRef<HTMLDivElement>(null)
+    const descriptionRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const checkOverflow = () => {
-      if (descriptionRef.current) {
-        setIsOverflowing(descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight)
-      }
-    }
+    useLayoutEffect(() => {
+        const checkOverflow = () => {
+            if (descriptionRef.current) {
+                setIsOverflowing(
+                    descriptionRef.current.scrollHeight > descriptionRef.current.clientHeight
+                );
+            }
+        };
 
-    checkOverflow()
-    window.addEventListener("resize", checkOverflow)
-    return () => window.removeEventListener("resize", checkOverflow)
-  }, [])
+        if (tournament) {
+            checkOverflow();
+            window.addEventListener("resize", checkOverflow);
+            return () => window.removeEventListener("resize", checkOverflow);
+        }
+    }, [tournament]);
+
 
     useEffect(() => {
         if (tournament?.resultStatus === "open") {

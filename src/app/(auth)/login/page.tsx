@@ -132,7 +132,7 @@ export default function LoginPage() {
 
                         <div className="flex flex-col space-y-4">
                             
-                            <button
+                            {/* <button
                                 onClick={(e) => {
                                     e.preventDefault();
                                     signIn("github")
@@ -145,7 +145,7 @@ export default function LoginPage() {
                                     GitHub
                                 </span>
                                 <BottomGradient />
-                            </button>
+                            </button> */}
                             <button
                                 onClick={(e) => {
                                     e.preventDefault();
