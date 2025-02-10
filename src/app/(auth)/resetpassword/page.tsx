@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast";
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 
 
@@ -32,6 +33,7 @@ export default function ResetPasswordForm() {
 
     const [token, setToken] = useState("");
     const [success, setSuccess] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const urlToken = window.location.search.split("=")[1];
@@ -58,6 +60,8 @@ export default function ResetPasswordForm() {
             });
             showToast(response.data.message)
             setSuccess(true);
+            router.push("/login")
+            
 
         } catch (error: any) {
             showErrorToast('Failed to reset password');
@@ -82,8 +86,9 @@ export default function ResetPasswordForm() {
     }
 
     return (
-        <Form {...form} >
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+       <div className=" w-full h-screen flex items-center justify-center">
+         <Form {...form} >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 md:w-1/2 bg-black/40 backdrop-blur-sm p-14  rounded-2xl">
                 <FormField
                     control={form.control}
                     name="password"
@@ -117,5 +122,6 @@ export default function ResetPasswordForm() {
                 <Button type="submit">Reset Password</Button>
             </form>
         </Form>
+       </div>
     )
 }

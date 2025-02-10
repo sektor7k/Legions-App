@@ -91,6 +91,10 @@ export default function InboxPage() {
         }
     };
 
+    if (error?.response?.status === 404) return <div className=" flex  justify-center items-center ">
+        <p className="text-xl text-gray-400 pt-12">Inbox Empty </p>
+    </div>;
+
     if (error) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
     if (!invites) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;
 

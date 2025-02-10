@@ -17,8 +17,6 @@ import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import { ethers } from "ethers";
-import ModelViewer from "../_components/ModelViewer";
-import LottieModel from "../_components/Lottie";
 
 declare global {
     interface Window {
@@ -138,7 +136,7 @@ export default function RegisterPage() {
 
         <div className="flex flex-row justify-center items-center w-full h-screen md:justify-between">
             <div className="relative flex-col justify-center h-full w-1/2 hidden md:flex">
-                <LottieModel />
+                Lottie
             </div>
             <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 backdrop-blur-sm border-gradient">
                 <h1 className="font-bold text-2xl text-neutral-800 dark:text-neutral-200">

@@ -69,6 +69,9 @@ export default function OutboxPage() {
             console.error('Error deleting invite:', error);
         }
     };
+    if (error?.response?.status === 404) return <div className=" flex  justify-center items-center ">
+    <p className="text-xl text-gray-400 pt-12">Outbox Empty </p>
+</div>;
 
     if (error) return <div className=" flex h-screen justify-center items-center"><ErrorAnimation /></div>;
     if (!invites) return <div className=" flex h-screen justify-center items-center"><LoadingAnimation /></div>;

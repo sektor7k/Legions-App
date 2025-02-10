@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -14,8 +15,6 @@ import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import { ethers } from "ethers";
-import dynamic from 'next/dynamic';
-import LottieModel from "../_components/Lottie";
 
 declare global {
     interface Window {
@@ -23,7 +22,6 @@ declare global {
     }
 }
 
-const ModelViewer = dynamic(() => import('../_components/ModelViewer'), { ssr: false });
 
 
 export default function LoginPage() {
@@ -121,7 +119,7 @@ export default function LoginPage() {
     return (
         <div className="flex flex-row justify-center items-center w-full h-screen md:justify-between">
             <div className="relative flex-col justify-center h-full w-1/2 hidden md:flex">
-                <LottieModel />
+                {/* <Image src={"/authgif.gif"} alt={""} width={500} height={500} className=" h-40 w-40"/> */}
             </div>
             <div className="flex justify-center items-center md:w-1/2">
                 <div className="max-w-md w-full mx-auto  p-4 md:p-8  backdrop-blur-sm border-gradient">
