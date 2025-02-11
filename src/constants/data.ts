@@ -50,7 +50,7 @@ export function getNavItemsBrowse(session: Session | null): NavItem[] {
     },
     {
       title: 'PVP Arena',
-      href: `/bet`,
+      href: `/#`,
       icon: 'circleDollarSign',
       label: 'bet'
     },

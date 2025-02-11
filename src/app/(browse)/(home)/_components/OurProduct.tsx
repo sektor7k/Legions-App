@@ -37,7 +37,7 @@ const features: FeatureItem[] = [
         icon: CircleDollarSign,
         color: "text-blue-800",
         borderColor: "border-blue-800",
-        link:"/bet"
+        link:"/#"
     },
     {
         title: "Coming Soon",

@@ -31,6 +31,27 @@ interface Coin {
   change24h: number
 }
 
+
+function formatPrice(price: number): React.ReactNode {
+  if (price >= 0.01) {
+    return `$${price.toLocaleString()}`
+  } else {
+    // 8 ondalık basamak gösterelim
+    const fixedStr = price.toFixed(6) // örn: 0.00008900
+    const [intPart, decPart] = fixedStr.split(".")
+    // İlk 4 ondalık kısmı normal gösterelim
+    const normalDecimals = decPart.slice(0, 4)
+    // Kalan kısmı al, sondaki sıfırları temizle
+    let extraDecimals = decPart.slice(4).replace(/0+$/, "")
+    return (
+      <>
+        ${intPart}.{normalDecimals}
+        {extraDecimals && <span className="italic">{extraDecimals}</span>}
+      </>
+    )
+  }
+}
+
 const CoinTable: React.FC<{ title: string; coins: Coin[] }> = ({ title, coins }) => (
   <Table>
     <TableHeader>
@@ -54,11 +75,13 @@ const CoinTable: React.FC<{ title: string; coins: Coin[] }> = ({ title, coins })
               height={24}
               className="rounded-full bg-white"
             />
-            <span className="font-bold">{coin.name}<span className="text-muted-foreground font-normal"> {coin.ticker}</span></span>
-            
+            <span className="font-bold">
+              {coin.name}
+              <span className="text-muted-foreground font-normal"> {coin.ticker}</span>
+            </span>
           </TableCell>
           <TableCell className="font-semibold">
-            ${coin.price.toLocaleString()}
+            {formatPrice(coin.price)}
           </TableCell>
           <TableCell
             className={`${
@@ -81,9 +104,7 @@ function TableSkeleton({ title }: { title: string }) {
     <Table>
       <TableHeader>
         <TableRow className="bg-white/5 backdrop-blur-sm border-none">
-          <TableHead className="font-bold">
-            {title}
-          </TableHead>
+          <TableHead className="font-bold">{title}</TableHead>
           <TableHead className="font-bold">
             <Skeleton className="h-4 w-[60px]" />
           </TableHead>
@@ -100,9 +121,7 @@ function TableSkeleton({ title }: { title: string }) {
           >
             <TableCell className="flex items-center space-x-2">
               <Skeleton className="h-6 w-6 rounded-full" />
-
-                <Skeleton className="h-4 w-[100px]" />
-
+              <Skeleton className="h-4 w-[100px]" />
             </TableCell>
             <TableCell>
               <Skeleton className="h-4 w-[60px]" />
@@ -147,7 +166,6 @@ export default function CryptoGainLoseTables() {
   if (isLoading || !coinData) {
     return (
       <div className="w-full p-4 space-y-4 md:space-y-0 md:flex md:space-x-4">
-
         <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
           <TableSkeleton title="Top Gaming Tokens" />
         </div>
@@ -161,7 +179,7 @@ export default function CryptoGainLoseTables() {
     )
   }
 
-  // 5) Data'yı kendi Coin tipimize dönüştür
+  // CoinData'yı kendi Coin tipimize dönüştür
   const mappedCoins: Coin[] = coinData.map((coin) => ({
     logo: coin.image,
     name: coin.name,
@@ -170,7 +188,7 @@ export default function CryptoGainLoseTables() {
     change24h: coin.price_change_percentage_24h,
   }))
 
-  // 6) Tablolar: Trend, Gainers, Losers
+  // Tablolar: Trending, Gainers, Losers
   const sortedBy24hDesc = [...mappedCoins].sort((a, b) => b.change24h - a.change24h)
   const topGainers = sortedBy24hDesc.slice(0, 7)
 
@@ -181,10 +199,10 @@ export default function CryptoGainLoseTables() {
 
   return (
     <div className="w-full p-4 space-y-4 md:space-y-0 md:flex md:space-x-4">
-      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient ">
+      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
         <CoinTable title="Top Gaming Tokens" coins={topTrending} />
       </div>
-      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient ">
+      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
         <CoinTable title="Top Gaming Tokens Gain" coins={topGainers} />
       </div>
       <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
