@@ -55,7 +55,7 @@ export default function InboxPage() {
         return "Just now"
     }
 
-    const handleAcceptInvite = async (inviteId: string) => {
+    const handleAcceptInvite = async (inviteId: string) => { 
         try {
             // API'den davetleri alın
             const response = await axios.post(`/api/tournament/invite/replyInvite`, { id: inviteId, reply: "accept" });
