@@ -97,7 +97,7 @@ export default function RegisterPage() {
 
         <div className="flex flex-row justify-center items-center w-full h-screen md:justify-between">
             <div className="relative flex-col justify-center h-full w-1/2 hidden md:flex">
-                Lottie
+                
             </div>
             <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 backdrop-blur-sm border-gradient">
                 <h1 className="font-bold text-2xl text-neutral-800 dark:text-neutral-200">
@@ -162,7 +162,7 @@ export default function RegisterPage() {
                         Sign up &rarr;
                         <BottomGradient />
                     </button>
-                    <Button variant={"link"} onClick={() => router.push("/login")} className=" text-gray-500 mt-3">
+                    <Button variant={"link"} onClick={() => router.push("/login")} className=" text-gray-300 mt-3">
                         Already a member? Login
                     </Button>
                     <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
