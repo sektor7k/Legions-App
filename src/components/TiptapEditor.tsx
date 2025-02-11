@@ -6,6 +6,8 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Underline from "@tiptap/extension-underline";
+import HardBreak from "@tiptap/extension-hard-break";
+
 import Link from "@tiptap/extension-link";
 import { Bold, Italic, UnderlineIcon, Highlighter, LinkIcon, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,6 +25,15 @@ const CustomLink = Link.extend({
     }
   },
 });
+
+const CustomHardBreak = HardBreak.extend({
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => this.editor.commands.setHardBreak(),
+    };
+  },
+});
+
 
 interface TiptapEditorProps {
   initialContent?: string;
@@ -47,6 +58,7 @@ const TiptapEditor: FC<TiptapEditorProps> = ({
       CustomLink.configure({
         openOnClick: false,
       }),
+      CustomHardBreak,
     ],
     content: initialContent,
     editorProps: {
