@@ -4,6 +4,7 @@ import Invite from '@/models/Invite';
 import Team, { TeamDocument, Member } from '@/models/Team';
 import { updateParticipantsCount } from '@/helpers/participantscount';
 import User from '@/models/User';
+import Tournament from '@/models/Tournament';
 
 export async function POST(request: NextRequest) {
     const { id, reply } = await request.json();
@@ -11,16 +12,25 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     try {
-        if (!Team || !User) {
+        if (!Team || !User || !Tournament) {
             return NextResponse.json({ message: 'Model not registered yet' }, { status: 500 });
         }
-        const invite = await Invite.findById(id).populate('userId', 'username image').populate('teamId', 'teamName teamImage');
+        const invite = await Invite.findById(id).populate('userId', 'username image').populate('teamId', 'teamName teamImage isDeleted')
 
-        if (!invite) {
+        const team = await Team.findById(invite.teamId._id).populate({
+            path: 'tournamentId',
+            select: 'registerStatus'
+          });
+
+        if (!invite || invite.teamId.isDeleted === true) {
             return NextResponse.json({ message: 'Invite not found' }, { status: 404 });
         }
 
-        
+        if (team.tournamentId.registerStatus === "closed") {
+            return NextResponse.json({
+                message: 'Register closed',
+            }, { status: 400 });
+        }
 
         if (reply === 'accept') {
             if (invite.inviteType === 'leader') {

@@ -124,23 +124,23 @@ const TournamentSchema = new Schema<TournamentDocument>({
   },
   tournamentStatus: {
     type: String,
-    default: 'close'
+    default: 'closed'
   },
   visibleStatus: {
     type: String,
-    default: 'close'
+    default: 'closed'
   },
   chatStatus: {
     type: String,
-    default: 'close'
+    default: 'closed'
   },
   registerStatus: {
     type: String,
-    default: 'close'
+    default: 'closed'
   },
   resultStatus: {
     type: String,
-    default: 'close'
+    default: 'closed'
   },
   game: {
     type: String,
