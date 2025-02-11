@@ -5,6 +5,8 @@ import { getNavItems } from '@/constants/data';
 import { MenuIcon } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
  
 // import { Playlist } from "../data/playlists";
 
@@ -23,11 +25,19 @@ export function MobileSidebar({ className }: SidebarProps) {
           <MenuIcon />
         </SheetTrigger>
         <SheetContent side="left" className="!px-0 bg-black bg-opacity-40 border-none">
-          <div className="space-y-4 py-4 ">
-            <div className="px-3 py-2">
-              <p className="mb-2 px-4 text-lg font-semibold tracking-tight">
-                Overview
-              </p>
+          <div className=" py-4 ">
+            <div className="px-3 py-2 space-y-4">
+            <Link
+                href={'/'}
+              >
+                <Image
+                  src={"/logoDark.png"}
+                  alt="Logo"
+                  width={130}
+                  height={100}
+                />
+
+              </Link>
               <div className="space-y-1">
                 <DashboardNav
                   items={navItems}

@@ -75,7 +75,9 @@ export default function ProfileAdresses({ evm, solana }: Adress) {
                         <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
                             <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=032" alt="" className="w-5" />
                         </div>
-                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">{evm || "No Address"}</p>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300 truncate">
+                            {evm || "No Address"}
+                        </p>
                         <Sheet >
                             <SheetTrigger>
                                 <Button variant={"ghost"} className=" rounded-r-xl rounded-l-none ">
@@ -98,7 +100,7 @@ export default function ProfileAdresses({ evm, solana }: Adress) {
                                     <Input
                                         id="evm"
                                         placeholder="0xd40F6*************************************"
-                                        className="col-span-2"
+                                        className=""
                                         onChange={(e) => setWalletAddress(e.target.value)}
                                     />
                                 </div>
@@ -127,7 +129,7 @@ export default function ProfileAdresses({ evm, solana }: Adress) {
                         <div className="bg-black bg-opacity-30 p-3 rounded-l-xl ">
                             <img src="https://cryptologos.cc/logos/solana-sol-logo.svg?v=032" alt="" className="w-9" />
                         </div>
-                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300">{solana || "No Address"}</p>
+                        <p className="rounded-r-none w-full bg-black bg-opacity-30 p-3 text-gray-300 truncate">{solana || "No Address"}</p>
 
                         <Sheet >
                             <SheetTrigger>
