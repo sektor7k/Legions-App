@@ -72,7 +72,7 @@ export default function ForgotPasswordForm() {
                     <Input type="email" placeholder="you@example.com" {...field} />
                   </FormControl>
                   <FormDescription className="text-sm text-gray-500">
-                    We'll send a password reset link to this email.
+                    We&apos;ll send a password reset link to this email.
                   </FormDescription>
                   <FormMessage>{fieldState.error?.message}</FormMessage>
                 </FormItem>

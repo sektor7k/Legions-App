@@ -11,7 +11,7 @@ export default function BlockedPage() {
         <ShieldAlert className="mx-auto h-16 w-16 text-red-700 mb-6" />
         <h1 className="text-2xl font-bold mb-4">Your Account is Blocked</h1>
         <p className="text-gray-300 mb-6">
-          We're sorry, but your account has been blocked by our system. If you wish to appeal this decision, please send
+          We&apos;re sorry, but your account has been blocked by our system. If you wish to appeal this decision, please send
           an email to the address below.
         </p>
         <div className="bg-gray-900 p-4 rounded-md mb-6">
