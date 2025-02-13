@@ -334,7 +334,7 @@ export default function AddBet() {
                             <p className="font-semibold text-base text-white">{match.team2Id.teamName}</p>
                           </div>
                           <div className="ml-auto text-gray-400 text-sm text-center">
-                            {match.matchDate} // {`${match.matchTime.slice(0, 2)}:${match.matchTime.slice(2)}`}
+                            {match.matchDate} / {`${match.matchTime.slice(0, 2)}:${match.matchTime.slice(2)}`}
                           </div>
                         </div>
                       </SelectItem>
