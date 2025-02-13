@@ -51,7 +51,7 @@ export default function ForgotPasswordForm() {
       description: message,
     })
   }
-
+//test
   return (
    <div className=" w-full h-screen flex justify-center items-center">
      <Card className="w-full max-w-md mx-auto bg-black/40 backdrop-blur-sm border-none">
