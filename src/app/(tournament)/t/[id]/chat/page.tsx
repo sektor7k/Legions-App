@@ -59,7 +59,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         if (!socketRef.current) {
-            socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5001");
+            socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5001", {transports: ["websocket"]});
 
             socketRef.current.on("receive_msg", (msgData) => {
                 mutate(
