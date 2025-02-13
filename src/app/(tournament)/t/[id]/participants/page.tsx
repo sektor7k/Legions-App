@@ -289,33 +289,42 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                         <DialogFooter >
                                                             <div className='flex w-full justify-between'>
                                                                 <DialogClose ref={closeRef} asChild>
-                                                                <AlertDialog>
-                                                                    <AlertDialogTrigger>
+                                                                    {rStatus ? (
                                                                         <Button
-                                                                        disabled={rStatus}
-                                                                        variant={"destructive"}
-                                                                    >
-                                                                        Delete Team
-                                                                    </Button>
-                                                                    </AlertDialogTrigger>
-                                                                    <AlertDialogContent className='bg-bg-auth border-none'>
-                                                                        <AlertDialogHeader>
-                                                                            <AlertDialogTitle>Should the team be deleted?</AlertDialogTitle>
-                                                                            <AlertDialogDescription>
-                                                                            The team will be removed from the teams in this tournament. Click the delete button if you want to continue the process.
-                                                                            </AlertDialogDescription>
-                                                                        </AlertDialogHeader>
-                                                                        <AlertDialogFooter>
-                                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                                            <Button variant={"destructive"}
-                                                                        onClick={() => handleDeleteTeam(team._id)}
-                                                                        >Delete
+                                                                            disabled
+                                                                            variant={"destructive"}
+                                                                        >
+                                                                            Delete Team
                                                                         </Button>
-                                                                        </AlertDialogFooter>
-                                                                    </AlertDialogContent>
-                                                                </AlertDialog>
+                                                                    ) : (
+                                                                        <AlertDialog>
+                                                                            <AlertDialogTrigger>
+                                                                                <Button
+                                                                                    variant={"destructive"}
+                                                                                >
+                                                                                    Delete Team
+                                                                                </Button>
+                                                                            </AlertDialogTrigger>
+                                                                            <AlertDialogContent className='bg-bg-auth border-none'>
+                                                                                <AlertDialogHeader>
+                                                                                    <AlertDialogTitle>Should the team be deleted?</AlertDialogTitle>
+                                                                                    <AlertDialogDescription>
+                                                                                        The team will be removed from the teams in this tournament. Click the delete button if you want to continue the process.
+                                                                                    </AlertDialogDescription>
+                                                                                </AlertDialogHeader>
+                                                                                <AlertDialogFooter>
+                                                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                                                    <Button variant={"destructive"}
+                                                                                        onClick={() => handleDeleteTeam(team._id)}
+                                                                                    >Delete
+                                                                                    </Button>
+                                                                                </AlertDialogFooter>
+                                                                            </AlertDialogContent>
+                                                                        </AlertDialog>
+                                                                    )}
+
                                                                 </DialogClose>
-                                                                
+
                                                                 <Button onClick={() => handleEditTeam(team._id)} disabled={rStatus}>
                                                                     Save
                                                                 </Button>
