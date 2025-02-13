@@ -7,7 +7,6 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   const publicPaths = [
-    '/landingpage',
     '/login',
     '/register',
     '/verifyemail',
@@ -101,7 +100,6 @@ export const config = {
   matcher: [
     '/',
     '/tournament',
-    '/landingpage',
     '/login',
     '/register',
     '/verifyemail',
@@ -109,6 +107,7 @@ export const config = {
     '/u/:path*',
     '/t/:path*',
     '/admin/:path*',
+    'bet',
     '/blocked',
   ],
 };
