@@ -5,6 +5,20 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { sendEmail } from "@/helpers/mailer";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*", // Tüm domainlere izin verir
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+// OPTIONS methodu preflight istekleri için
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(request: Request) {
   try {
     await connectDB();
