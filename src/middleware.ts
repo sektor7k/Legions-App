@@ -107,7 +107,7 @@ export const config = {
     '/u/:path*',
     '/t/:path*',
     '/admin/:path*',
-    'bet',
+    '/bet',
     '/blocked',
   ],
 };
