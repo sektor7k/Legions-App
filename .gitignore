@@ -15,7 +15,12 @@
 
 # production
 /build
+
+#BetDemo
 /src/app/bet
+/src/context
+
+
 # misc
 .DS_Store
 *.pem
