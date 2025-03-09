@@ -72,7 +72,7 @@ export default function Trending({
   speed?: "normal"
   pauseOnHover?: boolean
 }) {
-  const { data: data2, error: error2 } = useSWR("/api/getTrends", fetcher2)
+  const { data: data2, error: error2 } = useSWR(`${process.env.NEXT_PUBLIC_API_URL}/getTrends`, fetcher2)
 
   const {
     data,

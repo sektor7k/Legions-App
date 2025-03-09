@@ -61,18 +61,18 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
     const [teamName, setTeamName] = useState("");
     const [teamImage, setTeamImage] = useState("");
     const [status, setStatus] = useState("")
-    const { data: tournament, error } = useSWR<Tournament>(['/api/tournament/getTournamentDetail', params.id] as const,
+    const { data: tournament, error } = useSWR<Tournament>([`${process.env.NEXT_PUBLIC_API_URL}/tournament/getTournamentDetail`, params.id] as const,
         ([url, id]) => fetcher2(url, id)
     );
 
     const { data: teams, error: teamsError, mutate: teamsMutate } = useSWR(
-        params?.id ? ['/api/tournament/team/getTeam', { tournamentId: params.id }] : null,
+        params?.id ? [`${process.env.NEXT_PUBLIC_API_URL}/tournament/team/getTeam`, { tournamentId: params.id }] : null,
         ([url, params]) => fetcher(url, params)
     );
 
     const { data: registrationData, error: registrationError, mutate: registrationMutate } = useSWR(
         session?.user?.id && params.id
-            ? ['/api/tournament/checkRegistration', { userId: session.user.id, tournamentId: params.id }]
+            ? [`${process.env.NEXT_PUBLIC_API_URL}/tournament/checkRegistration`, { userId: session.user.id, tournamentId: params.id }]
             : null,
         ([url, params]) => fetcher(url, params)
     );
@@ -105,7 +105,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
         const userId = session?.user.id
 
         try {
-            const response = await axios.post('/api/tournament/invite/sendInvite', {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/invite/sendInvite`, {
                 teamId,
                 userId,
                 leadId,
@@ -122,7 +122,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
     const handleRemoveMember = async (teamId: string, memberId: string) => {
         try {
-            const response = await axios.post('/api/tournament/team/deleteuserTeam', {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/team/deleteuserTeam`, {
                 teamId,
                 memberId,
             });
@@ -137,7 +137,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
     const handleDeleteTeam = async (teamId: string) => {
         try {
-            const response = await axios.post('/api/tournament/team/deleteTeam', { teamId });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/team/deleteTeam`, { teamId });
             showToast("Team deleted successfully");
 
             await teamsMutate();
@@ -150,7 +150,7 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
 
     const handleEditTeam = async (teamId: string) => {
         try {
-            const response = await axios.post('/api/tournament/team/editTeam', { teamId, teamName, teamImage, status })
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/team/editTeam`, { teamId, teamName, teamImage, status })
             showToast("Edit team successfully");
             teamsMutate();
         } catch (error) {

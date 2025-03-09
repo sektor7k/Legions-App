@@ -10,7 +10,7 @@ const fetcher = (url: string, tournamentId: any) => axios.post(url, { tournament
 export default function Page({ params }: { params: { id: string } }) {
 
     const { data: bracket, error, mutate } = useSWR(
-        params.id ? ['/api/tournament/bracket/getBracket', params.id] : null,
+        params.id ? [`${process.env.NEXT_PUBLIC_API_URL}/tournament/getBracket`, params.id] : null,
         ([url, params]) => fetcher(url, params)
     );
 

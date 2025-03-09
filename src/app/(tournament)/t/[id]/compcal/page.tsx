@@ -85,7 +85,7 @@ const sortDescending = (a: Match, b: Match) => {
 
 export default function CompcalPage({ params }: { params: { id: string } }) {
   const { data: matches, error } = useSWR<Match[]>(
-    params.id ? ["/api/tournament/match/getMatch", { tournamentId: params.id }] : null,
+    params.id ? [`${process.env.NEXT_PUBLIC_API_URL}/tournament/getMatch`, { tournamentId: params.id }] : null,
     ([url, params]) => fetcher(url, params),
   )
 

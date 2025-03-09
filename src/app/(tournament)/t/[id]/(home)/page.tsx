@@ -42,7 +42,7 @@ const fetcher = (url: string, id: any) => axios.post(url, { id }).then(res => re
 export default function TournamentPage({ params }: { params: { id: string } }) {
 
     //  Turnuva verisini çek
-    const { data: tournament, error } = useSWR<Tournament>(['/api/tournament/getTournamentDetail', params.id] as const,
+    const { data: tournament, error } = useSWR<Tournament>([`${process.env.NEXT_PUBLIC_API_URL}/tournament/getTournamentDetail`, params.id] as const,
         ([url, id]) => fetcher(url, id)
     );
 

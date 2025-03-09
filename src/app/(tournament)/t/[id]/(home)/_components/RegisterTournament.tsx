@@ -54,7 +54,7 @@ export default function RegisterTournament({ id, registerStatus }: RegisterTourn
 
     const { data, error, mutate } = useSWR(
         session?.user?.id && id
-            ? ['/api/tournament/checkRegistration', { userId: session.user.id, tournamentId: id }]
+            ? [`${process.env.NEXT_PUBLIC_API_URL}/tournament/checkRegistration`, { userId: session.user.id, tournamentId: id }]
             : null,
         ([url, params]) => fetcher(url, params)
     );
@@ -72,7 +72,7 @@ export default function RegisterTournament({ id, registerStatus }: RegisterTourn
         setIsFirstDialogOpen(false);
         setthreeDialogOpen(true);
         try {
-            const response = await axios.post('/api/tournament/team/getTeamPublic', { tournamentId: id, status: "public" });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/team/getTeamPublic`, { tournamentId: id, status: "public" });
             setTeams(response.data);
         } catch (error) {
             console.error('Error fetching teams:', error);
@@ -106,7 +106,7 @@ export default function RegisterTournament({ id, registerStatus }: RegisterTourn
 
     const createTeam = async () => {
         try {
-            const response = await axios.post('/api/tournament/team/createTeam', {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/team/createTeam`, {
                 tournamentId: id,
                 teamName: teamName,
                 teamImage: teamImage,
@@ -134,7 +134,7 @@ export default function RegisterTournament({ id, registerStatus }: RegisterTourn
         const userId = session?.user.id
 
         try {
-            const response = await axios.post('/api/tournament/invite/sendInvite', {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/invite/sendInvite`, {
                 teamId,
                 userId,
                 leadId,

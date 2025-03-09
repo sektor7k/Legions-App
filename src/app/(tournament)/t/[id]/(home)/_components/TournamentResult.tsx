@@ -41,7 +41,7 @@ export default function TournamentResults({ id, isOpen, setIsOpen }: { id: strin
 
   // API'den turnuva sonuçlarını çek
   const { data: result, error: resultsError } = useSWR(
-    useMemo(() => ["/api/tournament/getResultTeam", { tournamentId: id }], [id]),
+    useMemo(() => [`${process.env.NEXT_PUBLIC_API_URL}/tournament/getResultTeam`, { tournamentId: id }], [id]),
     ([url, params]) => fetcher(url, params)
   )
 

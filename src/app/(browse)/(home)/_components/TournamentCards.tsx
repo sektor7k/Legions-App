@@ -52,7 +52,7 @@ export function TournamentCards() {
     data: tournaments,
     error,
     isLoading,
-  } = useSWR<TournamentsProps[]>("/api/tournament/getAllTournament", fetcher)
+  } = useSWR<TournamentsProps[]>(`${process.env.NEXT_PUBLIC_API_URL}/tournament/getAllTournament`, fetcher)
   const router = useRouter()
 
   if (isLoading) return <div className="flex justify-center items-center h-40"><LoadingAnimation /></div>

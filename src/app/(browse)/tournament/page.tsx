@@ -46,7 +46,7 @@ const fetcher = (url: string) =>
   });
 
 export default function Tournaments() {
-  const { data: tournaments, error } = useSWR<TournamentsProps[]>("/api/tournament/getAllTournament", fetcher)
+  const { data: tournaments, error } = useSWR<TournamentsProps[]>(`${process.env.NEXT_PUBLIC_API_URL}/tournament/getAllTournament`, fetcher)
 
   const router = useRouter()
 
