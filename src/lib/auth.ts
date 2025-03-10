@@ -5,7 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
-import { ethers } from "ethers";
 import jwt from "jsonwebtoken";
 
 interface ExtendedUser extends NextAuthUser {

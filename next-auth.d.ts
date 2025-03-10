@@ -3,13 +3,17 @@ import NextAuth from "next-auth";
 
 declare module "next-auth" {
   interface Session {
-    accessToken?:string
+    accessToken?: string
     token?: string;
     user: {
-      id: string;
-      username: string;
-      email: string;
-      image: string;
+      id: any;
+      username: any;
+      email: any;
+      image: any;
+      socialMedia: any;
+      wallets: any;
+      isAdmin: any;
+      status: any;
       // diğer özel alanlarınız
     };
   }
