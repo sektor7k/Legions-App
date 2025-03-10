@@ -16,6 +16,7 @@ import { ElementRef, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { mutate } from "swr";
+import { useSession } from "next-auth/react";
 
 interface Adress {
     evm: string | undefined;
@@ -27,19 +28,31 @@ export default function ProfileAdresses({ evm, solana }: Adress) {
     const [walletAddress, setWalletAddress] = useState('');
     const closeRef = useRef<ElementRef<"button">>(null);
     const { toast } = useToast()
+    const {data:session} = useSession();
 
 
     const handleSaveChanges = async (walletType: string) => {
         try {
-            const response = await axios.post('/api/user/wallets', { walletType, address: walletAddress });
-            showToast(`${walletType.toUpperCase()} adress updated successfully`)
-            await mutate(['/api/user/getUser'])
-            closeRef?.current?.click();
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/user/wallets`,
+            { walletType, address: walletAddress },
+            {
+              headers: {
+                Authorization: `Bearer ${session?.accessToken || ""}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          showToast(`${walletType.toUpperCase()} address updated successfully`);
+          // SWR anahtarının yapısını kontrol ederek doğru mutate anahtarını kullanın.
+          await mutate([`${process.env.NEXT_PUBLIC_API_URL}/user/getUser`, {}]);
+          closeRef?.current?.click();
         } catch (error) {
-            showErrorToast("Error updating wallet address")
-            console.error("Error updating wallet address:", error);
+          showErrorToast("Error updating wallet address");
+          console.error("Error updating wallet address:", error);
         }
-    };
+      };
+       
 
     function showErrorToast(message: string): void {
         toast({

@@ -29,13 +29,24 @@ interface SocialMedia {
 
 }
 
-const fetcher = (url: string,params:any) => axios.post(url,params).then((res) => res.data);
+
 
 export default function Page() {
   const { data: session } = useSession();
   const username = session?.user?.username || 'defaultUsername';
-  const { data: user, error, mutate } = useSWR<UserProps>(['/api/user/getUser'], ([url,params]) => fetcher(url,params));
 
+  const fetcher = (url: string, params: any) =>
+    axios.post(url, params, {
+      headers: {
+        Authorization: `Bearer ${session?.accessToken || ""}`,
+        "Content-Type": "application/json",
+      },
+    }).then((res) => res.data);
+
+    const { data: user, error, mutate } = useSWR(
+      session?.accessToken ? [`${process.env.NEXT_PUBLIC_API_URL}/user/getUser`, {}] : null,
+      ([url, params]) => fetcher(url, params)
+    );
 
   const breadcrumbItems = [
     { title: 'Dashboard', link: `/u/${username}/profile` }, // Dinamik dashboard linki

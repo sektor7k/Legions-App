@@ -13,7 +13,7 @@ export default function VerifyEmailPage() {
 
     const verifyUserEmail = async () => {
         try {
-            await axios.post('/api/auth/verifyemail', { token })
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/verifyemail`, { token })
             setVerified(true);
         } catch (error: any) {
             setError(true);

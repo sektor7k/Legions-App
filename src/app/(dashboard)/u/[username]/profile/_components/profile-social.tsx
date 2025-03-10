@@ -32,21 +32,30 @@ export default function ProfileSocial({ telegram, twitter, discord }: SocialMedi
     const [telegramN, setTelegram] = useState('');
     const closeRef = useRef<ElementRef<"button">>(null);
     const { toast } = useToast()
+    const {data:session} = useSession();
 
     const handleSaveChanges = async () => {
-
         try {
-            const response = await axios.post('/api/user/socialmedia', { twitter: twitterN, discord: discordN, telegram: telegramN });
-            showToast("Social media links successfully updated")
-            await mutate(['/api/user/getUser'])
-            closeRef?.current?.click();
-
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/user/socialmedia`,
+            { twitter: twitterN, discord: discordN, telegram: telegramN },
+            {
+              headers: {
+                Authorization: `Bearer ${session?.accessToken || ""}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          showToast("Social media links successfully updated");
+          // SWR anahtarının da aynı yapıda olduğundan emin olun:
+          await mutate([`${process.env.NEXT_PUBLIC_API_URL}/user/getUser`, {}]);
+          closeRef?.current?.click();
         } catch (error) {
-            showErrorToast("Error updating social media links")
-            console.error("Error updating social media links:", error);
-
+          showErrorToast("Error updating social media links");
+          console.error("Error updating social media links:", error);
         }
-    };
+      };
+      
 
     function showErrorToast(message: string): void {
         toast({

@@ -6,6 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import bcrypt from "bcryptjs";
 import { ethers } from "ethers";
+import jwt from "jsonwebtoken";
 
 interface ExtendedUser extends NextAuthUser {
   id: string;
@@ -22,20 +23,19 @@ interface ExtendedUser extends NextAuthUser {
     evm?: string;
     solana?: string;
   };
-  role:string;
+  role: string;
   status: string;
 }
-
 
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -63,7 +63,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Please verify your email address.");
         }
 
-        // Burada tüm gerekli alanların olduğundan emin olun
+        // Tüm gerekli alanların olduğundan emin olun
         return {
           id: userFound._id,
           email: userFound.email,
@@ -96,17 +96,16 @@ export const authOptions: NextAuthOptions = {
           await connectDB();
           const userExists = await User.findOne({ email: user.email });
           if (!userExists) {
-
             await User.create({
               email: user.email,
               username: user.email.split("@")[0],
               image: user.image,
-              isVerifed: true, 
-              role: "user", 
+              isVerifed: true,
+              role: "user",
               socialMedia: {},
               wallets: {},
               status: "active",
-              provider: "google"
+              provider: "google",
             });
           }
         }
@@ -116,7 +115,7 @@ export const authOptions: NextAuthOptions = {
         return false; // Giriş reddedilebilir
       }
     },
-    async jwt({ token, user,trigger, session }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         await connectDB();
         // DB'de email'e göre kullanıcıyı arıyoruz.
@@ -124,7 +123,7 @@ export const authOptions: NextAuthOptions = {
         if (dbUser) {
           // DB'deki kullanıcı kaydından gelen değerleri token'a aktarıyoruz.
           token.id = dbUser._id.toString();
-          token.username = dbUser.username;  // DB'de oluşturduğunuz username
+          token.username = dbUser.username;
           token.email = dbUser.email;
           token.image = dbUser.image;
           token.socialMedia = dbUser.socialMedia;
@@ -132,7 +131,16 @@ export const authOptions: NextAuthOptions = {
           token.role = dbUser.role;
           token.status = dbUser.status;
         }
-      }else if (token.id) {
+        // Kullanıcı giriş yaptığında raw JWT oluşturuyoruz.
+        token.raw = jwt.sign(
+          {
+            id: token.id,
+            username: token.username,
+            email: token.email,
+          },
+          process.env.NEXTAUTH_SECRET as string,
+        );
+      } else if (token.id) {
         // Diğer isteklerde DB'den güncel kullanıcı durumunu alalım.
         try {
           await connectDB();
@@ -152,7 +160,6 @@ export const authOptions: NextAuthOptions = {
         if (session.socialMedia) token.socialMedia = session.socialMedia;
         if (session.wallets) token.wallets = session.wallets;
       }
-      
 
       return token;
     },
@@ -167,6 +174,8 @@ export const authOptions: NextAuthOptions = {
         isAdmin: token.isAdmin,
         status: token.status,
       };
+      // Raw token'ı accessToken olarak ekliyoruz.
+      session.accessToken = token.raw as string;
       return session;
     },
   },

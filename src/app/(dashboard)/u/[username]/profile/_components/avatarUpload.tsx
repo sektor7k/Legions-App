@@ -32,7 +32,7 @@ export default function AvatarUpload({
   const closeRef = useRef<ElementRef<"button">>(null);
   const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl);
   const { toast } = useToast()
-  const {data, update} = useSession()
+  const { data: session, update } = useSession()
 
 
 
@@ -96,25 +96,32 @@ export default function AvatarUpload({
             ) : (
               <div className="border rounded-full outline-dashed outline-muted w-72 h-72">
                 <UploadDropzone
-
                   appearance={{
-                    label: {
-                      color: "#FFFFFF"
-                    },
-                    allowedContent: {
-                      color: "#FFFFFF"
-                    }
+                    label: { color: "#FFFFFF" },
+                    allowedContent: { color: "#FFFFFF" },
                   }}
                   onClientUploadComplete={async (res) => {
-                    console.log("Saasasasa")
-                    await axios.post('/api/user/uploadavatar', { avatarimage: res?.[0]?.url })
+                    console.log("Saasasasa");
+                    await axios.post(
+                      `${process.env.NEXT_PUBLIC_API_URL}/user/uploadavatar`,
+                      { avatarimage: res?.[0]?.url },
+                      {
+                        headers: {
+                          Authorization: `Bearer ${session?.accessToken || ""}`,
+                          "Content-Type": "application/json",
+                        },
+                      }
+                    );
                     setAvatarUrl(res?.[0]?.url);
-                    update({image:res?.[0]?.url})
+                    update({ image: res?.[0]?.url });
                     router.refresh();
                     closeRef?.current?.click();
-                    showToast("The avatar has been successfully updated.")
-                  }} endpoint={"imageUploader"} />
+                    showToast("The avatar has been successfully updated.");
+                  }}
+                  endpoint={"imageUploader"}
+                />
               </div>
+
             )}
           </div>
           <div className="flex justify-between ">

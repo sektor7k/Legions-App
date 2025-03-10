@@ -56,7 +56,7 @@ export default function RegisterPage() {
         }
         try {
 
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/api/auth/signup`, user);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/auth/signup`, user);
             console.log("Signup success", response);
             router.push("/verifyemail");
             showToast("Signup successfully!");

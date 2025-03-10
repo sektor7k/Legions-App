@@ -27,7 +27,7 @@ export default function ForgotPasswordForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await axios.post("/api/auth/forgotpassword", values)
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/forgotpassword`, values)
       console.log("Send email", response.data.message)
       showToast("Password renewal link has been sent to your e-mail address.")
     } catch (error: any) {

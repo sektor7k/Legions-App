@@ -33,16 +33,25 @@ export default function ProfileUser({ id, username, email, image }: UserProps) {
     const closeRef = useRef<ElementRef<"button">>(null);
     const [newUsername, setNewUsername] = useState(mail);
     const { toast } = useToast()
-    const {update} =useSession();
+    const {data: session, update} =useSession();
 
 
 
     const editUsername = async () => {
         try {
-            const response = await axios.post('/api/user/edituser', { newUsername });
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/user/editUser`,
+                { newUsername },
+                {
+                    headers: {
+                        Authorization: `Bearer ${session?.accessToken || ""}`,
+                        "Content-Type": "application/json",
+                      },
+                }
+            );
             update({ username: response.data.user.username })
             showToast("your username has been successfully updated")
-            await mutate(['/api/user/getUser'])
+            await mutate([`${process.env.NEXT_PUBLIC_API_URL}/user/getUser`, {}])
             closeRef?.current?.click();
 
         } catch (error) {
