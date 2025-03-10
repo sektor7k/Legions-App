@@ -31,25 +31,25 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     const socketRef = useRef<Socket | null>(null);
 
     const { data: tournament, error: errorTourrnament } = useSWR<Tournament>(
-        ['/api/tournament/getTournamentDetail', params.id] as const,
+        [`${process.env.NEXT_PUBLIC_API_URL}/tournament/getTournamentDetail`, params.id] as const,
         ([url, id]) => fetcher3(url, id)
     );
-
+/////
     const { data: messages = [], error } = useSWR(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`,
+        `${process.env.NEXT_PUBLIC_CHAT_URL}/api/rooms/${params.id}/messages`,
         fetcher
     );
 
     const { data: checkUser, error: errorCheck, mutate: checkUserMutate } = useSWR(
         session?.user.id
-            ? ['/api/tournament/checkRegistration', { userId: session?.user.id, tournamentId: params.id }]
+            ? [`${process.env.NEXT_PUBLIC_API_URL}/tournament/checkRegistration`, { userId: session?.user.id, tournamentId: params.id }]
             : null,
         ([url, params]) => fetcher2(url, params)
     );
 
     const { data: myTeam, error: errorTeam } = useSWR(
         session?.user.id
-            ? ['/api/tournament/team/getTeamLead', { tournamentId: params.id, leadId: session.user.id }]
+            ? [`${process.env.NEXT_PUBLIC_API_URL}/tournament/team/getTeamLead`, { tournamentId: params.id, leadId: session.user.id }]
             : null,
         ([url, params]) => fetcher2(url, params)
     );
@@ -63,7 +63,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
 
             socketRef.current.on("receive_msg", (msgData) => {
                 mutate(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`,
+                    `${process.env.NEXT_PUBLIC_CHAT_URL}/api/rooms/${params.id}/messages`,
                     (currentData: { userId: string; userName: string; text: string; createdAt: string; avatar: string }[] | undefined) =>
                         [...(currentData || []), msgData],
                     false
@@ -107,7 +107,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
             if (cStatus) {
                 return console.error("Chat Error");
             }
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, msgData);
+            await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}/api/rooms/${params.id}/messages`, msgData);
             setCurrentMsg("");
         } catch (error) {
             console.error('Mesaj gönderme hatası:', error);
@@ -136,7 +136,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
             if (cStatus || rStatus) {
                 return console.error("Chat Error");
             }
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, msgData);
+            await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}/api/rooms/${params.id}/messages`, msgData);
         } catch (error) {
             console.error('Steam mesaj gönderme hatası:', error);
         }
@@ -153,7 +153,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         };
 
         try {
-            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/rooms/${params.id}/messages`, msgData);
+            await axios.post(`${process.env.NEXT_PUBLIC_CHAT_URL}/api/rooms/${params.id}/messages`, msgData);
         } catch (error) {
             console.error('Steam mesaj gönderme hatası:', error);
         }
@@ -180,7 +180,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
             if (cStatus || rStatus) {
                 return console.error("Chat Error");
             }
-            const response = await axios.post('/api/tournament/invite/sendInvite', { teamId, userId, leadId, inviteType });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/invite/sendInvite`, { teamId, userId, leadId, inviteType });
             await checkUserMutate();
             showToast("A request to join the team has been sent.");
         } catch (error: any) {

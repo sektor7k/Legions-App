@@ -22,7 +22,7 @@ export default function OutboxPage() {
     const { data: session } = useSession();
     const { data: invites, error, mutate } = useSWR(
         session?.user.id
-            ? ['/api/tournament/invite/getOutbox', { userId: session.user.id }]
+            ? [`${process.env.NEXT_PUBLIC_API_URL}/tournament/invite/getOutbox`, { userId: session.user.id }]
             : null,
         ([url, params]) => fetcher(url, params)
     );
@@ -61,7 +61,7 @@ export default function OutboxPage() {
 
     const handleDeleteInvite = async (inviteId: string) => {
         try {
-            await axios.post(`/api/tournament/invite/deleteInvite`, { inviteId });
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/invite/deleteInvite`, { inviteId });
             mutate();
             showToast("Invite deleted successfully");
         } catch (error) {

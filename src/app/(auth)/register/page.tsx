@@ -56,8 +56,7 @@ export default function RegisterPage() {
         }
         try {
 
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/auth/signup`, user);
-            console.log("Signup success", response);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, user);
             router.push("/verifyemail");
             showToast("Signup successfully!");
 
@@ -71,8 +70,7 @@ export default function RegisterPage() {
     function showErrorToast(message: string): void {
         toast({
             variant: "destructive",
-            title: "Signup failed",
-            description: message,
+            title: message,
         })
     }
     function showToastWallet(message: string): void {

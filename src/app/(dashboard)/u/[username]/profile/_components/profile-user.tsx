@@ -48,7 +48,7 @@ export default function ProfileUser({ id, username, email, image }: UserProps) {
                         "Content-Type": "application/json",
                       },
                 }
-            );
+            ); 
             update({ username: response.data.user.username })
             showToast("your username has been successfully updated")
             await mutate([`${process.env.NEXT_PUBLIC_API_URL}/user/getUser`, {}])

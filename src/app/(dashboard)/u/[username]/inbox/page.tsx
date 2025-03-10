@@ -21,7 +21,7 @@ const fetcher = (url: string, params: any) =>
 export default function InboxPage() {
     const { data: session, status } = useSession();
 
-    const { data: invites, error, mutate } = useSWR(session?.user.id ? ['/api/tournament/invite/getInvite', { leadId: session.user.id, userId: session.user.id }] : null, ([url, params]) => fetcher(url, params));
+    const { data: invites, error, mutate } = useSWR(session?.user.id ? [`${process.env.NEXT_PUBLIC_API_URL}/tournament/invite/getInvite`, { leadId: session.user.id, userId: session.user.id }] : null, ([url, params]) => fetcher(url, params));
 
 
     function showErrorToast(message: string): void {
@@ -58,7 +58,7 @@ export default function InboxPage() {
     const handleAcceptInvite = async (inviteId: string) => { 
         try {
             // API'den davetleri alın
-            const response = await axios.post(`/api/tournament/invite/replyInvite`, { id: inviteId, reply: "accept" });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/invite/replyInvite`, { id: inviteId, reply: "accept" });
             showToast("Invite accepted");
             mutate()
 
@@ -81,7 +81,7 @@ export default function InboxPage() {
     const handleRejectInvite = async (inviteId: string) => {
         try {
             // API'den davetleri alın
-            const response = await axios.post(`/api/tournament/invite/replyInvite`, { id: inviteId, reply: "reject" });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/invite/replyInvite`, { id: inviteId, reply: "reject" });
             showErrorToast("Invite rejected successfully");
             mutate();
 
