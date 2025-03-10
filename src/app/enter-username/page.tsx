@@ -22,10 +22,19 @@ export default function EnterUsername() {
     const [newUsername, setNewUsername] = useState(username);
     const { toast } = useToast()
 
-
+ 
     const editUsername = async () => {
         try {
-            const response = await axios.post('/api/user/edituser', { newUsername });
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/user/editUser`,
+                { newUsername },
+                {
+                    headers: {
+                        Authorization: `Bearer ${session?.accessToken || ""}`,
+                        "Content-Type": "application/json",
+                      },
+                }
+            );
             update({ username: response.data.user.username })
             showToast("your username has been successfully updated")
             router.push("/");
