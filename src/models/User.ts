@@ -76,7 +76,7 @@ const UserSchema = new Schema<UserDocument>({
     telegram: { type: String, default: "" },
   },
   wallets: {
-    evm: { type: String, unique: true, sparse: true, default: "" },
+    evm: { type: String, default: "" },
     solana: { type: String, default: "" },
   },
   cryptoLoginNonce: {
