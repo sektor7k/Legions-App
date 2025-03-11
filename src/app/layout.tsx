@@ -10,7 +10,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { extractRouterConfig } from "uploadthing/server";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
-import { Wallet } from "@/context/WalletProvider";
+// import { Wallet } from "@/context/WalletProvider";
 
 
 
@@ -48,9 +48,9 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <main>
-                <Wallet>
+                {/* <Wallet> */}
                   {children}
-                </Wallet>
+                {/* </Wallet> */}
               </main>
               <Toaster />
             </ThemeProvider>
