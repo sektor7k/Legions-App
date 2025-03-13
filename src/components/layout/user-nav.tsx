@@ -81,12 +81,10 @@ export function UserNav() {
             <DropdownMenuItem onClick={() => { router.push(`/u/${session.user.username}/profile`) }}>
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { router.push(`/u/${session.user.username}/inbox`) }}>
-              Inbox
+            <DropdownMenuItem>
+              Settings
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => { router.push(`/u/${session.user.username}/outbox`) }}>
-              Outbox
-            </DropdownMenuItem>
+            
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={logout}>

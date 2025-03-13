@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { DashboardNavTournament } from '../dashboard-nav';
 import { useSession } from 'next-auth/react';
 import { getNavItemsTournament } from '@/constants/data';
+import NotificationButton from '../notifications/NotificationButton';
 
 type TournamentHeaderProps = {
     id: string;
@@ -45,7 +46,8 @@ export default function TournamentHeader({ id }: TournamentHeaderProps) {
                     <MobileSidebar id={id} />
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
+                    <NotificationButton/>
                     <UserNav />
                 </div>
             </nav>

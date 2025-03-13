@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { DashboardNavHeader } from '../dashboard-nav';
 import { useSession } from 'next-auth/react';
 import { getNavItemsBrowse } from '@/constants/data';
+import NotificationButton from '@/components/notifications/NotificationButton';
 
 interface RouteProps {
     href: string;
@@ -47,10 +48,12 @@ export default function BrowseHeader() {
                     <MobileSidebar />
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
+                <NotificationButton/>
                     <UserNav />
+                    
                 </div>
             </nav>
         </div>
     );
-}
+} 

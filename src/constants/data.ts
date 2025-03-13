@@ -11,17 +11,12 @@ export function getNavItems(session: Session | null): NavItem[] {
       icon: 'profile',
       label: 'profile'
     },
+    
     {
-      title: 'Inbox',
-      href: `/u/${username}/inbox`,
-      icon: 'inbox',
-      label: 'Inbox'
-    },
-    {
-      title: 'Outbox',
-      href: `/u/${username}/outbox`,
-      icon: 'outbox',
-      label: 'Outbox'
+      title: 'Settings',
+      href: `#`,
+      icon: 'settings',
+      label: 'Settings'
     },
   ];
 }
