@@ -19,6 +19,7 @@ interface Tournament {
     registerStatus: string;
     chatStatus: string;
 }
+//
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 const fetcher2 = (url: string, params: any) => axios.post(url, params).then(res => res.data);
