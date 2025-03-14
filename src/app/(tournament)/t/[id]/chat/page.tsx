@@ -35,7 +35,6 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         [`${process.env.NEXT_PUBLIC_API_URL}/tournament/getTournamentDetail`, params.id] as const,
         ([url, id]) => fetcher3(url, id)
     );
-/////
     const { data: messages = [], error } = useSWR(
         `${process.env.NEXT_PUBLIC_CHAT_URL}/api/rooms/${params.id}/messages`,
         fetcher
