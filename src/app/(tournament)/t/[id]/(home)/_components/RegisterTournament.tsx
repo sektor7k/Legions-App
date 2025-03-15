@@ -41,6 +41,7 @@ export default function RegisterTournament({ id, registerStatus }: RegisterTourn
     const [isFirstDialogOpen, setIsFirstDialogOpen] = useState(false);
     const [isSecondDialogOpen, setIsSecondDialogOpen] = useState(false);
     const [isthreeialogOpen, setthreeDialogOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [teamImage, setTeamImage] = useState("")
     const [teamName, setTeamName] = useState("public")
@@ -105,6 +106,10 @@ export default function RegisterTournament({ id, registerStatus }: RegisterTourn
     }
 
     const createTeam = async () => {
+
+        if (isSubmitting) return; // Eğer zaten çalışıyorsa, tekrar işlem yapma.
+    setIsSubmitting(true);
+
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/tournament/team/createTeam`, {
                 tournamentId: id,
@@ -127,6 +132,8 @@ export default function RegisterTournament({ id, registerStatus }: RegisterTourn
             console.error("Error Create team:", error);
 
         }
+
+        setIsSubmitting(false);
     }
 
     const handleJoinTeam = async (teamId: string, leadId: string) => {
@@ -138,6 +145,7 @@ export default function RegisterTournament({ id, registerStatus }: RegisterTourn
                 teamId,
                 userId,
                 leadId,
+                inviteType: 'leader'
             });
             showToast("Invite team successfully")
             mutate();
@@ -240,7 +248,7 @@ export default function RegisterTournament({ id, registerStatus }: RegisterTourn
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <Button onClick={createTeam} type="submit">Save changes</Button>
+                            <Button onClick={createTeam} type="submit" disabled={isSubmitting}>Save changes</Button>
                         </div>
                     </DialogFooter>
                 </DialogContent>

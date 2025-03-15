@@ -1,7 +1,7 @@
 // components/NotificationButton.tsx
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +28,8 @@ const fetcher = (url: string, params: any) =>
 export default function NotificationButton() {
     const { data: session } = useSession();
 
+    const [open, setOpen] = useState(false);
+
     const { data: invites, error, mutate } = useSWR(
         session?.user?.id
             ? [
@@ -41,7 +43,7 @@ export default function NotificationButton() {
     const pendingInvites = invites ? invites.filter((invite: any) => invite.status === "pending") : [];
 
     return (
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <button className="relative  rounded-xl hover:bg-gray-800">
                     <Bell className=" h-10 w-10 p-2 " />
@@ -57,7 +59,9 @@ export default function NotificationButton() {
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="text-xl font-bold">Notifications</h3>
 
-                    <X className="h-5 w-5" />
+                    <button onClick={() => setOpen(false)}>
+                        <X className="h-5 w-5" />
+                    </button>
 
                 </div>
                 {/* İnce gri divider - tüm genişliği kaplar */}
@@ -77,7 +81,7 @@ export default function NotificationButton() {
                             Outbox
                         </TabsTrigger>
                         <TabsTrigger
-                        disabled
+                            disabled
                             value="message"
                             className="py-2 px-4 border-b-2 rounded-none border-transparent transition ease-in-out duration-150 transform hover:scale-105 hover:shadow-md data-[state=active]:border-red-600 data-[state=active]:bg-transparent hover:bg-transparent"
                         >

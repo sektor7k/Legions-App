@@ -188,7 +188,7 @@ export default function TournamentPage({ params }: { params: { id: string } }) {
                     <div className="prose relative" style={{ whiteSpace: "pre-line" }}>
                         <div
                             ref={descriptionRef}
-                            className="max-h-[300px] overflow-hidden"
+                            className="max-h-[300px] 2xl:max-h-[230px] overflow-hidden"
                             dangerouslySetInnerHTML={{ __html: tournament.tdescription }}
                         />
                         {isOverflowing && (

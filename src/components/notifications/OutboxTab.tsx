@@ -112,7 +112,7 @@ export default function OutboxTab() {
               />
               <div className="flex-1 text-white">
                 <h2 className="text-xl font-semibold">{invite.teamId.teamName}</h2>
-                <p className="text-sm text-gray-300">Sent to: {invite.userId.username}</p>
+                
                 <p className="text-xs text-gray-400">{formatTime(new Date(invite.invitedAt))}</p>
               </div>
               <div className="flex justify-end items-center space-x-2">
@@ -124,7 +124,7 @@ export default function OutboxTab() {
                   >
                     Delete
                   </Button>
-                )}
+                )} 
                 <Badge
                   variant="default"
                   className={`${

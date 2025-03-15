@@ -38,7 +38,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
 
     return (
-        <div className="flex flex-col items-center mt-10 pl-10 overflow-x-auto">
+        <div className="flex flex-col items-center mt-10 md:pl-10 pl-[500px] overflow-x-auto">
 
             {bracket && (
                 <div className="flex flex-row justify-center mr-3 mt-8">

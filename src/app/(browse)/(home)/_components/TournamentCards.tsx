@@ -74,7 +74,7 @@ export function TournamentCards() {
         >
           <CarouselContent className="-ml-1">
             {tournaments.map((tournament) => (
-              <CarouselItem key={tournament._id} className="pl-1 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+              <CarouselItem key={tournament._id} className="pl-1 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 2xl:basis-1/5">
                 <button onClick={() => router.push(`/t/${tournament._id}`)}>
                   <CardDemo
                     name={tournament.tname || "Unnamed Tournament"}

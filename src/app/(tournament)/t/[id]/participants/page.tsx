@@ -204,18 +204,26 @@ export default function ParticipantsPage({ params }: { params: { id: string } })
                                                             </svg>
                                                         </Button>
                                                     </DialogTrigger>
-                                                    <DialogContent className="sm:max-w-[425px]">
+                                                    <DialogContent className="sm:max-w-[425px] ">
                                                         <DialogHeader>
                                                             <DialogTitle>Edit Team</DialogTitle>
                                                             <DialogDescription>
                                                                 Manage your team members or delete the team.
                                                             </DialogDescription>
                                                         </DialogHeader>
+                                                        <hr className="h-px bg-gray-900 border-0 mb-3" />
+
                                                         <Tabs defaultValue="account" >
-                                                            <TabsList className="grid w-full grid-cols-2 bg-gray-900">
-                                                                <TabsTrigger value="members">Memebers</TabsTrigger>
-                                                                <TabsTrigger value="detail">Team Detail</TabsTrigger>
+                                                            <TabsList className="grid w-full grid-cols-2 bg-transparent mb-3">
+                                                                <TabsTrigger value="members"
+                                                                    className='py-2 px-4 border-b-2 rounded-none border-transparent transition ease-in-out duration-150 transform hover:scale-105 hover:shadow-md data-[state=active]:border-red-600 data-[state=active]:bg-transparent hover:bg-transparent'
+                                                                >Memebers</TabsTrigger>
+                                                                <TabsTrigger value="detail"
+                                                                    className='py-2 px-4 border-b-2 rounded-none border-transparent transition ease-in-out duration-150 transform hover:scale-105 hover:shadow-md data-[state=active]:border-red-600 data-[state=active]:bg-transparent hover:bg-transparent'
+
+                                                                >Team Detail</TabsTrigger>
                                                             </TabsList>
+
                                                             <TabsContent value="members">
                                                                 <div className="grid gap-4 py-5">
                                                                     {team.members.map((member: any, idx: any) => (
