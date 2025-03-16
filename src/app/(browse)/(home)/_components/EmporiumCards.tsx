@@ -52,9 +52,9 @@ export default function EmporiumCards() {
         <div className="p-8 pt-20">
             <h1 className="text-2xl font-bold text-white mb-8 ">Emporium Cards</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 ">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-2">
                 {cards.map((card, index) => (
-                    <div key={index} className="relative w-full aspect-[3/4] max-w-[280px] mx-auto">
+                    <div key={index} className="relative w-full aspect-[4/5] max-w-[320px] mx-auto">
                         <Card
                             className="w-full h-full overflow-hidden relative bg-transparent transition-all duration-300 ease-in-out hover:scale-105 hover:z-10"
                             style={{ borderColor: card.primaryColor, borderWidth: "2px" }}
