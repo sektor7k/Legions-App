@@ -166,13 +166,13 @@ export default function CryptoGainLoseTables() {
   if (isLoading || !coinData) {
     return (
       <div className="w-full p-4 space-y-4 md:space-y-0 md:flex md:space-x-4">
-        <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
+        <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden ">
           <TableSkeleton title="Top Gaming Tokens" />
         </div>
-        <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
+        <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden ">
           <TableSkeleton title="Top Gaming Tokens Gain" />
         </div>
-        <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
+        <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden ">
           <TableSkeleton title="Top Gaming Tokens Lose" />
         </div>
       </div>
@@ -199,13 +199,13 @@ export default function CryptoGainLoseTables() {
 
   return (
     <div className="w-full p-4 space-y-4 md:space-y-0 md:flex md:space-x-4">
-      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
+      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border  ">
         <CoinTable title="Top Gaming Tokens" coins={topTrending} />
       </div>
-      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
+      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border ">
         <CoinTable title="Top Gaming Tokens Gain" coins={topGainers} />
       </div>
-      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border-gradient">
+      <div className="w-full md:w-1/2 backdrop-blur-sm rounded-sm overflow-hidden border ">
         <CoinTable title="Top Gaming Tokens Lose" coins={topLosers} />
       </div>
     </div>
