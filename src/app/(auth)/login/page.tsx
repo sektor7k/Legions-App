@@ -82,7 +82,7 @@ export default function LoginPage() {
                         LOGIN
                     </h2>
                     <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
-                        Castrum Legionsa hoş geldiniz. Unutmayın biz bir aileyiz
+                    Welcome to the castle. Sign up or log in to join the battle!
                     </p>
 
                     <div className="my-8" >
@@ -171,8 +171,8 @@ export default function LoginPage() {
 const BottomGradient = () => {
     return (
         <>
-            <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-            <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+            <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-red-600 to-transparent" />
+            <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-red-600 to-transparent" />
         </>
     );
 };
