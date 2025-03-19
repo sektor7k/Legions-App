@@ -308,7 +308,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
                             </Popover>
                             <input
                                 disabled={cStatus}
-                                className={`w-full p-2 pl-4 pr-12 border rounded-lg rounded-r-3xl border-gray-500 ${cStatus ? "opacity-40" : "opacity-100"} focus:outline-none focus:ring-2 focus:ring-white`}
+                                className={`w-full p-2 pl-4 pr-12 border rounded-lg rounded-r-3xl border-gray-500 ${cStatus ? "opacity-40" : "opacity-100"} focus:outline-none focus:ring-2 focus:ring-white dark:bg-white/10 text-white dark:text-white bg-white/10`}
                                 type="text"
                                 value={currentMsg}
                                 placeholder="Type your message..."
